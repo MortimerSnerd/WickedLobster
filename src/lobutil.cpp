@@ -1,5 +1,8 @@
 // Lobster initialization and utility functions.
 #include "pch.h"
+#include "lobutil.h"
+
+#include "lobster_headers.h"
 #include "lobster/compiler.h"
 #include "lobster/natreg.h"
 #include "lobster/vmdata.h"
@@ -51,19 +54,24 @@ std::string init_lobster(lobster_options& args)
         lobster::RegisterBuiltin(nfr, "wicked_lobster", add_wl_builtins);
         auto loader = lobster::EnginePreInit(nfr);
 
-        // We expect the current directory to be gamedir\src, with a "modules" and
+        // We expect the current directory to be gamedir, with a "modules" and
         // "data" directory underneath it.  These will be populated by scripts from 
         // whereever Lobster is installed on the system.  (that's a TODO)
-        if (!InitPlatform(".", args.root_src, false, loader)) {
+        if (!InitPlatform(".", "src", false, loader)) {
             return "Could not find location to read/write data on this platform!";
         }
 
         std::string bytecode_buffer;
         std::string_view src;
         std::string error_msg; 
+        #if _DEBUG
+        auto checks = lobster::RUNTIME_ASSERT_PLUS;
+        #else
+        auto checks = lobster::RUNTIME_ASSERT;
+        #endif
 
         lobster::Compile(nfr, args.root_src, src, bytecode_buffer, nullptr, nullptr,
-                         false, args.runtime_checks, nullptr, 10, true);
+                         false, checks, nullptr, 10, true);
         lobster::RunTCC(nfr,
                         bytecode_buffer,
                         args.root_src,
@@ -72,7 +80,7 @@ std::string init_lobster(lobster_options& args)
                         lobster::TraceMode::OFF,
                         false,
                         error_msg,
-                        args.runtime_checks,
+                        checks,
                         false);
         if (!error_msg.empty()) {
             return error_msg;
@@ -83,5 +91,3 @@ std::string init_lobster(lobster_options& args)
     return "";
 
 }
-
-

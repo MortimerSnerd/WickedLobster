@@ -1,5 +1,11 @@
-.vpj
-.vpw
-.vpwhistu
-.vpwhistxml
-.vtg
+*.vpj
+*.vpw
+*.vpwhistu
+*.vpwhist
+*.vpwhistxml
+*.vtg
+*.bak
+*.log
+# Ignore some of the copied over bits from the separate Lobster and WE repos.
+gamedir/src/data
+gamedir/src/modules

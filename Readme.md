@@ -56,3 +56,14 @@ Being able to use the generated C++ for Lobster is desirable for a final
 bit of performance gain, and will require some more investigation on how to 
 integrate that with the build in a non-hacky way.
 
+# oof
+- had to change wicked engine lib to use multithreaded runtime (not mt dll), and
+- add a preprocessor to set ITERATOR_DEBUG_LEVEL to the same level set in Lobster.
+
+## Things to copy into gamedir
+- WickedEngine
+    - Content/
+    - WickedEngine/shaders/
+- Lobster
+    - data/
+    - modules/

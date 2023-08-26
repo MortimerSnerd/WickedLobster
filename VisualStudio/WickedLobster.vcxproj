@@ -83,12 +83,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(IncludePath)</IncludePath>
-    <ExternalIncludePath>$(ProjectDir)\..\src;$(LOBSTER_ROOT_DIR)\dev\include;$(LOBSTER_ROOT_DIR)\dev\src;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>
+    </ExternalIncludePath>
     <LibraryPath>$(LOBSTER_ROOT_DIR)\bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <ExternalIncludePath>$(ProjectDir)\..\src;$(LOBSTER_ROOT_DIR)\dev\include;$(LOBSTER_ROOT_DIR)\dev\src;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>
+    </ExternalIncludePath>
     <LibraryPath>$(LOBSTER_ROOT_DIR)\bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -131,8 +133,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
-      <EnableModules>true</EnableModules>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <EnableModules>false</EnableModules>
       <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -141,11 +143,12 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <DisableSpecificWarnings>4127;4512;4201;4146;4456;4702</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>$(WICKED_ENGINE_ROOT_DIR)\WickedEngine;$(ProjectDir)\..\src;$(LOBSTER_ROOT_DIR)\dev\include;$(LOBSTER_ROOT_DIR)\dev\src;$(ExternalIncludePath)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(LOBSTER_ROOT_DIR)\build\lobster\language\languageDBG64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(LOBSTER_ROOT_DIR)\build\lobster\language\languageDBG64.lib;$(WICKED_ENGINE_ROOT_DIR)\BUILD\x64\Debug\WickedEngine_Windows.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -164,13 +167,14 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <DisableSpecificWarnings>4127;4512;4201;4146;4456;4702</DisableSpecificWarnings>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <AdditionalIncludeDirectories>$(WICKED_ENGINE_ROOT_DIR)\WickedEngine;$(ProjectDir)\..\src;$(LOBSTER_ROOT_DIR)\dev\include;$(LOBSTER_ROOT_DIR)\dev\src;$(ExternalIncludePath)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(LOBSTER_ROOT_DIR)\build\lobster\language\language64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(LOBSTER_ROOT_DIR)\build\lobster\language\language64.lib;$(WICKED_ENGINE_ROOT_DIR)\BUILD\x64\Release\WickedEngine_Windows.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
