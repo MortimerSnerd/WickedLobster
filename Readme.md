@@ -1,66 +1,45 @@
-# Summary
-Project integrating the [Lobster Language](https://github.com/aardappel/lobster) with the [Wicked Engine](https://github.com/turanszkij/WickedEngine).
+# WickedLobster
+Exploratory project integrating the [Lobster Language](https://github.com/aardappel/lobster) 
+with the [Wicked Engine](https://github.com/turanszkij/WickedEngine).  
 
-I enjoy the lobster language. The language is small and powerful, the
-implementation is fast, and the builtin engine 
-is easy to use for 2d. Doing 3d is certainly possible, but does require 
-more heavy lifting to implement. I've experimented with loading existing 
-simple formats, like Quake 2 BSP, and concluded it requires more work than
-I have spare time for.
+## Status
+I'm still getting the overall structure in place, so this is just a skeleton that
+is in pre-alpha state.  I'm checking it in mainly to have it backed up at this point,
+it's not usable by others yet. 
 
-Looking around at the 3d engine landscape, I considered Wicked Engine a good 
-choice for doing anything that needs to be 3d.  It looks great, has a pretty
-clean C++ API, the Lua integration is very helpful, but I do miss working in Lobster.  
+## Why
 
-Looking at their codebases, I've gotten the idea that it should be possible to 
-build a project that integrates the two without requiring changes to either 
-project.  This is largely possible because Lobster has an option to just compile
-the language code as a library, without the engine part.  And Wicked Engine 
-produces a library as well.  
+The short version - I like Lobster, but I don't have the time to write all
+of the support code that's really required for a 3d game.
 
-Once C++ side of the project is compiled, it should be able to load and execute
-Lobster code without further trips to the C++ compiler when Lobster is run in JIT
-mode.  
+When I looked around for a 3d engine, Wicked Engine seemed like the best match
+for me.  Very well done, does a lot while not feeling as huge as Unreal.  Has
+Lua integration, and I'm comfortable with C++ so I don't mind working directly
+with the Wicked Engine API's. 
 
-The binding will be for a subset of the Wicked Engine API.  The goal is not to 
-be able to do everything from Lobster, but to be able to handle game logic
-and orchestration from Lobster, and leave the heavier setup and things that
-require sub-classing to the C++ side.
+One interesting thing about Lobster is that it allows you to compile just
+the language, without the builtin engine. One day, one of my neurons
+fired and I thought about taking the Lobster language libary and putting it
+with the Wicked Engine library.
 
-# Caveat
-This is still exploratory and not remotely usable by anyone else yet. 
+## Goals
 
-# Structure
-This is still exploratory stage, so Windows only with me editing a Visual Studio
-project to set things up.  This seems like an ideal candidate for a CMake setup, but
-I'm going to defer going down that road until I make sure there aren't more
-fundamental problems with the project itself.
+- Bind just enough of the Wicked Engine API so game logic and control can be 
+  done in Lobster.  It's not intended to expose every feature to Lobster. 
+  Some things are better left to C++.
+- I want to keep Lobster and Wicked Engine out of the tree, without having
+  to make modifications to them.  At the moment, I'm doing this with build
+  variables that have the path to external Lobster and Wicked Engine directories.
+- The directory the game will run from "gamedir" needs data directories
+  from both Lobster and Wicked Engine.  I've just copied mine manually, 
+  but it would be better to build a script to do that. 
 
-How I expect this two work:  The Lobster and Wicked Engine repositories will 
-live off in their own directories.  There are build system variables that can be set
-to the locations of these two repos so the build can locate library and include
-directories.  (Currently: User Defined Macros for the Visual Studio project)
 
-Both Lobster and Wicked Engine have expectations on where to find resources
-when they are run.  There will be a script that can build a deployment directory
-by copying over what is needed in the correct structure.
-
-Initially, I'm just going to make some hand bindings as I feel out how
-practical this will be, but binding by hand is tedious and error prone. There
-should be some sort of script that can generate bindings for the majority 
-of the Wicked Engine API, hopefully leaving only a few special cases that
-require manual bindings.
-
-On the Lobster side, initially it's just going to Jit the code on startup.  
-Being able to use the generated C++ for Lobster is desirable for a final
-bit of performance gain, and will require some more investigation on how to 
-integrate that with the build in a non-hacky way.
-
-# oof - bad things and reminders
+## oof - bad things and reminders
 - had to change wicked engine lib to use multithreaded runtime (not mt dll), and
-- add a preprocessor to set ITERATOR_DEBUG_LEVEL to the same level set in Lobster.
+  add a preprocessor to set ITERATOR_DEBUG_LEVEL to the same level set in Lobster.
 
-## Things to copy into gamedir
+### Things to copy into gamedir
 - WickedEngine
     - Content/
     - WickedEngine/shaders/
