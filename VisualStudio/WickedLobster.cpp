@@ -49,13 +49,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return FALSE;
     }
 
-    lobster_options opts;
-    auto errmsg = init_lobster(opts);
-    if (!errmsg.empty()) {
-        auto rc = MessageBoxA(MainWindow, errmsg.data(), "Badness", MB_OK);
-        return FALSE;
-    }
-
+    // Set up the application
     application.Initialize();
     application.ActivatePath(&game);
     wi::initializer::InitializeComponentsImmediate();
@@ -66,27 +60,36 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     application.infoDisplay.resolution = true;
     application.infoDisplay.fpsinfo = true;
 
-    wi::scene::LoadModel("Content/models/Sponza/sponza.wiscene");
 
-    HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WICKEDLOBSTER));
+    lobster_options opts;
+    int rval = 0;
+    auto errmsg = run_lobster(opts,
+        [&rval, hInstance]() {
 
-    // Main message loop:
-    MSG msg = {0};
-    while (msg.message != WM_QUIT) {
-        if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
-        } else {
+            HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_WICKEDLOBSTER));
 
-            application.Run(); // run the update - render loop (mandatory)
+            // Main message loop:
+            MSG    msg         = {0};
+            while (msg.message != WM_QUIT) {
+                if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+                    TranslateMessage(&msg);
+                    DispatchMessage(&msg);
+                } else {
+                    lobster_begin_frame();
+                    application.Run(); // run the update - render loop (mandatory)
+                }
+            }
 
-        }
+            rval = (int)msg.wParam;
+
+    });
+    if (!errmsg.empty()) {
+        auto rc = MessageBoxA(MainWindow, errmsg.data(), "Badness", MB_OK);
+        rval = 0;
     }
 
-    return (int) msg.wParam;
+    return rval;
 }
-
-
 
 //
 //  FUNCTION: MyRegisterClass()

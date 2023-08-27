@@ -1,14 +1,34 @@
 // Lobster initialization and utility functions.
 #include "pch.h"
 #include "lobutil.h"
+#include "wibindings.h"
 
 #include "lobster_headers.h"
 #include "lobster/compiler.h"
 #include "lobster/natreg.h"
 #include "lobster/vmdata.h"
 
+using namespace std;
+
 namespace {
     lobster::NativeRegistry nfr;
+
+    // The function that's the C++ main loop.  This function is live
+    // as long as the game is running, and gets set by init.
+    // A little confusing, but the call stack will be :
+    // init_lobster -> Compile/RunTCC -> wi_start_game(lobster fn) -> main_loop.
+    function<void()> main_loop(nullptr);
+
+    lobster::VM *active_vm = nullptr;
+
+
+
+    void lob_do_nothing(lobster::VM &, lobster::StackPtr)
+    {
+    }
+
+    // Called at the beginning of a frame.
+    lobster::Value frame_begin_fn(lob_do_nothing);
 }
 
 // Some stubs we need to make since LOBSTER_ENGINE=0
@@ -19,7 +39,7 @@ namespace lobster {
     }
 }
 
-std::string BreakPoint(lobster::VM &, string_view reason) {
+string BreakPoint(lobster::VM &, string_view reason) {
     //TODO: how to handle this when we don't have the imgui debugger?
     auto cstr = reason.data();
     printf("BREAKPOINT called: %s\n", cstr ? cstr : "<null>");
@@ -28,6 +48,20 @@ std::string BreakPoint(lobster::VM &, string_view reason) {
 
 extern "C" void GLFrame(lobster::StackPtr, lobster::VM &) 
 {
+}
+
+namespace
+{
+    void push_wo_handle(lobster::StackPtr &sp, wo_handle h)
+    {
+        PushVec(sp, iint2{(iint)h.kind, h.name});
+    }
+
+    wo_handle pop_wo_handle(lobster::StackPtr &sp)
+    {
+        auto i2 = PopVec<int2>(sp);
+        return {i2[0], i2[1]};
+    }
 }
 
 
@@ -39,11 +73,53 @@ void add_wl_builtins(lobster::NativeRegistry &anfr)
         [](StackPtr &, VM &) {
             return Value(12);
     });
+
+    anfr("wi_start_game", "", "", "",
+         "The lobster code should call this to start the game after any "
+         "wanted function callbacks are set up.",
+        [](StackPtr &, VM &) {
+            main_loop();
+            return NilVal();
+    });
+
+    anfr("wi_set_begin_frame_fn", "f", "L", "",
+         "Sets the function that gets called at the beginning of the frame.",
+        [](StackPtr &, VM &vm, Value &f) {
+            assert(f.type >= lobster::V_FUNCTION);
+            frame_begin_fn = f;
+            active_vm = &vm;
+            return NilVal();
+    });
+
+    anfr("wi_new_scene", "", "", "I}:2",
+         "Creates a new empty scene and returns the handle for it.",
+        [](StackPtr &sp, VM &) {
+            push_wo_handle(sp, wbnd::new_scene());
+    });
+
+    anfr("wi_global_scene", "", "", "I}:2",
+         "Returns the handle for the global scene.",
+        [](StackPtr &sp, VM &) {
+            push_wo_handle(sp, wbnd::global_scene());
+    });
+
+    anfr("wi_load_model", "scene,fname,attach_to_entity", "I}:2SB", "I}:2",
+         "Loads model in fname into the given scene.  Returns"
+         " the entity handle.",
+        [](StackPtr &sp, VM &) {
+            auto attach = Pop(sp).True();
+            auto fname = Pop(sp);
+            auto scene = pop_wo_handle(sp);
+            push_wo_handle(sp, wbnd::load_model(scene,
+                                                string(fname.sval()->strv()),
+                                                attach));
+    });
 }
 
-
-std::string init_lobster(lobster_options& args)
+string run_lobster(lobster_options &args, function<void()> main)
 {
+    // Set this so it will be ready when the lobster code calls back into 
+    main_loop = main;
     try {
         // For simplicity, at first only jit the code every time we start.
         // We can probably make a separate tool to make lobster compilation to 
@@ -61,9 +137,9 @@ std::string init_lobster(lobster_options& args)
             return "Could not find location to read/write data on this platform!";
         }
 
-        std::string bytecode_buffer;
-        std::string_view src;
-        std::string error_msg; 
+        string bytecode_buffer;
+        string_view src;
+        string error_msg; 
         #if _DEBUG
         auto checks = lobster::RUNTIME_ASSERT_PLUS;
         #else
@@ -76,7 +152,7 @@ std::string init_lobster(lobster_options& args)
                         bytecode_buffer,
                         args.root_src,
                         nullptr,
-                        std::move(args.program_args),
+                        move(args.program_args),
                         lobster::TraceMode::OFF,
                         false,
                         error_msg,
@@ -85,9 +161,20 @@ std::string init_lobster(lobster_options& args)
         if (!error_msg.empty()) {
             return error_msg;
         }
-    } catch (std::string const& err) {
+    } catch (string const& err) {
         return err;
     }
     return "";
 
+}
+
+void lobster_begin_frame()
+{
+    active_vm->CallFunctionValue(frame_begin_fn);
+}
+
+void dump_lobster_stack()
+{
+    //TODO
+    printf("LOBSTER STACK GOES HERE\n");
 }

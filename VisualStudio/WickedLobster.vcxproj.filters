@@ -33,6 +33,9 @@
     <ClInclude Include="..\src\lobutil.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\wibindings.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WickedLobster.cpp">
@@ -42,6 +45,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\lobutil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\wibindings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
