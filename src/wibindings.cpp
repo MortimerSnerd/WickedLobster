@@ -90,5 +90,10 @@ namespace wbnd
         return {WK_ENTITY, scene_for_ix(scene.name)->Entity_FindByName(std::string(name), 
                                                                        ancestor.name)};
     }
+
+    void backlog(int level, std::string_view const &msg)
+    {
+        wi::backlog::post(std::string(msg), (wi::backlog::LogLevel)level);
+    }
 }
 

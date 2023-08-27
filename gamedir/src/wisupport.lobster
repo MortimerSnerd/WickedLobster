@@ -1,5 +1,21 @@
 // Wrappers for the raw builtin interface to make it easier to use.
 
+// Mirror of wi::backlog::LogLevel
+enum backlog_level:
+   lev_none, lev_default, lev_warning, lev_error
+
+// Logs to backlog with given levels.  For debug builds this also gets blasted
+// out to stdout.
+def error(msg: string):
+   wi_log(lev_error, msg)
+
+def warning(msg: string):
+   wi_log(lev_warning, msg)
+
+def info(msg: string):
+   wi_log(lev_default, msg)
+
+
 // Handle kinds used internally to tell the difference between the different
 // handles.
 enum wokind:

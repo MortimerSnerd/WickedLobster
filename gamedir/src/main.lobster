@@ -9,14 +9,16 @@ wi_set_begin_frame_fn(): frame_begin()
 
 // Any miscellaneous setup.  Here we load an initial scene.
 let scene = global_scene()
-scene.load_model("Content/models/Sponza/sponza.wiscene", false)
+scene.load_model("Content/models/badbard.wiscene", false)
 
 //DEBUG+
 let ent = scene.create_entity()
 let nc = scene.create_name_component(ent)
 nc.set_name("bozo")
 assert scene.entity_find_by_name("bozo").handle == ent.handle
+error("pants on fire {nc}")
 //DEBUG-
+
 
 
 // Finally, call wi_start_game() to start the main loop.  This will not return

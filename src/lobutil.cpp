@@ -146,6 +146,12 @@ void add_wl_builtins(lobster::NativeRegistry &anfr)
             push_wo_handle(sp, wbnd::entity_find_by_name(scene, name, ancestor));
     });
 
+    anfr("wi_log", "level,msg", "IS", "",
+         "Logs to WickedEnine backlog with the given wi::backlog::LogLevel",
+        [](StackPtr &, VM &, Value &level, Value &msg) {
+            wbnd::backlog((int)level.ival(), msg.sval()->strv());
+            return NilVal();
+    });
 }
 
 string run_lobster(lobster_options &args, function<void()> main)
