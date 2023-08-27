@@ -121,6 +121,31 @@ void add_wl_builtins(lobster::NativeRegistry &anfr)
             push_wo_handle(sp, wbnd::create_entity());
     });
 
+    anfr("wi_create_name_component", "scene,entity", "I}:2I}:2", "I}:2",
+         "Creates a name component on the given entity.",
+         [](StackPtr &sp, VM &){
+        auto ent = pop_wo_handle(sp);
+        auto scene = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::create_entity_name_component(scene, ent));
+    });
+
+    anfr("wi_nc_set_name", "name_comp,name", "I}:2S", "",
+         "Sets the name for the given name component handle.",
+        [](StackPtr &sp, VM &) {
+            auto name = Pop(sp).sval()->strv();
+            auto comp = pop_wo_handle(sp);
+            wbnd::nc_set_name(comp, name);
+    });
+
+    anfr("wi_entity_find_by_name", "scene,name,ancestor_ent", "I}:2SI}:2", "I}:2",
+         "Finds an entity by name in the given scene. Returns invalid entity if not found",
+        [](StackPtr &sp, VM &) {
+            auto ancestor = pop_wo_handle(sp);
+            auto name     = Pop(sp).sval()->strv();
+            auto scene    = pop_wo_handle(sp);
+            push_wo_handle(sp, wbnd::entity_find_by_name(scene, name, ancestor));
+    });
+
 }
 
 string run_lobster(lobster_options &args, function<void()> main)

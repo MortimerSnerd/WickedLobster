@@ -8,8 +8,16 @@ def frame_begin():
 wi_set_begin_frame_fn(): frame_begin()
 
 // Any miscellaneous setup.  Here we load an initial scene.
-let scene = wi_global_scene()
-wi_load_model(scene, "Content/models/Sponza/sponza.wiscene", false)
+let scene = global_scene()
+scene.load_model("Content/models/Sponza/sponza.wiscene", false)
+
+//DEBUG+
+let ent = scene.create_entity()
+let nc = scene.create_name_component(ent)
+nc.set_name("bozo")
+assert scene.entity_find_by_name("bozo").handle == ent.handle
+//DEBUG-
+
 
 // Finally, call wi_start_game() to start the main loop.  This will not return
 // until the game is exiting.

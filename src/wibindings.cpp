@@ -26,8 +26,9 @@ namespace wbnd
         }
         switch (h.kind) {
         case WK_SCENE:
+        case WK_NAME_COMP:
             if (h.name == 0) {
-                printf("Null scene pointer.");
+                printf("Null handle pointer, kind=%d\n", (int)h.kind);
                 dump_lobster_stack();
                 fflush(stdout);
                 abort();
@@ -58,15 +59,36 @@ namespace wbnd
         handle_check(dest_scene, WK_SCENE);
         auto ent = wi::scene::LoadModel(*scene_for_ix(dest_scene.name), filename,
                                         XMMatrixIdentity(), attach_to_entity);
-        if (ent == wi::ecs::INVALID_ENTITY) {
-            return {-WK_ENTITY, 0};
-        }
         return {WK_ENTITY, (int64_t)ent};
     }
 
     wo_handle create_entity()
     {
         return {WK_ENTITY, wi::ecs::CreateEntity()};
+    }
+
+    wo_handle create_entity_name_component(wo_handle scene, wo_handle entity)
+    {
+        handle_check(scene, WK_SCENE);
+        handle_check(entity, WK_ENTITY);
+        auto sp = scene_for_ix(scene.name);
+        auto &comp = sp->names.Create(entity.name);
+        return {WK_NAME_COMP, reinterpret_cast<int64_t>(&comp)};
+    }
+
+    void nc_set_name(wo_handle name_comp, std::string_view const &name)
+    {
+        handle_check(name_comp, WK_NAME_COMP);
+        auto np = reinterpret_cast<wi::scene::NameComponent *>(name_comp.name);
+        np->name = name;
+    }
+
+    wo_handle entity_find_by_name(wo_handle scene, std::string_view const &name, wo_handle ancestor)
+    {
+        handle_check(scene, WK_SCENE);
+        handle_check(ancestor, WK_ENTITY);
+        return {WK_ENTITY, scene_for_ix(scene.name)->Entity_FindByName(std::string(name), 
+                                                                       ancestor.name)};
     }
 }
 
