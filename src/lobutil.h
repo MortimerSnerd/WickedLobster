@@ -3,7 +3,7 @@
 
 struct lobster_options 
 {
-    std::string root_src = "src/main.lobster";
+    std::string root_src = "main.lobster";
     std::vector<std::string> program_args = {};
 };
 

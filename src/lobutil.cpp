@@ -133,7 +133,7 @@ string run_lobster(lobster_options &args, function<void()> main)
         // We expect the current directory to be gamedir, with a "modules" and
         // "data" directory underneath it.  These will be populated by scripts from 
         // whereever Lobster is installed on the system.  (that's a TODO)
-        if (!InitPlatform(".", "src", false, loader)) {
+        if (!InitPlatform(".", "", false, loader)) {
             return "Could not find location to read/write data on this platform!";
         }
 
@@ -146,6 +146,8 @@ string run_lobster(lobster_options &args, function<void()> main)
         auto checks = lobster::RUNTIME_ASSERT;
         #endif
 
+        AddDataDir(".");
+        AddDataDir("src");
         lobster::Compile(nfr, args.root_src, src, bytecode_buffer, nullptr, nullptr,
                          false, checks, nullptr, 10, true);
         lobster::RunTCC(nfr,
