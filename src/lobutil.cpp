@@ -59,8 +59,8 @@ namespace
 
     wo_handle pop_wo_handle(lobster::StackPtr &sp)
     {
-        auto i2 = PopVec<int2>(sp);
-        return {i2[0], i2[1]};
+        auto i2 = PopVec<iint2>(sp);
+        return {(int)i2[0], i2[1]};
     }
 }
 
@@ -114,6 +114,13 @@ void add_wl_builtins(lobster::NativeRegistry &anfr)
                                                 string(fname.sval()->strv()),
                                                 attach));
     });
+
+    anfr("wi_create_entity", "", "", "I}:2",
+         "Creates an entity and returns the handle",
+        [](StackPtr &sp, VM &) {
+            push_wo_handle(sp, wbnd::create_entity());
+    });
+
 }
 
 string run_lobster(lobster_options &args, function<void()> main)
