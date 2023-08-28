@@ -72,10 +72,10 @@ namespace wbnd
         return wo_handle{WK_SCENE, reinterpret_cast<int64_t>(&wi::scene::GetScene())};
     }
 
-    wo_handle load_model(wo_handle const& dest_scene, std::string const& filename, bool attach_to_entity)
+    wo_handle load_model(wo_handle const& dest_scene, std::string_view const& filename, bool attach_to_entity)
     {
         handle_check(dest_scene, WK_SCENE);
-        auto ent = wi::scene::LoadModel(*scene_for_ix(dest_scene.name), filename,
+        auto ent = wi::scene::LoadModel(*scene_for_ix(dest_scene.name), std::string(filename),
                                         XMMatrixIdentity(), attach_to_entity);
         return {WK_ENTITY, (int64_t)ent};
     }
@@ -85,7 +85,7 @@ namespace wbnd
         return {WK_ENTITY, wi::ecs::CreateEntity()};
     }
 
-    wo_handle create_entity_name_component(wo_handle const& scene, wo_handle const& entity)
+    wo_handle create_name_component(wo_handle const& scene, wo_handle const& entity)
     {
         handle_check(scene, WK_SCENE);
         handle_check(entity, WK_ENTITY);
@@ -101,7 +101,7 @@ namespace wbnd
         np->name = name;
     }
 
-    wo_handle entity_find_by_name(wo_handle const& scene, std::string_view const &name, wo_handle ancestor)
+    wo_handle find_entity_by_name(wo_handle const& scene, std::string_view const &name, wo_handle const& ancestor)
     {
         handle_check(scene, WK_SCENE);
         handle_check(ancestor, WK_ENTITY);
@@ -109,7 +109,7 @@ namespace wbnd
                                                                        ancestor.name)};
     }
 
-    void backlog(int level, std::string_view const &msg)
+    void backlog(int64_t level, std::string_view const &msg)
     {
         wi::backlog::post(std::string(msg), (wi::backlog::LogLevel)level);
     }
@@ -142,7 +142,7 @@ namespace wbnd
         render_path_3d = rp;
     }
 
-    wo_handle get_3d_renderpath()
+    wo_handle get_renderpath3d()
     {
         return {WK_RENDERPATH3, reinterpret_cast<int64_t>(render_path_3d)};
     }

@@ -1,0 +1,44 @@
+"Clears the transform component's transform."
+def transform_clear(trans_comp: H)
+
+"Returns the transform component for 'entity' if it exists, or int2{?, 0} if there is none."
+def get_transform_component(scene: H, entity: H) -> H
+
+"Creates a new empty scene."
+def new_scene() -> H
+
+"Returns the global scene"
+def global_scene() -> H
+
+"Loads the model from the file into the given scene. Returns valid entity handle if attached==true"
+def load_model(scene: H, fname: string, attach: bool) -> H
+
+"Creates a new empty entity"
+def create_entity() -> H
+
+"Creates a name component for the given entity, and returns a the handle"
+def create_name_component(scene: H, entity: H) -> H
+
+"Sets the name for a name component."
+def nc_set_name(name_comp: H, name: string)
+
+"Searches scene for an entity by name. Returns INVALID_ENTITY if not found."
+def find_entity_by_name(scene: H, name: string, ancestor_entity: H) -> H
+
+"Logs to Wicked Engine backlog with given log level"
+def backlog(level: int, msg: string)
+
+"Creates a camera component on an entity."
+def create_camera_component(scene: H, entity: H) -> H
+
+"Creates a transform component on an entity"
+def create_transform_component(scene: H, entity: H) -> H
+
+"Returns the games RenderPath3d"
+def get_renderpath3d() -> H
+
+"Sets the camera component used by the 3d renderpath"
+def renderpath3d_set_camera(rpath: H, cam_component: H)
+
+"Tranlates transform by 'vec'"
+def transform_translate(trans_component: H, v: float3)

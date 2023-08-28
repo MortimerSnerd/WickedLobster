@@ -7,13 +7,13 @@ enum backlog_level:
 // Logs to backlog with given levels.  For debug builds this also gets blasted
 // out to stdout.
 def error(msg: string):
-   wi_log(lev_error, msg)
+   wi_backlog(lev_error, msg)
 
 def warning(msg: string):
-   wi_log(lev_warning, msg)
+   wi_backlog(lev_warning, msg)
 
 def info(msg: string):
-   wi_log(lev_default, msg)
+   wi_backlog(lev_default, msg)
 
 
 // Handle kinds used internally to tell the difference between the different
