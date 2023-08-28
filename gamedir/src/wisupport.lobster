@@ -1,4 +1,8 @@
 // Wrappers for the raw builtin interface to make it easier to use.
+//
+// Warning: angles are in radians, not the default of degrees as was the case
+//          with the built in Lobster engine.
+import core.quat
 
 // Mirror of wi::backlog::LogLevel
 enum backlog_level:
@@ -14,7 +18,6 @@ def warning(msg: string):
 
 def info(msg: string):
    wi_backlog(lev_default, msg)
-
 
 // Handle kinds used internally to tell the difference between the different
 // handles.
@@ -44,6 +47,40 @@ constructor wi_name_component(h: int2):
 class wi_camera_component:
    handle: int2
 
+   def fov() -> float:
+      return wi_camera_fov(handle)
+
+   def set_fov(ang: float):
+      wi_camera_set_fov(handle, ang)
+
+   def zNear() -> float:
+      return wi_camera_znear(handle)
+
+   def set_zNear(f: float):
+      wi_camera_set_znear(handle, f)
+
+   def zFar() -> float:
+      return wi_camera_zfar(handle)
+
+   def set_zFar(f: float):
+      wi_camera_set_zfar(handle, f)
+
+   def dims() -> float2:
+      return wi_camera_dims(handle)
+
+   def set_dims(d: float2):
+      wi_camera_set_dims(handle, d)
+
+   def focal_length() -> float:
+      return wi_camera_focal_length(handle)
+
+   def set_focal_length(l: float):
+      wi_camera_set_focal_length(handle, l)
+
+   def update():
+      wi_camera_update(handle)
+
+
 constructor wi_camera_component(h: int2):
    assert h[0] == wk_camera_comp
    return wi_camera_component{h}
@@ -59,6 +96,27 @@ class wi_transform_component:
 
    def clear():
       wi_transform_clear(handle)
+
+   def rotate(q: quat):
+      wi_transform_rotate(handle, q.as_float4())
+
+   def position() -> float3:
+      return wi_transform_position(handle)
+
+   def rotation() -> float4:
+      return wi_transform_rotation(handle)
+
+   def update_transform():
+      wi_transform_update_transform(handle)
+
+   def rotate_roll_pitch_yaw(angles: float3):
+      wi_transform_rotate_roll_pitch_yaw(handle, angles)
+
+   def scale(s: float3):
+      wi_transform_scale(handle, s)
+
+   def lerp(a: wi_transform_component, b: wi_transform_component, t: float):
+      wi_transform_lerp(handle, a.handle, b.handle, t)
 
 
 constructor wi_transform_component(h: int2):
@@ -104,14 +162,18 @@ class wi_scene:
    def create_camera_component(ent: wi_entity) -> wi_camera_component:
       return wi_camera_component(wi_create_camera_component(handle, ent.handle))
 
+   def get_camera_component(ent: wi_entity) -> wi_camera_component:
+      return wi_camera_component(wi_get_camera_component(handle, ent.handle))
+
    def create_transform_component(ent: wi_entity) -> wi_transform_component:
       return wi_transform_component(wi_create_transform_component(handle, ent.handle))
 
-   def entity_find_by_name(name: string, ancestor = INVALID_ENTITY) -> wi_entity:
-      return wi_entity{wi_entity_find_by_name(handle, name, ancestor.handle)}
+   def find_entity_by_name(name: string, ancestor = INVALID_ENTITY) -> wi_entity:
+      return wi_entity{wi_find_entity_by_name(handle, name, ancestor.handle)}
 
    def get_transform_component(ent: wi_entity) -> wi_transform_component:
       return wi_transform_component(wi_get_transform_component(handle, ent.handle))
+
 
 def new_wi_scene() -> wi_scene:
    return wi_scene{wi_new_scene()}

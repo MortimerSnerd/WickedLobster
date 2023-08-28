@@ -1,5 +1,4 @@
 // GENERATED for inclusion in wibindings.h by tools/bindgen.lobster, do not edit
-void transform_clear(wo_handle const& trans_comp);
 wo_handle get_transform_component(wo_handle const& scene, wo_handle const& entity);
 wo_handle new_scene();
 wo_handle global_scene();
@@ -14,3 +13,23 @@ wo_handle create_transform_component(wo_handle const& scene, wo_handle const& en
 wo_handle get_renderpath3d();
 void renderpath3d_set_camera(wo_handle const& rpath, wo_handle const& cam_component);
 void transform_translate(wo_handle const& trans_component, XMFLOAT3 const& v);
+void transform_rotate(wo_handle const& trans_component, XMFLOAT4 const& quat);
+XMFLOAT3 transform_position(wo_handle const& tcomp);
+XMFLOAT4 transform_rotation(wo_handle const& tcomp);
+void transform_update_transform(wo_handle const& tcomp);
+void transform_clear(wo_handle const& trans_comp);
+void transform_rotate_roll_pitch_yaw(wo_handle const& tcomp, XMFLOAT3 const& angles);
+void transform_scale(wo_handle const& tcomp, XMFLOAT3 const& scale);
+void transform_lerp(wo_handle const& tcomp, wo_handle const& a, wo_handle const& b, float t);
+float camera_fov(wo_handle const& tcomp);
+void camera_set_fov(wo_handle const& tcomp, float fov);
+XMFLOAT2 camera_get_dims(wo_handle const& tcomp);
+void camera_set_dims(wo_handle const& tcomp, XMFLOAT2 const& dims);
+float camera_znear(wo_handle const& tcomp);
+void camera_set_znear(wo_handle const& tcomp, float znear);
+float camera_zfar(wo_handle const& tcomp);
+void camera_set_zfar(wo_handle const& tcomp, float zfar);
+float camera_focal_length(wo_handle const& tcomp);
+void camera_set_focal_length(wo_handle const& tcomp, float l);
+void camera_update(wo_handle const& tcomp);
+wo_handle get_camera_component(wo_handle const& scene, wo_handle const& ent);

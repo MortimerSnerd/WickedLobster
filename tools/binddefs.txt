@@ -1,6 +1,3 @@
-"Clears the transform component's transform."
-def transform_clear(trans_comp: H)
-
 "Returns the transform component for 'entity' if it exists, or int2{?, 0} if there is none."
 def get_transform_component(scene: H, entity: H) -> H
 
@@ -42,3 +39,65 @@ def renderpath3d_set_camera(rpath: H, cam_component: H)
 
 "Tranlates transform by 'vec'"
 def transform_translate(trans_component: H, v: float3)
+
+"Rotates transform around given quaternion"
+def transform_rotate(trans_component: H, quat: float4)
+
+"Gets transform position"
+def transform_position(tcomp: H) -> float3
+
+"Gets transform rotation"
+def transform_rotation(tcomp: H) -> float4
+
+"Applies local space to world space matrix for transform"
+def transform_update_transform(tcomp: H)
+
+"Clears the transform component's transform."
+def transform_clear(trans_comp: H)
+
+"Apply euler rotation to transform"
+def transform_rotate_roll_pitch_yaw(tcomp: H, angles: float3)
+
+"Apply scale to transform"
+def transform_scale(tcomp: H, scale: float3)
+
+"Set this transform to be the linear interpolation of transforms 'a' and 'b'"
+def transform_lerp(tcomp: H, a: H, b: H, t: float)
+
+
+"Gets camera component fov"
+def camera_fov(tcomp: H) -> float
+
+"Sets camera component fov, in radians."
+def camera_set_fov(tcomp: H, fov: float)
+
+"Gets camera plane dims"
+def camera_get_dims(tcomp: H) -> float2
+
+"Sets camera plane dims"
+def camera_set_dims(tcomp: H, dims: float2)
+
+"Gets the camera zNear"
+def camera_znear(tcomp: H) -> float
+
+"Sets the camera zNear"
+def camera_set_znear(tcomp: H, znear: float)
+
+"Gets the camera zFar"
+def camera_zfar(tcomp: H) -> float
+
+"Sets the camera zFar"
+def camera_set_zfar(tcomp: H, zfar: float)
+
+"Gets the camera focal length"
+def camera_focal_length(tcomp: H) -> float
+
+"Sets the camera focal length"
+def camera_set_focal_length(tcomp: H, l: float)
+
+"Updates the camera transforms"
+def camera_update(tcomp: H)
+
+"Gets the camera component of an entity"
+def get_camera_component(scene: H, ent: H) -> H
+

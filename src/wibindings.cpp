@@ -54,9 +54,10 @@ namespace wbnd
         }
     }
 
-    wi::scene::Scene* scene_for_ix(int64_t i)
+    wi::scene::Scene* scene_ptr(wo_handle const &h)
     {
-        return reinterpret_cast<wi::scene::Scene *>(i);
+        handle_check(h, WK_SCENE);
+        return reinterpret_cast<wi::scene::Scene *>(h.name);
     }
 
     wo_handle new_scene()
@@ -74,8 +75,7 @@ namespace wbnd
 
     wo_handle load_model(wo_handle const& dest_scene, std::string_view const& filename, bool attach_to_entity)
     {
-        handle_check(dest_scene, WK_SCENE);
-        auto ent = wi::scene::LoadModel(*scene_for_ix(dest_scene.name), std::string(filename),
+        auto ent = wi::scene::LoadModel(*scene_ptr(dest_scene), std::string(filename),
                                         XMMatrixIdentity(), attach_to_entity);
         return {WK_ENTITY, (int64_t)ent};
     }
@@ -87,9 +87,8 @@ namespace wbnd
 
     wo_handle create_name_component(wo_handle const& scene, wo_handle const& entity)
     {
-        handle_check(scene, WK_SCENE);
         handle_check(entity, WK_ENTITY);
-        auto sp = scene_for_ix(scene.name);
+        auto sp = scene_ptr(scene);
         auto &comp = sp->names.Create(entity.name);
         return {WK_NAME_COMP, reinterpret_cast<int64_t>(&comp)};
     }
@@ -103,10 +102,9 @@ namespace wbnd
 
     wo_handle find_entity_by_name(wo_handle const& scene, std::string_view const &name, wo_handle const& ancestor)
     {
-        handle_check(scene, WK_SCENE);
         handle_check(ancestor, WK_ENTITY);
-        return {WK_ENTITY, scene_for_ix(scene.name)->Entity_FindByName(std::string(name), 
-                                                                       ancestor.name)};
+        return {WK_ENTITY, scene_ptr(scene)->Entity_FindByName(std::string(name), 
+                                                               ancestor.name)};
     }
 
     void backlog(int64_t level, std::string_view const &msg)
@@ -117,10 +115,9 @@ namespace wbnd
     wi::scene::Scene* create_component_common(wo_handle const &scene, 
                                               wo_handle const &entity)
     {
-        handle_check(scene, WK_SCENE);
         handle_check(entity, WK_ENTITY);
         valid_entity(entity);
-        return scene_for_ix(scene.name);
+        return scene_ptr(scene);
     }
 
     wo_handle create_camera_component(wo_handle const& scene, wo_handle const& entity)
@@ -147,12 +144,17 @@ namespace wbnd
         return {WK_RENDERPATH3, reinterpret_cast<int64_t>(render_path_3d)};
     }
 
+    wi::scene::CameraComponent* cam_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_CAMERA_COMP);
+        return reinterpret_cast<wi::scene::CameraComponent *>(h.name);
+    }
+
     void renderpath3d_set_camera(wo_handle const &rpath, wo_handle const &cam_component)
     {
         handle_check(rpath, WK_RENDERPATH3);
-        handle_check(cam_component, WK_CAMERA_COMP);
         auto rp = reinterpret_cast<wi::RenderPath3D *>(rpath.name);
-        auto cc = reinterpret_cast<wi::scene::CameraComponent *>(cam_component.name);
+        auto cc = cam_ptr(cam_component);
         rp->camera = cc;
     }
 
@@ -169,11 +171,125 @@ namespace wbnd
         return {WK_TRANSFORM_COMP, reinterpret_cast<int64_t>(sp->transforms.GetComponent(entity.name))};
     }
 
+    wi::scene::TransformComponent* tc_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_TRANSFORM_COMP);
+        return reinterpret_cast<wi::scene::TransformComponent *>(h.name);
+    }
+
     void transform_clear(wo_handle const &trans)
     {
-        handle_check(trans, WK_TRANSFORM_COMP);
-        auto tp = reinterpret_cast<wi::scene::TransformComponent *>(trans.name);
+        auto tp = tc_ptr(trans);
         tp->ClearTransform();
     }
+
+    void transform_rotate(wo_handle const &trans_component, XMFLOAT4 const &quat)
+    {
+        auto tp = tc_ptr(trans_component);
+        tp->Rotate(quat);
+    }
+
+    XMFLOAT3 transform_position(wo_handle const &tcomp)
+    {
+        auto tp = tc_ptr(tcomp);
+        return tp->GetPosition();
+    }
+
+    XMFLOAT4 transform_rotation(wo_handle const &tcomp)
+    {
+        auto tp = tc_ptr(tcomp);
+        return tp->GetRotation();
+    }
+
+    void transform_update_transform(wo_handle const &tcomp)
+    {
+        auto tp = tc_ptr(tcomp);
+        tp->UpdateTransform();
+    }
+
+    void transform_rotate_roll_pitch_yaw(wo_handle const &tcomp, XMFLOAT3 const &angles)
+    {
+        auto tp = tc_ptr(tcomp);
+        tp->RotateRollPitchYaw(angles);
+    }
+
+    void transform_scale(wo_handle const &tcomp, XMFLOAT3 const &scale)
+    {
+        auto tp = tc_ptr(tcomp);
+        tp->Scale(scale);
+    }
+
+    void transform_lerp(wo_handle const &tcomp, wo_handle const &a, wo_handle const &b, float t)
+    {
+        auto tp = tc_ptr(tcomp);
+        auto ap = tc_ptr(a);
+        auto bp = tc_ptr(b);
+        tp->Lerp(*ap, *bp, t);
+    }
+
+    float camera_fov(wo_handle const &tcomp)
+    {
+        return cam_ptr(tcomp)->fov;
+    }
+
+    void camera_set_fov(wo_handle const &tcomp, float fov)
+    {
+        cam_ptr(tcomp)->fov = fov;
+    }
+
+    XMFLOAT2 camera_get_dims(wo_handle const &tcomp)
+    {
+        auto cp = cam_ptr(tcomp);
+        return {cp->width, cp->height};
+    }
+
+    void camera_set_dims(wo_handle const &tcomp, XMFLOAT2 const &dims)
+    {
+        auto cp = cam_ptr(tcomp);
+        cp->width = dims.x;
+        cp->height = dims.y;
+    }
+
+    float camera_znear(wo_handle const &tcomp)
+    {
+        return cam_ptr(tcomp)->zNearP;
+    }
+
+    void camera_set_znear(wo_handle const &tcomp, float znear)
+    {
+        cam_ptr(tcomp)->zNearP = znear;
+    }
+
+    float camera_zfar(wo_handle const &tcomp)
+    {
+        return cam_ptr(tcomp)->zFarP;
+    }
+
+    void camera_set_zfar(wo_handle const &tcomp, float zfar)
+    {
+        cam_ptr(tcomp)->zFarP = zfar;
+    }
+
+    float camera_focal_length(wo_handle const &tcomp)
+    {
+        return cam_ptr(tcomp)->focal_length;
+    }
+
+    void camera_set_focal_length(wo_handle const &tcomp, float l)
+    {
+        cam_ptr(tcomp)->focal_length = l;
+    }
+
+    void camera_update(wo_handle const &tcomp)
+    {
+        cam_ptr(tcomp)->UpdateCamera();
+    }
+
+    wo_handle get_camera_component(wo_handle const &scene, wo_handle const &ent)
+    {
+        auto sp = scene_ptr(scene);
+        return {WK_CAMERA_COMP,  reinterpret_cast<int64_t>(sp->cameras.GetComponent(ent.name))};
+    }
+
 }
 

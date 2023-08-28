@@ -50,6 +50,20 @@ let known_types = [
       storefn: fn(expr): "push_xmfloat3(sp, {expr});", 
       pass_as_constref: true
    },
+   TD{name: "float4", 
+      lobster_tyspec: "F}}:4", 
+      wbnd_tyname: "XMFLOAT4", 
+      loadfn: fn(name): "XMFLOAT4 {name};\npop_xmfloat4(sp,{name});", 
+      storefn: fn(expr): "push_xmfloat4(sp, {expr});", 
+      pass_as_constref: true
+   },
+   TD{name: "float2", 
+      lobster_tyspec: "F}}:2", 
+      wbnd_tyname: "XMFLOAT2", 
+      loadfn: fn(name): "XMFLOAT2 {name};\npop_xmfloat2(sp,{name});", 
+      storefn: fn(expr): "push_xmfloat2(sp, {expr});", 
+      pass_as_constref: true
+   },
    TD{
       name: "string",
       lobster_tyspec: "S",
@@ -72,6 +86,14 @@ let known_types = [
       wbnd_tyname: "int64_t", 
       loadfn: fn(name): "auto {name} = Pop(sp).ival();",
       storefn: fn(expr): "Push(sp, Value({expr});",
+      pass_as_constref: false
+   },
+   TD{
+      name: "float", 
+      lobster_tyspec: "F",
+      wbnd_tyname: "float", 
+      loadfn: fn(name): "auto {name} = Pop(sp).fltval();",
+      storefn: fn(expr): "Push(sp, Value({expr}));",
       pass_as_constref: false
    }
 ]

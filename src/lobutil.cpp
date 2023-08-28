@@ -65,6 +65,20 @@ namespace
         return {(int)i2[0], i2[1]};
     }
 
+    void push_xmfloat2(lobster::StackPtr &sp, XMFLOAT2 const &v)
+    {
+        float2 lv = {v.x, v.y};
+        PushVec(sp, lv);
+
+    }
+
+    void pop_xmfloat2(lobster::StackPtr &sp, XMFLOAT2 &dest)
+    {
+        auto f = PopVec<geom::float2>(sp);
+        dest.x = f.x;
+        dest.y = f.y;
+    }
+
     void push_xmfloat3(lobster::StackPtr &sp, XMFLOAT3 const &v)
     {
         float3 lv = {v.x, v.y, v.z};
@@ -78,6 +92,22 @@ namespace
         dest.x = f3.x;
         dest.y = f3.y;
         dest.z = f3.z;
+    }
+
+    void push_xmfloat4(lobster::StackPtr &sp, XMFLOAT4 const &v)
+    {
+        float4 lv = {v.x, v.y, v.z, v.w};
+        PushVec(sp, lv);
+
+    }
+
+    void pop_xmfloat4(lobster::StackPtr &sp, XMFLOAT4 &dest)
+    {
+        auto f3 = PopVec<geom::float4>(sp);
+        dest.x = f3.x;
+        dest.y = f3.y;
+        dest.z = f3.z;
+        dest.w = f3.w; 
     }
 }
 
