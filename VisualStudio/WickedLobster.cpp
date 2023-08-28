@@ -5,6 +5,7 @@
 #include "WickedEngine.h"
 #include "wiInitializer.h"
 #include "lobutil.h"
+#include "wibindings.h"
 
 #include "framework.h"
 
@@ -59,6 +60,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     application.infoDisplay.watermark = true;
     application.infoDisplay.resolution = true;
     application.infoDisplay.fpsinfo = true;
+
+    wbnd::set_3d_render_path(&game);
 
 
     lobster_options opts;

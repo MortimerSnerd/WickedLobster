@@ -39,6 +39,12 @@ with the Wicked Engine library.
 - had to change wicked engine lib to use multithreaded runtime (not mt dll), and
   add a preprocessor to set ITERATOR_DEBUG_LEVEL to the same level set in Lobster.
 
+- Getting more experience with bindings, starting to get some ideas of how 
+  to automate the worst of the boilerplate.  There's not as much I can reuse
+  from the \*LuaBind classes, so I still may need to make a manual list.  The
+  Lobster side is fairly mechanical based on types, and on the wibinding.h side, 
+  can at least generate the function headers leave the wicked api calls a manual work.
+
 ### Things to copy into gamedir
 - WickedEngine
     - Content/

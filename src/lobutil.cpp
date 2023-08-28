@@ -1,6 +1,7 @@
 // Lobster initialization and utility functions.
 #include "pch.h"
 #include "lobutil.h"
+#include "wiMath.h"
 #include "wibindings.h"
 
 #include "lobster_headers.h"
@@ -52,6 +53,7 @@ extern "C" void GLFrame(lobster::StackPtr, lobster::VM &)
 
 namespace
 {
+    using namespace DirectX;
     void push_wo_handle(lobster::StackPtr &sp, wo_handle h)
     {
         PushVec(sp, iint2{(iint)h.kind, h.name});
@@ -61,6 +63,21 @@ namespace
     {
         auto i2 = PopVec<iint2>(sp);
         return {(int)i2[0], i2[1]};
+    }
+
+    void push_xmfloat3(lobster::StackPtr &sp, XMFLOAT3 const &v)
+    {
+        float3 lv = {v.x, v.y, v.z};
+        PushVec(sp, lv);
+
+    }
+
+    void pop_xmfloat3(lobster::StackPtr &sp, XMFLOAT3 &dest)
+    {
+        auto f3 = PopVec<geom::float3>(sp);
+        dest.x = f3.x;
+        dest.y = f3.y;
+        dest.z = f3.z;
     }
 }
 
@@ -152,6 +169,60 @@ void add_wl_builtins(lobster::NativeRegistry &anfr)
             wbnd::backlog((int)level.ival(), msg.sval()->strv());
             return NilVal();
     });
+
+    anfr("wi_create_camera_component", "scene,entity", "I}:2I}:2", "I}:2",
+         "Creates a camera attachment for an entity, and returns the handle for it.",
+        [](StackPtr &sp, VM &) {
+            auto ent   = pop_wo_handle(sp);
+            auto scene = pop_wo_handle(sp);
+            push_wo_handle(sp, wbnd::create_camera_component(scene, ent));
+    });
+
+    anfr("wi_create_transform_component", "scene,entity", "I}:2I}:2", "I}:2",
+         "Creates a transform attachment for an entity, and returns the handle for it.",
+        [](StackPtr &sp, VM &) {
+            auto ent   = pop_wo_handle(sp);
+            auto scene = pop_wo_handle(sp);
+            push_wo_handle(sp, wbnd::create_transform_component(scene, ent));
+    }); 
+
+    anfr("wi_get_renderpath3d", "", "", "I}:2",
+         "Returns handle to the game's 3d renderpath.",
+        [](StackPtr &sp, VM &) {
+            push_wo_handle(sp, wbnd::get_3d_renderpath());
+    });
+
+    anfr("wi_renderpath3d_set_camera", "rpath,cam_component", "I}:2I}:2", "",
+         "Sets the camera for the given 3d renderpath.",
+        [](StackPtr &sp, VM &) {
+            auto cc    = pop_wo_handle(sp);
+            auto rpath = pop_wo_handle(sp);
+            wbnd::renderpath3d_set_camera(rpath, cc);
+    });
+
+    anfr("wi_transform_translate", "trans_comp,vec", "I}:2F}:3", "",
+         "Translates the transform by vec",
+        [](StackPtr &sp, VM &) {
+            XMFLOAT3 v;
+            pop_xmfloat3(sp, v);
+            auto tc = pop_wo_handle(sp);
+            wbnd::transform_translate(tc, v);
+    });
+
+    anfr("wi_get_transform_component", "scene,entity", "I}:2I}:2", "I}:2",
+         "Returns transform component for entity if it exists, or int2{?, 0} if there is none.",
+        [](StackPtr &sp, VM &) {
+            auto ent   = pop_wo_handle(sp);
+            auto scene = pop_wo_handle(sp);
+            push_wo_handle(sp,  wbnd::get_transform_component(scene, ent));
+    });
+    anfr("wi_transform_clear", "trans_comp", "I}:2", "",
+         "Clears the transform.",
+        [](StackPtr &sp, VM &) {
+            auto tc = pop_wo_handle(sp);
+            wbnd::transform_clear(tc);
+    });
+
 }
 
 string run_lobster(lobster_options &args, function<void()> main)

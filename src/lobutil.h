@@ -9,7 +9,7 @@ struct lobster_options
 
 // Tags for wicked objects we may keep references to.
 enum WOKIND {
-    WK_SCENE, WK_ENTITY, WK_NAME_COMP
+    WK_SCENE, WK_ENTITY, WK_NAME_COMP, WK_CAMERA_COMP, WK_TRANSFORM_COMP, WK_RENDERPATH3
 };
 
 // A handle for a wicked object that can be passed in and out of lobster as an int2.
