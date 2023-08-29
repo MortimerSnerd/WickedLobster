@@ -5,6 +5,7 @@
 #include "wibindings.h"
 #include "WickedEngine.h"
 #include "wiScene.h"
+#include "wiInput.h"
 
 // NB for arrays of WI objects that are indexed by wo_handle, when the object
 // is deleted, a nullptr is put in that array slot.  Which will catch any 
@@ -291,5 +292,39 @@ namespace wbnd
         return {WK_CAMERA_COMP,  reinterpret_cast<int64_t>(sp->cameras.GetComponent(ent.name))};
     }
 
+    bool input_down(int64_t button, int64_t playerindex)
+    {
+        return wi::input::Down((wi::input::BUTTON)button, playerindex);
+    }
+
+    bool input_press(int64_t button, int64_t playerindex)
+    {
+        return wi::input::Press((wi::input::BUTTON)button, playerindex);
+    }
+
+    bool input_hold(int64_t button, int64_t frames, bool continuous, int64_t playerindex)
+    {
+        return wi::input::Hold((wi::input::BUTTON)button, frames, continuous, playerindex);
+    }
+
+    XMFLOAT4 input_get_pointer()
+    {
+        return wi::input::GetPointer();
+    }
+
+    void input_set_pointer(XMFLOAT4 const &props)
+    {
+        wi::input::SetPointer(props);
+    }
+
+    void input_hide_pointer(bool value)
+    {
+        wi::input::HidePointer(value);
+    }
+
+    XMFLOAT4 input_get_analog(int64_t axis, int64_t playerindex)
+    {
+        return wi::input::GetAnalog((wi::input::GAMEPAD_ANALOG)axis, playerindex);
+    }
 }
 

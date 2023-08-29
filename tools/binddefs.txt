@@ -101,3 +101,26 @@ def camera_update(tcomp: H)
 "Gets the camera component of an entity"
 def get_camera_component(scene: H, ent: H) -> H
 
+
+
+"Check if a button is down"
+def input_down(button: int, playerindex: int) -> bool
+
+"Check if a button is pressed once"
+def input_press(button: int, playerindex: int) -> bool
+
+"Check if a button is held down"
+def input_hold(button: int, frames: int, continuous: bool, playerindex: int) -> bool
+
+"get pointer position (eg. mouse pointer) (.xy) + scroll delta (.z) + pressure (.w)"
+def input_get_pointer() -> float4
+
+"sets pointer position"
+def input_set_pointer(props: float4)
+
+"Hides/shows pointer"
+def input_hide_pointer(value: bool)
+
+"Reads input from analog controller axis"
+def input_get_analog(axis: int, playerindex: int) -> float4
+

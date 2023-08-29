@@ -17,8 +17,12 @@ def frame_begin():
       let t = scene.get_transform_component(camera)
       guard not t.is_empty() 
       t.clear()
-      t.rotate(mk_quat(float3_y, a))
+      t.rotate(mk_quat(float3_y, a*4.9))
       t.translate(float3_y*a)
+
+   if input_press(KEYBOARD_BUTTON_F5):
+      tim = 0.0
+
    
 wi_set_begin_frame_fn(): frame_begin()
 

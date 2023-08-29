@@ -4,6 +4,85 @@
 //          with the built in Lobster engine.
 import core.quat
 
+// wi::input::BUTTON enum 
+enum BUTTON:
+   BUTTON_NONE = 0,
+
+   MOUSE_BUTTON_LEFT,
+   MOUSE_BUTTON_RIGHT,
+   MOUSE_BUTTON_MIDDLE,
+
+   KEYBOARD_BUTTON_UP,
+   KEYBOARD_BUTTON_DOWN,
+   KEYBOARD_BUTTON_LEFT,
+   KEYBOARD_BUTTON_RIGHT,
+   KEYBOARD_BUTTON_SPACE,
+   KEYBOARD_BUTTON_RSHIFT,
+   KEYBOARD_BUTTON_LSHIFT,
+   KEYBOARD_BUTTON_F1,
+   KEYBOARD_BUTTON_F2,
+   KEYBOARD_BUTTON_F3,
+   KEYBOARD_BUTTON_F4,
+   KEYBOARD_BUTTON_F5,
+   KEYBOARD_BUTTON_F6,
+   KEYBOARD_BUTTON_F7,
+   KEYBOARD_BUTTON_F8,
+   KEYBOARD_BUTTON_F9,
+   KEYBOARD_BUTTON_F10,
+   KEYBOARD_BUTTON_F11,
+   KEYBOARD_BUTTON_F12,
+   KEYBOARD_BUTTON_ENTER,
+   KEYBOARD_BUTTON_ESCAPE,
+   KEYBOARD_BUTTON_HOME,
+   KEYBOARD_BUTTON_RCONTROL,
+   KEYBOARD_BUTTON_LCONTROL,
+   KEYBOARD_BUTTON_DELETE,
+   KEYBOARD_BUTTON_BACKSPACE,
+   KEYBOARD_BUTTON_PAGEDOWN,
+   KEYBOARD_BUTTON_PAGEUP,
+   CHARACTER_RANGE_START = 65, // letter A
+   GAMEPAD_RANGE_START = 256, // do not use!
+   GAMEPAD_BUTTON_UP,
+   GAMEPAD_BUTTON_LEFT,
+   GAMEPAD_BUTTON_DOWN,
+   GAMEPAD_BUTTON_RIGHT,
+   GAMEPAD_BUTTON_1,
+   GAMEPAD_BUTTON_2,
+   GAMEPAD_BUTTON_3,
+   GAMEPAD_BUTTON_4,
+   GAMEPAD_BUTTON_5,
+   GAMEPAD_BUTTON_6,
+   GAMEPAD_BUTTON_7,
+   GAMEPAD_BUTTON_8,
+   GAMEPAD_BUTTON_9,
+   GAMEPAD_BUTTON_10,
+   GAMEPAD_BUTTON_11,
+   GAMEPAD_BUTTON_12,
+   GAMEPAD_BUTTON_13,
+   GAMEPAD_BUTTON_14,
+   GAMEPAD_RANGE_END // do not use!
+
+// wi::input::GAMEPAD_ANALOG
+enum GAMEPAD_ANALOG:
+   GAMEPAD_ANALOG_THUMBSTICK_L,
+   GAMEPAD_ANALOG_THUMBSTICK_R,
+   GAMEPAD_ANALOG_TRIGGER_L,
+   GAMEPAD_ANALOG_TRIGGER_R
+
+// Input support functions that just replicate the default parameters of the C++ 
+// version.
+def input_down(button: int, playerindex = 0):
+   return wi_input_down(button, playerindex)
+
+def input_press(button: int, playerindex = 0):
+   return wi_input_press(button, playerindex)
+
+def input_hold(button: int, frames = 30, continuous = false, playerindex = 0):
+   return wi_input_hole(button, frames, continuous, playerindex)
+
+def input_get_analog(axis: int, playerindex = 0):
+   return wi_input_get_analog(axis, playerindex)
+
 // Mirror of wi::backlog::LogLevel
 enum backlog_level:
    lev_none, lev_default, lev_warning, lev_error
