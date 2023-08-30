@@ -23,13 +23,13 @@ namespace {
     lobster::VM *active_vm = nullptr;
 
 
-
+    // Dummy function so we don't have null function pointers.
     void lob_do_nothing(lobster::VM &, lobster::StackPtr)
     {
     }
 
-    // Called at the beginning of a frame.
-    lobster::Value frame_begin_fn(lob_do_nothing);
+    // Called by Application::FixedUpdate at...fixed intervals.
+    lobster::Value app_fixed_update(lob_do_nothing);
 }
 
 // Some stubs we need to make since LOBSTER_ENGINE=0
@@ -54,6 +54,17 @@ extern "C" void GLFrame(lobster::StackPtr, lobster::VM &)
 namespace
 {
     using namespace DirectX;
+    void push_wo_iterator(lobster::StackPtr &sp, wo_iterator h)
+    {
+        PushVec(sp, int2{h.kind, h.ix});
+    }
+
+    wo_iterator pop_wo_iterator(lobster::StackPtr &sp)
+    {
+        auto i2 = PopVec<int2>(sp);
+        return {i2[0], i2[1]};
+    }
+
     void push_wo_handle(lobster::StackPtr &sp, wo_handle h)
     {
         PushVec(sp, iint2{(iint)h.kind, h.name});
@@ -123,11 +134,11 @@ void add_wl_builtins(lobster::NativeRegistry &anfr)
             return NilVal();
     });
 
-    anfr("wi_set_begin_frame_fn", "f", "L", "",
+    anfr("wi_set_app_fixed_frame_fn", "f", "L", "",
          "Sets the function that gets called at the beginning of the frame.",
         [](StackPtr &, VM &vm, Value &f) {
             assert(f.type >= lobster::V_FUNCTION);
-            frame_begin_fn = f;
+            app_fixed_update = f;
             active_vm = &vm;
             return NilVal();
     });
@@ -192,9 +203,9 @@ string run_lobster(lobster_options &args, function<void()> main)
 
 }
 
-void lobster_begin_frame()
+void lobster_fixed_update()
 {
-    active_vm->CallFunctionValue(frame_begin_fn);
+    active_vm->CallFunctionValue(app_fixed_update);
 }
 
 void dump_lobster_stack()

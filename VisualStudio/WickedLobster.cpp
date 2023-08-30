@@ -6,6 +6,7 @@
 #include "wiInitializer.h"
 #include "lobutil.h"
 #include "wibindings.h"
+#include "GameApplication.h"
 
 #include "framework.h"
 
@@ -17,7 +18,7 @@ HINSTANCE hInst;                                // current instance
 WCHAR szTitle[MAX_LOADSTRING];                  // The title bar text
 WCHAR szWindowClass[MAX_LOADSTRING];            // the main window class name
 HWND MainWindow;
-wi::Application application;
+GameApplication application;
 wi::RenderPath3D game;
 
 
@@ -62,6 +63,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     application.infoDisplay.fpsinfo = true;
 
     wbnd::set_3d_render_path(&game);
+    wbnd::set_game_app(&application);
 
 
     lobster_options opts;
@@ -78,7 +80,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                     TranslateMessage(&msg);
                     DispatchMessage(&msg);
                 } else {
-                    lobster_begin_frame();
+                    //TODO move to Application::FixedUpdate
+                    lobster_fixed_update();
                     application.Run(); // run the update - render loop (mandatory)
                 }
             }

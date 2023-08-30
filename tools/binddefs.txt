@@ -4,8 +4,14 @@ def get_transform_component(scene: H, entity: H) -> H
 "Creates a new empty scene."
 def new_scene() -> H
 
+"Deletes a scene."
+def delete_scene(scene: H)
+
 "Returns the global scene"
 def global_scene() -> H
+
+"Merges src scene into dest scene."
+def scene_merge(dest: H, src: H)
 
 "Loads the model from the file into the given scene. Returns valid entity handle if attached==true"
 def load_model(scene: H, fname: string, attach: bool) -> H
@@ -18,6 +24,18 @@ def create_name_component(scene: H, entity: H) -> H
 
 "Sets the name for a name component."
 def nc_set_name(name_comp: H, name: string)
+
+"Gets the name of a name component"
+def nc_get_name(name_comp: H) -> string
+
+"Gets the name component for the given entity"
+def get_name_component(scene: H, entity: H) -> H
+
+"Returns number of entities that have name components."
+def entity_names_count(scene: H) -> int
+
+"Returns entity #n that has a name component"
+def entity_names_get(scene: H, n: int) -> H
 
 "Searches scene for an entity by name. Returns INVALID_ENTITY if not found."
 def find_entity_by_name(scene: H, name: string, ancestor_entity: H) -> H
@@ -33,6 +51,9 @@ def create_transform_component(scene: H, entity: H) -> H
 
 "Returns the games RenderPath3d"
 def get_renderpath3d() -> H
+
+"Returns the application fixed frame update rate"
+def get_fixed_update_rate() -> float
 
 "Sets the camera component used by the 3d renderpath"
 def renderpath3d_set_camera(rpath: H, cam_component: H)
@@ -101,6 +122,12 @@ def camera_update(tcomp: H)
 "Gets the camera component of an entity"
 def get_camera_component(scene: H, ent: H) -> H
 
+"Returns the number of cameras in the scene"
+def get_camera_count(scene: H) -> int
+
+"returns entity holding the nth camera in the scene"
+def get_camera_entity(scene: H, n: int) -> H
+
 
 
 "Check if a button is down"
@@ -123,4 +150,8 @@ def input_hide_pointer(value: bool)
 
 "Reads input from analog controller axis"
 def input_get_analog(axis: int, playerindex: int) -> float4
+
+
+"Renders debug text in the next frame"
+def draw_debug_text(text: string, pos: float3, color: float4, scaling: float)
 

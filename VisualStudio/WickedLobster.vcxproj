@@ -178,6 +178,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\GameApplication.h" />
     <ClInclude Include="..\src\lobutil.h" />
     <ClInclude Include="..\src\wibindings.h" />
     <ClInclude Include="framework.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="WickedLobster.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\GameApplication.cpp" />
     <ClCompile Include="..\src\lobutil.cpp" />
     <ClCompile Include="..\src\wibindings.cpp" />
     <ClCompile Include="pch.cpp">

@@ -43,6 +43,14 @@ let known_types = [
       storefn: fn(expr): "push_wo_handle(sp, {expr});",
       pass_as_constref: true
    },
+   TD{
+      name:"X", 
+      lobster_tyspec: "I}}:2", 
+      wbnd_tyname: "wo_iterator", 
+      loadfn: fn(name): "auto {name} = pop_wo_iterator(sp);",
+      storefn: fn(expr): "push_wo_iterator(sp, {expr});",
+      pass_as_constref: true
+   },
    TD{name: "float3", 
       lobster_tyspec: "F}}:3", 
       wbnd_tyname: "XMFLOAT3", 
@@ -85,7 +93,7 @@ let known_types = [
       lobster_tyspec: "I",
       wbnd_tyname: "int64_t", 
       loadfn: fn(name): "auto {name} = Pop(sp).ival();",
-      storefn: fn(expr): "Push(sp, Value({expr});",
+      storefn: fn(expr): "Push(sp, Value({expr}));",
       pass_as_constref: false
    },
    TD{
@@ -222,7 +230,7 @@ def write_lobster_binding_code(defs) -> string?:
 
       out.line("\"{d.doc}\",")
 
-      out.line("   [](StackPtr& sp, VM&) {{")
+      out.line("   [](StackPtr& sp, VM& vm) {{")
       // Pop params off in reverse order
       reverse(d.params) p:
          let loadf = known_types[p.type].loadfn

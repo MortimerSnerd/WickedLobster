@@ -36,6 +36,9 @@
     <ClInclude Include="..\src\wibindings.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\GameApplication.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WickedLobster.cpp">
@@ -48,6 +51,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\wibindings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\GameApplication.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -110,22 +110,31 @@ let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
 // and then discard it.  These can be invalidated by any code that
 // creates or removes components, and the result would probably be a crash.
 
-// Name component.  This is only valid up up to the point that
-// components are added/removed. 
-class wi_name_component:
+// Base class for convenience, this is not how the C++ code is structred.
+class wi_component:
    handle: int2
 
+   def is_empty() -> bool:
+      return handle[1] == 0
+
+   def is_valid() -> bool:
+      return not is_empty()
+
+// Name component.  This is only valid up up to the point that
+// components are added/removed. 
+class wi_name_component: wi_component
    def set_name(n: string):
       wi_nc_set_name(handle, n)
+
+   def get_name() -> string:
+      return wi_nc_get_name(handle)
 
 constructor wi_name_component(h: int2):
    assert h[0] == wk_name_comp
    return wi_name_component{h}
 
 
-class wi_camera_component:
-   handle: int2
-
+class wi_camera_component: wi_component
    def fov() -> float:
       return wi_camera_fov(handle)
 
@@ -164,12 +173,7 @@ constructor wi_camera_component(h: int2):
    assert h[0] == wk_camera_comp
    return wi_camera_component{h}
 
-class wi_transform_component:
-   handle: int2
-
-   def is_empty():
-      return handle[1] == 0
-
+class wi_transform_component: wi_component
    def translate(v: float3):
       wi_transform_translate(handle, v)
 
@@ -214,8 +218,6 @@ constructor wi_renderpath3d():
    assert(h[0] == wk_renderpath3)
    return wi_renderpath3d{h}
 
-
-
 struct wi_entity:
    handle: int2
 
@@ -229,20 +231,24 @@ let INVALID_ENTITY = wi_entity{INVALID_ENTITY_HANDLE}
 class wi_scene:
    handle: int2   
       
+   // Loads a model. If "attached", it is rooted to an entity with a transform.
    def load_model(fname: string, attached: bool) -> wi_entity:
       return wi_entity{wi_load_model(handle, fname, attached)}
 
    def create_entity() -> wi_entity:
       return wi_entity{wi_create_entity()}
 
-   def create_name_component(ent: wi_entity) -> wi_name_component:
-      return wi_name_component(wi_create_name_component(handle, ent.handle))
-
    def create_camera_component(ent: wi_entity) -> wi_camera_component:
       return wi_camera_component(wi_create_camera_component(handle, ent.handle))
 
    def get_camera_component(ent: wi_entity) -> wi_camera_component:
       return wi_camera_component(wi_get_camera_component(handle, ent.handle))
+
+   def get_camera_count() -> int:
+      return wi_get_camera_count(handle)
+
+   def get_camera_entity(n: int) -> wi_entity:
+      return wi_entity{wi_get_camera_entity(handle, n)}
 
    def create_transform_component(ent: wi_entity) -> wi_transform_component:
       return wi_transform_component(wi_create_transform_component(handle, ent.handle))
@@ -253,9 +259,40 @@ class wi_scene:
    def get_transform_component(ent: wi_entity) -> wi_transform_component:
       return wi_transform_component(wi_get_transform_component(handle, ent.handle))
 
+   def create_name_component(ent: wi_entity) -> wi_name_component:
+      return wi_name_component(wi_create_name_component(handle, ent.handle))
+
+   def get_name_component(ent: wi_entity) -> wi_name_component:
+      return wi_name_component(wi_get_name_component(handle, ent.handle))
+
+   def get_names_count() -> int:
+      return wi_entity_names_count(handle)
+
+   def get_names_entity(i: int) -> wi_entity:
+      return wi_entity{wi_entity_names_get(handle, i)}
+
+   def delete():
+      guard handle[1] != 0
+      wi_delete_scene(handle)
+      handle = int2{wk_scene, 0}
+
+   def merge(src: wi_scene):
+      wi_scene_merge(handle, src.handle)
 
 def new_wi_scene() -> wi_scene:
    return wi_scene{wi_new_scene()}
 
 def global_scene() -> wi_scene:
    return wi_scene{wi_global_scene()}
+
+def with_temp_scene(body):
+   let scene = new_wi_scene()
+   body(scene)
+   scene.delete()
+
+// Delta time for application fixed update.
+def get_fixed_dt():
+   return 1.0 / wi_get_fixed_update_rate()
+
+def draw_debug_text(text: string, pos: float3, color=float4{1.0, 1.0, 1.0, 1.0}, scaling = 1.0):
+   wi_draw_debug_text(text, pos, color, scaling)

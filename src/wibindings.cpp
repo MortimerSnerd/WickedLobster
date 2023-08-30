@@ -4,14 +4,9 @@
 #include "lobutil.h"
 #include "wibindings.h"
 #include "WickedEngine.h"
+#include "GameApplication.h"
 #include "wiScene.h"
 #include "wiInput.h"
-
-// NB for arrays of WI objects that are indexed by wo_handle, when the object
-// is deleted, a nullptr is put in that array slot.  Which will catch any 
-// references after delete from the Lobster side.  Cleaning out nulls is 
-// deferred to large events where it makes sense to clear everything out, 
-// like when loading a new level.
 
 using namespace std;
 
@@ -19,6 +14,7 @@ using namespace std;
 namespace
 {
     wi::RenderPath3D *render_path_3d = nullptr;
+    GameApplication *game_app = nullptr;
 }
 
 namespace wbnd
@@ -69,6 +65,22 @@ namespace wbnd
         return {WK_SCENE, reinterpret_cast<int64_t>(sc)};
     }
 
+    void delete_scene(wo_handle const &scene)
+    {
+        if (scene.name == 0) return;
+        auto sp = scene_ptr(scene);
+        // No deleting global scene.
+        if (sp == &wi::scene::GetScene()) return;
+        delete sp;
+    }
+
+    void scene_merge(wo_handle const &dest, wo_handle const &src)
+    {
+        auto dp = scene_ptr(dest);
+        auto sp = scene_ptr(src);
+        dp->Merge(*sp);
+    }
+
     wo_handle global_scene()
     {
         return wo_handle{WK_SCENE, reinterpret_cast<int64_t>(&wi::scene::GetScene())};
@@ -94,10 +106,15 @@ namespace wbnd
         return {WK_NAME_COMP, reinterpret_cast<int64_t>(&comp)};
     }
 
+    wi::scene::NameComponent* name_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_NAME_COMP);
+        return reinterpret_cast<wi::scene::NameComponent *>(h.name);
+    }
+
     void nc_set_name(wo_handle const& name_comp, std::string_view const &name)
     {
-        handle_check(name_comp, WK_NAME_COMP);
-        auto np = reinterpret_cast<wi::scene::NameComponent *>(name_comp.name);
+        auto np = name_ptr(name_comp);
         np->name = name;
     }
 
@@ -140,9 +157,23 @@ namespace wbnd
         render_path_3d = rp;
     }
 
+    void set_game_app(GameApplication *app)
+    {
+        game_app = app;
+    }
+
     wo_handle get_renderpath3d()
     {
         return {WK_RENDERPATH3, reinterpret_cast<int64_t>(render_path_3d)};
+    }
+
+    float get_fixed_update_rate()
+    {
+        if (game_app) {
+            return game_app->getTargetFrameRate();
+        } else {
+            return 60.0f;
+        }
     }
 
     wi::scene::CameraComponent* cam_ptr(wo_handle const &h)
@@ -325,6 +356,51 @@ namespace wbnd
     XMFLOAT4 input_get_analog(int64_t axis, int64_t playerindex)
     {
         return wi::input::GetAnalog((wi::input::GAMEPAD_ANALOG)axis, playerindex);
+    }
+
+    int64_t entity_names_count(wo_handle const &scene)
+    {
+        auto sp = scene_ptr(scene);
+        return (int64_t)sp->names.GetCount();
+    }
+
+    wo_handle entity_names_get(wo_handle const &scene, int64_t n)
+    {
+        auto sp = scene_ptr(scene);
+        return {WK_ENTITY,  sp->names.GetEntity(n)};
+    }
+
+    std::string_view nc_get_name(wo_handle const &name_comp)
+    {
+        auto np = name_ptr(name_comp);
+        return np->name;
+    }
+
+    wo_handle get_name_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        auto sp = scene_ptr(scene);
+        return {WK_NAME_COMP,  reinterpret_cast<int64_t>(sp->names.GetComponent(entity.name))};
+    }
+
+    int64_t get_camera_count(wo_handle const &scene)
+    {
+        auto sp = scene_ptr(scene);
+        return (int64_t)sp->cameras.GetCount();
+    }
+
+    wo_handle get_camera_entity(wo_handle const &scene, int64_t n)
+    {
+        auto sp = scene_ptr(scene);
+        return {WK_CAMERA_COMP, sp->cameras.GetEntity(n)};
+    }
+
+    void draw_debug_text(std::string_view const &text, XMFLOAT3 const &pos, XMFLOAT4 const &color, float scaling)
+    {
+        wi::renderer::DebugTextParams p;
+        p.position = pos;
+        p.color = color;
+        p.scaling = scaling;
+        wi::renderer::DrawDebugText(text.data(), p);
     }
 }
 
