@@ -49,9 +49,6 @@ def create_camera_component(scene: H, entity: H) -> H
 "Creates a transform component on an entity"
 def create_transform_component(scene: H, entity: H) -> H
 
-"Returns the games RenderPath3d"
-def get_renderpath3d() -> H
-
 "Returns the application fixed frame update rate"
 def get_fixed_update_rate() -> float
 
@@ -153,5 +150,77 @@ def input_get_analog(axis: int, playerindex: int) -> float4
 
 
 "Renders debug text in the next frame"
-def draw_debug_text(text: string, pos: float3, color: float4, scaling: float)
+def draw_debug_text(text: string, pos: float3, flags: int, color: float4, scaling: float)
+
+
+"Creates a wi::Timer"
+def create_timer() -> H
+
+"Deletes a timer created with create_timer"
+def delete_timer(timer: H)
+
+"Records a reference timestamp"
+def timer_record(timer: H)
+
+"Elapsed time since creation or last record call."
+def timer_elapsed_seconds(time: H) -> double
+
+"Elapsed time in milliseconds since creation or later record() call"
+def timer_elapsed(timer: H) -> double
+
+"wi::font::Params struct"
+struct font_params
+	position: float3
+	size: int
+	scaling: float
+	rotation: float
+	spacing_x: float
+	spacing_y: float
+	h_align: int
+	v_align: int
+	color: float4
+	shadow_color: float4
+	h_wrap: float
+	style: int
+	softness: float
+	bolden: float
+	shadow_softness: float
+	shadow_bolden: float
+	shadow_offset_x: float
+	shadow_offset_y: float
+	cursor: float4
+	hdr_scaling: float
+
+end
+
+
+"Creates a SpriteFont"
+def create_sprite_font() -> H
+
+"Sets the font_params for a sprite font"
+def sprite_font_set_params(font: H, font_params: H)
+
+"Deletes a SpriteFont"
+def delete_sprite_font(font: H)
+
+"Changes fonts hidden state"
+def sprite_font_set_hidden(font: H, value: bool)
+
+"Returns dimensions of the text"
+def sprite_font_text_size(font: H) -> float2
+
+"Sets the text TODO is non-wstring version of this utf8 friendly?"
+def sprite_font_set_text(font: H, txt: string)
+
+"Gets the text"
+def sprite_font_get_text(font: H) -> string
+
+
+
+"Returns the games RenderPath3d"
+def get_renderpath3d() -> H
+
+"Adds a sprite font to the renderpath"
+def renderpath_add_font(path: H, sprite_font: H, layer: string)
+
 

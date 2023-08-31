@@ -11,6 +11,8 @@
 using namespace std;
 
 
+extern void break_impl();
+
 namespace
 {
     wi::RenderPath3D *render_path_3d = nullptr;
@@ -33,6 +35,9 @@ namespace wbnd
         case WK_NAME_COMP:
         case WK_CAMERA_COMP:
         case WK_TRANSFORM_COMP:
+        case WK_TIMER:
+        case WK_FONT_PARAMS:
+        case WK_SPRITE_FONT:
             if (h.name == 0) {
                 printf("Null handle pointer, kind=%d\n", (int)h.kind);
                 dump_lobster_stack();
@@ -125,7 +130,7 @@ namespace wbnd
                                                                ancestor.name)};
     }
 
-    void backlog(int64_t level, std::string_view const &msg)
+    void backlog(int32_t level, std::string_view const &msg)
     {
         wi::backlog::post(std::string(msg), (wi::backlog::LogLevel)level);
     }
@@ -182,10 +187,14 @@ namespace wbnd
         return reinterpret_cast<wi::scene::CameraComponent *>(h.name);
     }
 
+    wi::RenderPath3D* rpath_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_RENDERPATH3);
+        return reinterpret_cast<wi::RenderPath3D *>(h.name);
+    }
     void renderpath3d_set_camera(wo_handle const &rpath, wo_handle const &cam_component)
     {
-        handle_check(rpath, WK_RENDERPATH3);
-        auto rp = reinterpret_cast<wi::RenderPath3D *>(rpath.name);
+        auto rp = rpath_ptr(rpath);
         auto cc = cam_ptr(cam_component);
         rp->camera = cc;
     }
@@ -323,17 +332,17 @@ namespace wbnd
         return {WK_CAMERA_COMP,  reinterpret_cast<int64_t>(sp->cameras.GetComponent(ent.name))};
     }
 
-    bool input_down(int64_t button, int64_t playerindex)
+    bool input_down(int32_t button, int32_t playerindex)
     {
         return wi::input::Down((wi::input::BUTTON)button, playerindex);
     }
 
-    bool input_press(int64_t button, int64_t playerindex)
+    bool input_press(int32_t button, int32_t playerindex)
     {
         return wi::input::Press((wi::input::BUTTON)button, playerindex);
     }
 
-    bool input_hold(int64_t button, int64_t frames, bool continuous, int64_t playerindex)
+    bool input_hold(int32_t button, int32_t frames, bool continuous, int32_t playerindex)
     {
         return wi::input::Hold((wi::input::BUTTON)button, frames, continuous, playerindex);
     }
@@ -353,18 +362,18 @@ namespace wbnd
         wi::input::HidePointer(value);
     }
 
-    XMFLOAT4 input_get_analog(int64_t axis, int64_t playerindex)
+    XMFLOAT4 input_get_analog(int32_t axis, int32_t playerindex)
     {
         return wi::input::GetAnalog((wi::input::GAMEPAD_ANALOG)axis, playerindex);
     }
 
-    int64_t entity_names_count(wo_handle const &scene)
+    int32_t entity_names_count(wo_handle const &scene)
     {
         auto sp = scene_ptr(scene);
-        return (int64_t)sp->names.GetCount();
+        return sp->names.GetCount();
     }
 
-    wo_handle entity_names_get(wo_handle const &scene, int64_t n)
+    wo_handle entity_names_get(wo_handle const &scene, int32_t n)
     {
         auto sp = scene_ptr(scene);
         return {WK_ENTITY,  sp->names.GetEntity(n)};
@@ -382,25 +391,337 @@ namespace wbnd
         return {WK_NAME_COMP,  reinterpret_cast<int64_t>(sp->names.GetComponent(entity.name))};
     }
 
-    int64_t get_camera_count(wo_handle const &scene)
+    int32_t get_camera_count(wo_handle const &scene)
     {
         auto sp = scene_ptr(scene);
-        return (int64_t)sp->cameras.GetCount();
+        return sp->cameras.GetCount();
     }
 
-    wo_handle get_camera_entity(wo_handle const &scene, int64_t n)
+    wo_handle get_camera_entity(wo_handle const &scene, int32_t n)
     {
         auto sp = scene_ptr(scene);
         return {WK_CAMERA_COMP, sp->cameras.GetEntity(n)};
     }
 
-    void draw_debug_text(std::string_view const &text, XMFLOAT3 const &pos, XMFLOAT4 const &color, float scaling)
+    void draw_debug_text(std::string_view const &text, XMFLOAT3 const &pos, int32_t flags, XMFLOAT4 const &color, float scaling)
     {
         wi::renderer::DebugTextParams p;
         p.position = pos;
         p.color = color;
         p.scaling = scaling;
+        p.flags = flags;
         wi::renderer::DrawDebugText(text.data(), p);
+    }
+
+    wi::Timer* timer_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_TIMER);
+        return reinterpret_cast<wi::Timer *>(h.name);
+    }
+
+    wo_handle create_timer()
+    {
+        return {WK_TIMER, reinterpret_cast<int64_t>(new wi::Timer())};
+    }
+
+    void delete_timer(wo_handle const &timer)
+    {
+        if (timer.name == 0) return;
+        auto tp = timer_ptr(timer);
+        delete tp;
+    }
+
+    void timer_record(wo_handle const &timer)
+    {
+        timer_ptr(timer)->record();
+    }
+
+    double timer_elapsed_seconds(wo_handle const &time)
+    {
+        return timer_ptr(time)->elapsed_seconds();
+    }
+
+    double timer_elapsed(wo_handle const &timer)
+    {
+        return timer_ptr(timer)->elapsed();
+    }
+
+    wi::font::Params* fparams_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_FONT_PARAMS);
+        return reinterpret_cast<wi::font::Params *>(h.name);
+    }
+
+    wo_handle create_font_params()
+    {
+        return {WK_FONT_PARAMS, reinterpret_cast<int64_t>(new wi::font::Params())};
+    }
+
+    void delete_font_params(wo_handle const &font_params)
+    {
+        if (font_params.name == 0) return;
+        delete fparams_ptr(font_params);
+    }
+
+    //TODO questionable as to whether we should be messing with the z coordinate.
+    void set_font_params_position(wo_handle const &font_params, XMFLOAT3 const &v)
+    {
+        fparams_ptr(font_params)->position = v;
+    }
+
+    XMFLOAT3 get_font_params_position(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->position;
+    }
+
+    void set_font_params_size(wo_handle const &font_params, int32_t v)
+    {
+        fparams_ptr(font_params)->size = v;
+    }
+
+    int32_t get_font_params_size(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->size;
+    }
+
+    void set_font_params_scaling(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->scaling = v;
+    }
+
+    float get_font_params_scaling(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->scaling;
+    }
+
+    void set_font_params_rotation(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->rotation = v;
+    }
+
+    float get_font_params_rotation(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->rotation;
+    }
+
+    void set_font_params_spacing_x(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->spacingX = v;
+    }
+
+    float get_font_params_spacing_x(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->spacingX;
+    }
+
+    void set_font_params_spacing_y(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->spacingY = v;
+    }
+
+    float get_font_params_spacing_y(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->spacingY;
+    }
+
+    void set_font_params_h_align(wo_handle const &font_params, int32_t v)
+    {
+        fparams_ptr(font_params)->h_align = (wi::font::Alignment)v;
+    }
+
+    int32_t get_font_params_h_align(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->h_align;
+    }
+
+    void set_font_params_v_align(wo_handle const &font_params, int32_t v)
+    {
+        fparams_ptr(font_params)->v_align = (wi::font::Alignment)v;
+    }
+
+    int32_t get_font_params_v_align(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->v_align;
+    }
+
+    void set_font_params_color(wo_handle const &font_params, XMFLOAT4 const &v)
+    {
+        fparams_ptr(font_params)->color = wi::Color::fromFloat4(v);
+    }
+
+    XMFLOAT4 get_font_params_color(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->color.toFloat4();
+    }
+
+    void set_font_params_shadow_color(wo_handle const &font_params, XMFLOAT4 const &v)
+    {
+        fparams_ptr(font_params)->shadowColor = wi::Color::fromFloat4(v);
+    }
+
+    XMFLOAT4 get_font_params_shadow_color(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->shadowColor.toFloat4();
+    }
+
+    void set_font_params_h_wrap(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->h_wrap = v;
+    }
+
+    float get_font_params_h_wrap(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->h_wrap;
+    }
+
+    void set_font_params_style(wo_handle const &font_params, int32_t v)
+    {
+        fparams_ptr(font_params)->style = v;
+    }
+
+    int32_t get_font_params_style(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->style;
+    }
+
+    void set_font_params_softness(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->softness = v;
+    }
+
+    float get_font_params_softness(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->softness;
+    }
+
+    void set_font_params_bolden(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->bolden = v;
+    }
+
+    float get_font_params_bolden(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->bolden;
+    }
+
+    void set_font_params_shadow_softness(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->shadow_softness = v;
+    }
+
+    float get_font_params_shadow_softness(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->shadow_softness;
+    }
+
+    void set_font_params_shadow_bolden(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->shadow_bolden = v;
+    }
+
+    float get_font_params_shadow_bolden(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->shadow_bolden;
+    }
+
+    void set_font_params_shadow_offset_x(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->shadow_offset_x = v;
+    }
+
+    float get_font_params_shadow_offset_x(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->shadow_offset_x;
+    }
+
+    void set_font_params_shadow_offset_y(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->shadow_offset_y = v;
+    }
+
+    float get_font_params_shadow_offset_y(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->shadow_offset_y;
+    }
+
+    void set_font_params_cursor(wo_handle const &font_params, XMFLOAT4 const &v)
+    {
+        // We pack this into a float4 for lobster.
+        fparams_ptr(font_params)->cursor = {XMFLOAT2{v.x, v.y}, 
+                                            XMFLOAT2{v.z, v.w}};
+    }
+
+    XMFLOAT4 get_font_params_cursor(wo_handle const &font_params)
+    {
+        XMFLOAT4 rv;
+        auto fp = fparams_ptr(font_params);
+
+        rv.x = fp->cursor.position.x;
+        rv.y = fp->cursor.position.y;
+        rv.z = fp->cursor.size.x;
+        rv.w = fp->cursor.size.y;
+        return rv;
+    }
+
+    void set_font_params_hdr_scaling(wo_handle const &font_params, float v)
+    {
+        fparams_ptr(font_params)->hdr_scaling = v;
+    }
+
+    float get_font_params_hdr_scaling(wo_handle const &font_params)
+    {
+        return fparams_ptr(font_params)->hdr_scaling;
+    }
+
+    wi::SpriteFont* sf_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_SPRITE_FONT);
+        return reinterpret_cast<wi::SpriteFont *>(h.name);
+    }
+
+    wo_handle create_sprite_font()
+    {
+        return {WK_SPRITE_FONT, reinterpret_cast<int64_t>(new wi::SpriteFont())};
+    }
+
+    void sprite_font_set_params(wo_handle const &font, wo_handle const &font_params)
+    {
+        sf_ptr(font)->params = *fparams_ptr(font_params);
+    }
+
+    void delete_sprite_font(wo_handle const &font)
+    {
+        if (font.name == 0) return;
+        delete sf_ptr(font);
+    }
+
+    void sprite_font_set_hidden(wo_handle const &font, bool value)
+    {
+        sf_ptr(font)->SetHidden(value);
+    }
+
+    XMFLOAT2 sprite_font_text_size(wo_handle const &font)
+    {
+        return sf_ptr(font)->TextSize();
+    }
+
+    void sprite_font_set_text(wo_handle const &font, std::string_view const &txt)
+    {
+        sf_ptr(font)->SetText(std::string(txt));
+    }
+
+    std::string_view sprite_font_get_text(wo_handle const &font)
+    {
+        return sf_ptr(font)->GetTextA();
+    }
+
+    void renderpath_add_font(wo_handle const &path, wo_handle const &sprite_font, std::string_view const &layer)
+    {
+        auto rp = rpath_ptr(path);
+        auto rp2 = dynamic_cast<wi::RenderPath2D *>(rp);
+        if (rp2) {
+            rp2->AddFont(sf_ptr(sprite_font), std::string(layer)); 
+        }
     }
 }
 

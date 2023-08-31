@@ -2,6 +2,8 @@
 //
 // Warning: angles are in radians, not the default of degrees as was the case
 //          with the built in Lobster engine.
+import color
+
 import core.quat
 
 // wi::input::BUTTON enum 
@@ -101,7 +103,8 @@ def info(msg: string):
 // Handle kinds used internally to tell the difference between the different
 // handles.
 enum wokind:
-   wk_scene, wk_entity, wk_name_comp, wk_camera_comp, wk_transform_comp, wk_renderpath3
+   wk_scene, wk_entity, wk_name_comp, wk_camera_comp, wk_transform_comp, wk_renderpath3,
+   wk_timer, wk_sprite_font
 
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
@@ -206,18 +209,6 @@ constructor wi_transform_component(h: int2):
    assert h[0] == wk_transform_comp
    return wi_transform_component{h}
 
-// wi::RenderPath3D
-class wi_renderpath3d:
-   handle: int2
-
-   def set_camera(cc: wi_camera_component):
-      wi_renderpath3d_set_camera(handle, cc.handle)
-
-constructor wi_renderpath3d():
-   let h = wi_get_renderpath3d()
-   assert(h[0] == wk_renderpath3)
-   return wi_renderpath3d{h}
-
 struct wi_entity:
    handle: int2
 
@@ -294,5 +285,190 @@ def with_temp_scene(body):
 def get_fixed_dt():
    return 1.0 / wi_get_fixed_update_rate()
 
-def draw_debug_text(text: string, pos: float3, color=float4{1.0, 1.0, 1.0, 1.0}, scaling = 1.0):
-   wi_draw_debug_text(text, pos, color, scaling)
+enum_flags debug_draw_text_flags:
+   dd_depth_test, dd_camera_facing, dd_camera_scaling
+
+def draw_debug_text(text: string, pos: float3, flags = 0, color=float4{1.0, 1.0, 1.0, 1.0}, scaling = 1.0):
+   wi_draw_debug_text(text, pos, flags, color, scaling)
+
+struct wi_timer:
+   handle: int2
+
+   def record():
+      return wi_timer_record(handle)
+
+   def elapsed_seconds():
+      return wi_timer_elapsed_seconds(handle)
+
+   def elapsed():
+      return wi_timer_elapsed(handle)
+
+   def delete():
+      wi_delete_timer(handle)
+
+constructor wi_timer():
+   return wi_timer{wi_create_timer()}
+
+
+struct wi_font_params:
+   handle: int2
+
+   def delete():
+      wi_delete_font_params(handle)
+
+   def position():
+      return wi_get_font_params_position(handle)
+
+   def set_position(v):
+      wi_set_font_params_position(handle, v)
+
+   def size():
+      return wi_font_params_get_size(handle)
+
+   def set_size(s: int):
+      wi_font_params_set_size(s)
+
+   def scaling():
+      return wi_get_font_params_scaling(handle)
+
+   def set_scaling(v):
+      wi_set_font_params_scaling(handle, v)
+
+   def rotation():
+      return wi_get_font_params_rotation(handle)
+
+   def set_rotation(v):
+      wi_set_font_params_rotation(handle, v)
+
+   def spacing_x():
+      return wi_get_font_params_spacing_x(handle)
+
+   def set_spacing_x(v):
+      wi_set_font_params_spacing_x(handle, v)
+
+   def spacing_y():
+      return wi_get_font_params_spacing_y(handle)
+
+   def set_spacing_y(v):
+      wi_set_font_params_spacing_y(handle, v)
+
+   def h_align():
+      return wi_get_font_params_h_align(handle)
+
+   def set_h_align(v):
+      wi_set_font_params_h_align(handle, v)
+
+   def v_align():
+      return wi_get_font_params_v_align(handle)
+
+   def set_v_align(v):
+      wi_set_font_params_v_align(handle, v)
+
+   def color():
+      let f4 = wi_get_font_params_color(handle)
+      return color{f4[0], f4[1], f4[2], f4[3]}
+
+   def set_color(v):
+      if v is float4:
+         wi_set_font_params_color(handle, v)
+      else:
+         wi_set_font_params_color(handle, float4{v[0], v[1], v[2], v[3]})
+
+   def shadow_color():
+      return wi_get_font_params_shadow_color(handle)
+
+   def set_shadow_color(v):
+      wi_set_font_params_shadow_color(handle, v)
+
+   def h_wrap():
+      return wi_get_font_params_h_wrap(handle)
+
+   def set_h_wrap(v):
+      wi_set_font_params_h_wrap(handle, v)
+
+   def style():
+      return wi_get_font_params_style(handle)
+
+   def set_style(v):
+      wi_set_font_params_style(handle, v)
+
+   def softness():
+      return wi_get_font_params_softness(handle)
+
+   def set_softness(v):
+      wi_set_font_params_softness(handle, v)
+
+   def bolden():
+      return wi_get_font_params_bolden(handle)
+
+   def set_bolden(v):
+      wi_set_font_params_bolden(handle, v)
+
+   def shadow_offset_x():
+      return wi_get_font_params_shadow_offset_x(handle)
+
+   def set_shadow_offset_x(v):
+      wi_set_font_params_shadow_offset_x(handle, v)
+
+   def shadow_offset_y():
+       return wi_get_font_params_shadow_offset_y(handle)
+
+   def set_shadow_offset_y(v):
+       wi_set_font_params_shadow_offset_y(handle, v)
+
+   // position, size
+   def cursor() -> float2, float2:
+      return wi_get_font_params_cursor(handle)
+
+   def set_cursor(pos, size):
+      wi_set_font_params_cursor(handle, float4{pos.x, pos.y, size.x, size.y})
+
+   def hdr_scaling():
+      return wi_get_font_params_hdr_scaling(handle)
+
+   def set_hdr_scaling(v):
+      wi_set_font_params_hdr_scaling(handle, v)
+
+
+constructor wi_font_params():
+   return wi_font_params{wi_create_font_params()}
+
+
+struct wi_sprite_font:
+   handle: int2
+
+   def delete():
+      wi_delete_sprite_font(handle)
+
+   def set_params(p: wi_font_params):
+      wi_sprite_font_set_params(handle, p.handle)
+
+   def text_size():
+      return wi_sprite_font_text_size(handle)
+
+   def set_text(txt: string):
+      wi_sprite_font_set_text(handle, txt)
+
+   def text() -> string:
+      return wi_sprite_font_get_text(handle)
+
+constructor wi_sprite_font():
+   return wi_sprite_font{wi_create_sprite_font()}
+
+
+// wi::RenderPath3D
+class wi_renderpath3d:
+   handle: int2
+
+   def set_camera(cc: wi_camera_component):
+      wi_renderpath3d_set_camera(handle, cc.handle)
+
+   // Technically a RenderPath2d function.
+   def add_font(sf: wi_sprite_font, layer = ""):
+      wi_renderpath_add_font(handle, sf.handle, layer)
+
+constructor wi_renderpath3d():
+   let h = wi_get_renderpath3d()
+   assert(h[0] == wk_renderpath3)
+   return wi_renderpath3d{h}
+

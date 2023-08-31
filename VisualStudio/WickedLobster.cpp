@@ -220,3 +220,9 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
+
+// Implementation over here where we have access to windows headers.
+void break_impl()
+{
+    DebugBreak();
+}

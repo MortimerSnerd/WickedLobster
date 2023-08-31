@@ -9,7 +9,8 @@ struct lobster_options
 
 // Tags for wicked objects we may keep references to.
 enum WOKIND {
-    WK_SCENE, WK_ENTITY, WK_NAME_COMP, WK_CAMERA_COMP, WK_TRANSFORM_COMP, WK_RENDERPATH3
+    WK_SCENE, WK_ENTITY, WK_NAME_COMP, WK_CAMERA_COMP, WK_TRANSFORM_COMP, WK_RENDERPATH3,
+    WK_TIMER, WK_SPRITE_FONT, WK_FONT_PARAMS
 
 };
 

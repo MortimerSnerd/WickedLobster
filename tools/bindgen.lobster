@@ -91,6 +91,14 @@ let known_types = [
    TD{
       name: "int", 
       lobster_tyspec: "I",
+      wbnd_tyname: "int32_t", 
+      loadfn: fn(name): "auto {name} = (int32_t)Pop(sp).ival();",
+      storefn: fn(expr): "Push(sp, Value({expr}));",
+      pass_as_constref: false
+   },
+   TD{
+      name: "iint",  // We want a real 64 bit value, not 32 bit.
+      lobster_tyspec: "I",
       wbnd_tyname: "int64_t", 
       loadfn: fn(name): "auto {name} = Pop(sp).ival();",
       storefn: fn(expr): "Push(sp, Value({expr}));",
@@ -101,6 +109,16 @@ let known_types = [
       lobster_tyspec: "F",
       wbnd_tyname: "float", 
       loadfn: fn(name): "auto {name} = Pop(sp).fltval();",
+      storefn: fn(expr): "Push(sp, Value({expr}));",
+      pass_as_constref: false
+   },
+   // All lobster reals are doubles, but in most cases we only need float.  
+   // This is for cases where we need double.
+   TD{
+      name: "double",      
+      lobster_tyspec: "F",
+      wbnd_tyname: "double", 
+      loadfn: fn(name): "auto {name} = Pop(sp).fval();",
       storefn: fn(expr): "Push(sp, Value({expr}));",
       pass_as_constref: false
    }
@@ -136,10 +154,6 @@ def parse_bindings(fname: string) -> string?, [fundef]:
    def error(msg):
       return L.format_error("", msg), [] from parse_bindings
 
-   def keyword(k):
-      L.ignore_ws():
-         L.expect_word(k): error("expected keyword {k}")
-
    def identifier():
       L.skip_ws()
       guard L.chars_left():
@@ -163,35 +177,86 @@ def parse_bindings(fname: string) -> string?, [fundef]:
 
       return p
 
+   def parse_struct_def():
+      let members = []
+      L.skip_ws()
+      let sname = identifier()
+      L.skip_ws()
+      while L.chars_left() and not L.matched_word("end"):
+         push(members, parse_param())
+         L.skip_ws()
+
+      let hix = find(known_types): _.name == "H"
+      assert hix >= 0
+      // Construct and destruct.
+      push(funs, fundef{
+         name: "create_{sname}", 
+         params: [], 
+         returns: hix})
+      push(funs, fundef{
+         name: "delete_{sname}", 
+         params: [param{
+            name: sname, 
+            type: hix}], 
+         returns: -1})
+
+      // Accessors
+      for(members) m:
+         push(funs, fundef{
+            name: "set_{sname}_{m.name}", 
+            params: [
+               param{
+                  name: sname, 
+                  type: hix}, 
+               param{
+                  name: "v", 
+                  type: m.type}
+            ],
+            returns: -1})
+         push(funs, fundef{
+            name: "get_{sname}_{m.name}", 
+            params: [
+               param{
+                  name: sname, 
+                  type: hix}
+            ],
+            returns: m.type})
+
    L.skip_ws()
    while L.chars_left():
       let fd = fundef{}
       L.skip_ws()
       fd.doc = L.expect_string(): error("Expecting doc string.")
-      keyword("def")
-      fd.name = identifier()
-      L.expect('('): error("expected opening paren")
       L.skip_ws()
-      while L.chars_left() and L.char() != ')':
-         push(fd.params, parse_param())
+      if L.matched_word("struct"):
+         parse_struct_def()
+      elif L.matched_word("def"):
          L.skip_ws()
-         if not L.matched_word(","):
-            break
-         
-      L.expect(')'): error("Closing paren not found")
-      L.skip_ws()
-
-      if L.matched_word("->"):
-         let rty = identifier()
-         let ti = find(known_types): _.name == rty
-         if ti >= 0:
-            fd.returns = ti
-         else:
-            error("unrecognized return type {rty}")
-
+         fd.name = identifier()
+         L.expect('('): error("expected opening paren")
+         L.skip_ws()
+         while L.chars_left() and L.char() != ')':
+            push(fd.params, parse_param())
+            L.skip_ws()
+            if not L.matched_word(","):
+               break
+            
+         L.expect(')'): error("Closing paren not found")
          L.skip_ws()
 
-      push(funs, fd)
+         if L.matched_word("->"):
+            let rty = identifier()
+            let ti = find(known_types): _.name == rty
+            if ti >= 0:
+               fd.returns = ti
+            else:
+               error("unrecognized return type {rty}")
+
+            L.skip_ws()
+
+         push(funs, fd)
+      else:
+         error("Was expecting def|struct")
 
 
    return nil, funs

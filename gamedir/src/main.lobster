@@ -1,10 +1,12 @@
 //
 // This module is executed on engine startup.
+import color
 import wisupport
 import vec
 
 var tim = 0.0
 var camera = INVALID_ENTITY
+let ftext = wi_sprite_font()
 
 // First: Set up any callbacks for events, frame notifications
 def app_fixed_frame():
@@ -23,14 +25,16 @@ def app_fixed_frame():
    if input_press(KEYBOARD_BUTTON_F5):
       tim = 0.0
 
-   draw_debug_text("Eat more cheese", float3{0.0, 2.0, 2.0})
+   draw_debug_text("Eat more cheese", float3{0.0, 12.0, 22.0}, dd_camera_facing)
    
 wi_set_app_fixed_frame_fn(): app_fixed_frame()
 
 // Any miscellaneous setup.  Here we load an initial scene, and create
 // a camera we can move around.
+let stopwatch = wi_timer()
 let scene = global_scene()
 scene.load_model("Content/models/badbard.wiscene", false)
+info("Load took {stopwatch.elapsed_seconds()}")
 camera = scene.create_entity()
 scene.create_name_component(camera).set_name("cambo")
 let cc = scene.create_camera_component(camera)
@@ -45,6 +49,15 @@ with_temp_scene() tscene:
    let tt = tscene.get_transform_component(teapot)
    tt.translate(float3{20.0, 7.0, 1.0})
    scene.merge(tscene)
+
+let fp = wi_font_params()
+fp.set_scaling(2.0)
+fp.set_color(color_green)
+fp.set_shadow_color(color_white)
+fp.set_position(float3{100.0, 100.0, 0.0})
+ftext.set_params(fp)
+ftext.set_text("This is some test text in a sprite font")
+wi_renderpath3d().add_font(ftext)
 
 // Finally, call wi_start_game() to start the main loop.  This will not return
 // until the game is exiting.
