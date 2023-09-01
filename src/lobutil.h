@@ -3,14 +3,14 @@
 
 struct lobster_options 
 {
-    std::string root_src = "main.lobster";
+    std::string root_src = "ccontrol.lobster";
     std::vector<std::string> program_args = {};
 };
 
 // Tags for wicked objects we may keep references to.
 enum WOKIND {
     WK_SCENE, WK_ENTITY, WK_NAME_COMP, WK_CAMERA_COMP, WK_TRANSFORM_COMP, WK_RENDERPATH3,
-    WK_TIMER, WK_SPRITE_FONT, WK_FONT_PARAMS
+    WK_TIMER, WK_SPRITE_FONT, WK_FONT_PARAMS, WK_HUMANOID, WK_LAYER
 
 };
 

@@ -24,6 +24,7 @@ def app_fixed_frame():
 
    if input_press(KEYBOARD_BUTTON_F5):
       tim = 0.0
+      wi_renderpath3d().clear_fonts()
 
    draw_debug_text("Eat more cheese", float3{0.0, 12.0, 22.0}, dd_camera_facing)
    

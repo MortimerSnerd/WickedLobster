@@ -179,26 +179,32 @@ def parse_bindings(fname: string) -> string?, [fundef]:
 
    def parse_struct_def():
       let members = []
+      var make_constructor = true
       L.skip_ws()
       let sname = identifier()
       L.skip_ws()
+      if L.matched_word("!"):
+         make_constructor = false
+
       while L.chars_left() and not L.matched_word("end"):
          push(members, parse_param())
          L.skip_ws()
 
       let hix = find(known_types): _.name == "H"
       assert hix >= 0
-      // Construct and destruct.
-      push(funs, fundef{
-         name: "create_{sname}", 
-         params: [], 
-         returns: hix})
-      push(funs, fundef{
-         name: "delete_{sname}", 
-         params: [param{
-            name: sname, 
-            type: hix}], 
-         returns: -1})
+
+      if make_constructor:
+         // Construct and destruct.
+         push(funs, fundef{
+            name: "create_{sname}", 
+            params: [], 
+            returns: hix})
+         push(funs, fundef{
+            name: "delete_{sname}", 
+            params: [param{
+               name: sname, 
+               type: hix}], 
+            returns: -1})
 
       // Accessors
       for(members) m:

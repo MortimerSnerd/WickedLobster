@@ -38,6 +38,7 @@ namespace wbnd
         case WK_TIMER:
         case WK_FONT_PARAMS:
         case WK_SPRITE_FONT:
+        case WK_HUMANOID:
             if (h.name == 0) {
                 printf("Null handle pointer, kind=%d\n", (int)h.kind);
                 dump_lobster_stack();
@@ -722,6 +723,199 @@ namespace wbnd
         if (rp2) {
             rp2->AddFont(sf_ptr(sprite_font), std::string(layer)); 
         }
+    }
+
+    void renderpath_remove_font(wo_handle const &path, wo_handle const &sprite_font)
+    {
+        rpath_ptr(path)->RemoveFont(sf_ptr(sprite_font));
+    }
+
+    void renderpath_clear_fonts(wo_handle const &path)
+    {
+        rpath_ptr(path)->ClearFonts();
+    }
+
+    int32_t renderpath_font_order(wo_handle const &path, wo_handle const &sprite_font)
+    {
+        return rpath_ptr(path)->GetFontOrder(sf_ptr(sprite_font));
+    }
+
+    void renderpath_set_font_order(wo_handle const &path, wo_handle const &sprite_font, int32_t order)
+    {
+        rpath_ptr(path)->SetFontOrder(sf_ptr(sprite_font), order);
+    }
+
+    wi::scene::HumanoidComponent* hum_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_HUMANOID);
+        return reinterpret_cast<wi::scene::HumanoidComponent *>(h.name);
+    }
+
+    wo_handle create_humanoid_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_HUMANOID, reinterpret_cast<int64_t>(&scene_ptr(scene)->humanoids.Create(entity.name))};
+    }
+
+    wo_handle get_humanoid_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_HUMANOID, reinterpret_cast<int64_t>(scene_ptr(scene)->humanoids.GetComponent(entity.name))};
+    }
+
+    int32_t entity_humanoid_count(wo_handle const &scene)
+    {
+        return (int32_t)scene_ptr(scene)->humanoids.GetCount();
+    }
+
+    wo_handle entity_humanoid_get(wo_handle const &scene, int32_t n)
+    {
+        return {WK_ENTITY, scene_ptr(scene)->humanoids.GetEntity((size_t)n)};
+    }
+
+    void set_humanoid_default_look_direction(wo_handle const &humanoid, XMFLOAT3 const &v)
+    {
+        hum_ptr(humanoid)->default_look_direction = v;
+    }
+
+    XMFLOAT3 get_humanoid_default_look_direction(wo_handle const &humanoid)
+    {
+        return hum_ptr(humanoid)->default_look_direction;
+    }
+
+    void set_humanoid_head_rotation_max(wo_handle const &humanoid, XMFLOAT2 const &v)
+    {
+        hum_ptr(humanoid)->head_rotation_max = v;
+    }
+
+    XMFLOAT2 get_humanoid_head_rotation_max(wo_handle const &humanoid)
+    {
+        return hum_ptr(humanoid)->head_rotation_max;
+    }
+
+    void set_humanoid_head_rotation_speed(wo_handle const &humanoid, float v)
+    {
+        hum_ptr(humanoid)->head_rotation_speed = v;
+    }
+
+    float get_humanoid_head_rotation_speed(wo_handle const &humanoid)
+    {
+        return hum_ptr(humanoid)->head_rotation_speed;
+    }
+
+    void set_humanoid_eye_rotation_max(wo_handle const &humanoid, XMFLOAT2 const &v)
+    {
+        hum_ptr(humanoid)->eye_rotation_max = v;
+    }
+
+    XMFLOAT2 get_humanoid_eye_rotation_max(wo_handle const &humanoid)
+    {
+        return hum_ptr(humanoid)->eye_rotation_max;
+    }
+
+    void set_humanoid_eye_rotation_speed(wo_handle const &humanoid, float v)
+    {
+        hum_ptr(humanoid)->eye_rotation_speed = v;
+    }
+
+    float get_humanoid_eye_rotation_speed(wo_handle const &humanoid)
+    {
+        return hum_ptr(humanoid)->eye_rotation_speed;
+    }
+
+    void set_humanoid_look_at(wo_handle const &humanoid, XMFLOAT3 const &v)
+    {
+        hum_ptr(humanoid)->lookAt = v;
+    }
+
+    XMFLOAT3 get_humanoid_look_at(wo_handle const &humanoid)
+    {
+        return hum_ptr(humanoid)->lookAt;
+    }
+
+    int32_t humanoid_bone_count(wo_handle const &hum)
+    {
+        return (int32_t)wi::scene::HumanoidComponent::HumanoidBone::Count;
+    }
+
+    wo_handle humanoid_bone(wo_handle const &hum, int32_t i)
+    {
+        return {WK_ENTITY, hum_ptr(hum)->bones[i]};
+    }
+
+    bool humanoid_is_lookat_enabled(wo_handle const &hum)
+    {
+        return hum_ptr(hum)->IsLookAtEnabled();
+    }
+
+    void humanoid_set_lookat_enabled(wo_handle const &hum, bool v)
+    {
+        hum_ptr(hum)->SetLookAtEnabled(v);
+    }
+
+    wi::scene::LayerComponent* layer_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_LAYER);
+        return reinterpret_cast<wi::scene::LayerComponent *>(h.name);
+    }
+
+    wo_handle create_layer_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        return {WK_LAYER, reinterpret_cast<int64_t>(&scene_ptr(scene)->layers.Create(entity.name))};
+    }
+
+    wo_handle get_layer_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        return {WK_LAYER, reinterpret_cast<int64_t>(scene_ptr(scene)->layers.GetComponent(entity.name))};
+    }
+
+    int32_t entity_layer_count(wo_handle const &scene)
+    {
+        return (int32_t)scene_ptr(scene)->layers.GetCount();
+    }
+
+    wo_handle entity_layer_get(wo_handle const &scene, int32_t n)
+    {
+        return {WK_ENTITY, scene_ptr(scene)->layers.GetEntity(n)};
+    }
+
+    void set_layer_mask(wo_handle const &layer, int32_t v)
+    {
+        layer_ptr(layer)->layerMask = v;
+    }
+
+    int32_t get_layer_mask(wo_handle const &layer)
+    {
+        return layer_ptr(layer)->layerMask;
+    }
+
+    void set_layer_propagation_mask(wo_handle const &layer, int32_t v)
+    {
+        layer_ptr(layer)->propagationMask = v;
+    }
+
+    int32_t get_layer_propagation_mask(wo_handle const &layer)
+    {
+        return layer_ptr(layer)->propagationMask;
+    }
+
+    bool is_descendant_entity(wo_handle const &scene, wo_handle const &entity, wo_handle const &ancestor)
+    {
+        handle_check(entity, WK_ENTITY);
+        handle_check(ancestor, WK_ENTITY);
+        return scene_ptr(scene)->Entity_IsDescendant(entity.name, ancestor.name);
+    }
+
+    void remove_entity(wo_handle const &scene, wo_handle const &entity, bool recursive)
+    {
+        handle_check(entity, WK_ENTITY);
+        scene_ptr(scene)->Entity_Remove(entity.name, recursive);
+    }
+
+    wo_handle duplicate_entity(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_ENTITY, scene_ptr(scene)->Entity_Duplicate(entity.name)};
     }
 }
 

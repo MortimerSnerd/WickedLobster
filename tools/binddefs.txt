@@ -10,6 +10,15 @@ def delete_scene(scene: H)
 "Returns the global scene"
 def global_scene() -> H
 
+"Returns true if 'entity' is descendant of 'ancestor'"
+def is_descendant_entity(scene: H, entity: H, ancestor: H) -> bool
+
+"Deletes an entity from the scene"
+def remove_entity(scene: H, entity: H, recursive: bool)
+
+"Duplicates an entity"
+def duplicate_entity(scene: H, entity: H) -> H
+
 "Merges src scene into dest scene."
 def scene_merge(dest: H, src: H)
 
@@ -18,6 +27,30 @@ def load_model(scene: H, fname: string, attach: bool) -> H
 
 "Creates a new empty entity"
 def create_entity() -> H
+
+"Creates a layer component for the given entity and returns a handle"
+def create_layer_component(scene: H, entity: H) -> H
+
+"Gets the layer component for the given entity."
+def get_layer_component(scene: H, entity: H) -> H
+
+"Returns the number of entities that have a layer component"
+def entity_layer_count(scene: H) -> int
+
+"Returns the nth entity that has a layer component"
+def entity_layer_get(scene: H, n: int) -> H
+
+"Creates a humanoid component for the given entity and returns a handle"
+def create_humanoid_component(scene: H, entity: H) -> H
+
+"Gets the humanoid component for the given entity."
+def get_humanoid_component(scene: H, entity: H) -> H
+
+"Returns the number of entities that have a humanoid component"
+def entity_humanoid_count(scene: H) -> int
+
+"Returns the nth entity that has a humanoid component"
+def entity_humanoid_get(scene: H, n: int) -> H
 
 "Creates a name component for the given entity, and returns a the handle"
 def create_name_component(scene: H, entity: H) -> H
@@ -216,6 +249,35 @@ def sprite_font_set_text(font: H, txt: string)
 def sprite_font_get_text(font: H) -> string
 
 
+"wi::scene::HumanoidComponent"
+struct humanoid!
+	default_look_direction: float3
+	head_rotation_max: float2
+	head_rotation_speed: float
+	eye_rotation_max: float2
+	eye_rotation_speed: float
+	look_at: float3
+end
+
+"Returns number of bones in humanoid component"
+def humanoid_bone_count(hum: H) -> int
+
+"Returns entity for bone with the given HumanoidBone name"
+def humanoid_bone(hum: H, i: int) -> H
+
+"Is lookat enabled?"
+def humanoid_is_lookat_enabled(hum: H) -> bool
+
+"Sets lookat for humanoid component"
+def humanoid_set_lookat_enabled(hum: H, v: bool)
+
+
+"wi::scene::Layer component"
+struct layer!
+	mask: int
+	propagation_mask: int
+end
+
 
 "Returns the games RenderPath3d"
 def get_renderpath3d() -> H
@@ -223,4 +285,15 @@ def get_renderpath3d() -> H
 "Adds a sprite font to the renderpath"
 def renderpath_add_font(path: H, sprite_font: H, layer: string)
 
+"Removes a sprite font from the renderpath"
+def renderpath_remove_font(path: H, sprite_font: H) 
+
+"Clears all fonts from renderpath"
+def renderpath_clear_fonts(path: H)
+
+"Returns the order for the given font"
+def renderpath_font_order(path: H, sprite_font: H) -> int
+
+"Sets the order for the given font"
+def renderpath_set_font_order(path: H, sprite_font: H, order: int)
 

@@ -104,7 +104,7 @@ def info(msg: string):
 // handles.
 enum wokind:
    wk_scene, wk_entity, wk_name_comp, wk_camera_comp, wk_transform_comp, wk_renderpath3,
-   wk_timer, wk_sprite_font
+   wk_timer, wk_sprite_font, wk_font_params, wk_humanoid, wk_layer
 
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
@@ -217,17 +217,183 @@ struct wi_entity:
 
 let INVALID_ENTITY = wi_entity{INVALID_ENTITY_HANDLE}
 
+class wi_layer: wi_component
+   def layer_mask():
+      return wi_get_layer_mask(handle)
+
+   def set_layer_mask(v):
+      wi_set_layer_mask(handle, v)
+
+   def propagation_mask():
+      return wi_get_layer_propagation_mask(handle)
+
+   def set_propagation_mask(v):
+      wi_set_layer_propagation_mask(handle, v)
+
+   def effective_mask():
+      return propagation_mask() & layer_mask()
+
+constructor wi_layer(h: int2):
+   assert h[0] == wk_layer
+   return wi_layer{h}
+
+// Bone names for the humanoid component
+enum wi_humanoid_bone:
+   hb_Hips,			// Required
+   hb_Spine,			// Required
+   hb_Chest,
+   hb_UpperChest,
+   hb_Neck,
+   hb_Head,			// Required
+   hb_LeftEye,
+   hb_RightEye,
+   hb_Jaw,
+   hb_LeftUpperLeg,	// Required
+   hb_LeftLowerLeg,	// Required
+   hb_LeftFoot,		// Required
+   hb_LeftToes,
+   hb_RightUpperLeg,	// Required
+   hb_RightLowerLeg,	// Required
+   hb_RightFoot,		// Required
+   hb_RightToes,
+   hb_LeftShoulder,
+   hb_LeftUpperArm,	// Required
+   hb_LeftLowerArm,	// Required
+   hb_LeftHand,		// Required
+   hb_RightShoulder,
+   hb_RightUpperArm,	// Required
+   hb_RightLowerArm,	// Required
+   hb_RightHand,		// Required
+   hb_LeftThumbMetacarpal,
+   hb_LeftThumbProximal,
+   hb_LeftThumbDistal,
+   hb_LeftIndexProximal,
+   hb_LeftIndexIntermediate,
+   hb_LeftIndexDistal,
+   hb_LeftMiddleProximal,
+   hb_LeftMiddleIntermediate,
+   hb_LeftMiddleDistal,
+   hb_LeftRingProximal,
+   hb_LeftRingIntermediate,
+   hb_LeftRingDistal,
+   hb_LeftLittleProximal,
+   hb_LeftLittleIntermediate,
+   hb_LeftLittleDistal,
+   hb_RightThumbMetacarpal,
+   hb_RightThumbProximal,
+   hb_RightThumbDistal,
+   hb_RightIndexIntermediate,
+   hb_RightIndexDistal,
+   hb_RightIndexProximal,
+   hb_RightMiddleProximal,
+   hb_RightMiddleIntermediate,
+   hb_RightMiddleDistal,
+   hb_RightRingProximal,
+   hb_RightRingIntermediate,
+   hb_RightRingDistal,
+   hb_RightLittleProximal,
+   hb_RightLittleIntermediate,
+   hb_RightLittleDistal
+
+class wi_humanoid_component: wi_component
+   def default_look_direction():
+      return wi_get_humanoid_default_look_direction(handle) 
+
+   def set_default_look_direction(d: float3):
+      wi_set_humanoid_default_look_direction(d)
+
+   def head_rotation_max():
+      return wi_get_humanoid_head_rotation_max(handle)
+
+   def set_head_rotation_max(v):
+      wi_set_humanoid_head_rotation_max(handle, v)
+
+   def eye_rotation_max():
+      return wi_get_humanoid_eye_rotation_max(handle)
+
+   def set_eye_rotation_max(v):
+      wi_set_humanoid_eye_rotation_max(handle, v)
+
+   def head_rotation_speed():
+      return wi_get_humanoid_head_rotation_speed(handle)
+
+   def set_head_rotation_speed(v):
+      wi_set_humanoid_head_rotation_speed(handle, v)
+
+   def eye_rotation_speed():
+      return wi_get_humanoid_eye_rotation_speed(handle)
+
+   def set_eye_rotation_speed(v):
+      wi_set_humanoid_eye_rotation_speed(handle, v)
+
+   def look_at():
+      return wi_get_humanoid_look_at(handle)
+
+   def set_look_at(v):
+      wi_set_humanoid_look_at(handle, v)
+
+   def bone_count():
+      return wi_humanoid_bone_count(handle)
+
+   def bone(i: int):
+      return wi_entity{wi_humanoid_bone(handle, i)}
+
+   def is_lookat_enabled():
+      return wi_humanoid_is_lookat_enabled(handle)
+
+   def set_lookat_enabled(v: bool):
+      wi_humanoid_set_lookat_enabled(handle, v)
+
+
+constructor wi_humanoid_component(h: int2):
+   assert h[0] == wk_humanoid
+   return wi_humanoid_component{h}
+   
+
 // Wrapper for scenes.  This can be saved long term, 
 // it is only invalidated when the scene is deleted.
 class wi_scene:
    handle: int2   
+
+   def is_descendant_entity(entity: wi_entity, ancestor: wi_entity):
+      return wi_is_descendant_entity(handle, entity.handle, ancestor.handle)
       
+   def remove_entity(entity: wi_entity, recursive = true):
+      wi_remove_entity(handle, entity.handle, recursive)
+
+   def duplicate_entity(ent: wi_entity):
+      return wi_entity{wi_duplicate_entity(handle, ent.handle)}
+
    // Loads a model. If "attached", it is rooted to an entity with a transform.
    def load_model(fname: string, attached: bool) -> wi_entity:
       return wi_entity{wi_load_model(handle, fname, attached)}
 
    def create_entity() -> wi_entity:
       return wi_entity{wi_create_entity()}
+
+   def create_layer_component(ent: wi_entity):
+      return wi_layer(wi_create_layer_component(handle, ent.handle))
+
+   def get_layer_component(ent: wi_entity):
+      return wi_layer(wi_get_layer_component(handle, ent.handle))
+
+   def get_layer_count():
+      return wi_entity_layer_count(handle)
+
+   def get_layer_entity(n: int):
+      return wi_entity{wi_entity_layer_get(handle, n)}
+
+   def create_humanoid_component(ent: wi_entity):
+      return wi_humanoid_component(wi_humanoid_component(wi_create_humanoid_component(handle, ent.handle)))
+
+   def get_humanoid_component(ent):
+      return wi_humanoid_component(wi_get_humanoid_component(handle, ent.handle))
+
+   def get_humanoid_count():
+      return wi_entity_humanoid_count(handle)
+
+   def get_humanoid_entity(n: int):
+      return wi_entity{wi_entity_humanoid_get(handle, n)}
 
    def create_camera_component(ent: wi_entity) -> wi_camera_component:
       return wi_camera_component(wi_create_camera_component(handle, ent.handle))
@@ -466,6 +632,18 @@ class wi_renderpath3d:
    // Technically a RenderPath2d function.
    def add_font(sf: wi_sprite_font, layer = ""):
       wi_renderpath_add_font(handle, sf.handle, layer)
+
+   def get_font_order(sf: wi_sprite_font) -> int:
+      return wi_renderpath_get_font_order(handle, sf.handle)
+
+   def set_font_order(sf: wi_sprite_font, order: int):
+      wi_renderpath_set_font_order(handle, sf.handle, order)
+
+   def remove_font(sf: wi_sprite_font):
+      wi_renderpath_remove_font(handle, sf.handle)
+
+   def clear_fonts():
+      wi_renderpath_clear_fonts(handle)
 
 constructor wi_renderpath3d():
    let h = wi_get_renderpath3d()
