@@ -1,6 +1,7 @@
 #include "pch.h"
 // wiMath is safe and doesn't cause namespace problems with Lobster.
 #include "wiMath.h"
+#include "DirectXMath.h"
 #include "lobutil.h"
 #include "wibindings.h"
 #include "WickedEngine.h"
@@ -9,7 +10,6 @@
 #include "wiInput.h"
 
 using namespace std;
-
 
 extern void break_impl();
 
@@ -39,6 +39,8 @@ namespace wbnd
         case WK_FONT_PARAMS:
         case WK_SPRITE_FONT:
         case WK_HUMANOID:
+        case WK_MATRIX:
+        case WK_COLLIDER:
             if (h.name == 0) {
                 printf("Null handle pointer, kind=%d\n", (int)h.kind);
                 dump_lobster_stack();
@@ -158,6 +160,22 @@ namespace wbnd
         return {WK_TRANSFORM_COMP, reinterpret_cast<int64_t>(&comp)};
     }
 
+    wo_handle create_transform()
+    {
+        return {WK_TRANSFORM_COMP, reinterpret_cast<int64_t>(new wi::scene::TransformComponent)};
+    }
+
+    wi::scene::TransformComponent* tc_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_TRANSFORM_COMP);
+        return reinterpret_cast<wi::scene::TransformComponent *>(h.name);
+    }
+    
+    void delete_transform(wo_handle const &trans)
+    {
+        delete tc_ptr(trans);
+    }
+
     void set_3d_render_path(wi::RenderPath3D *rp)
     {
         render_path_3d = rp;
@@ -211,12 +229,6 @@ namespace wbnd
     {
         auto sp = create_component_common(scene, entity);
         return {WK_TRANSFORM_COMP, reinterpret_cast<int64_t>(sp->transforms.GetComponent(entity.name))};
-    }
-
-    wi::scene::TransformComponent* tc_ptr(wo_handle const &h)
-    {
-        handle_check(h, WK_TRANSFORM_COMP);
-        return reinterpret_cast<wi::scene::TransformComponent *>(h.name);
     }
 
     void transform_clear(wo_handle const &trans)
@@ -916,6 +928,278 @@ namespace wbnd
     {
         handle_check(entity, WK_ENTITY);
         return {WK_ENTITY, scene_ptr(scene)->Entity_Duplicate(entity.name)};
+    }
+
+    wi::scene::ColliderComponent* coll_ptr(wo_handle const &collider)
+    {
+        handle_check(collider, WK_COLLIDER);
+        return reinterpret_cast<wi::scene::ColliderComponent *>(collider.name);
+    }
+
+    void set_collider_shape(wo_handle const &collider, int32_t v)
+    {
+        coll_ptr(collider)->shape = (wi::scene::ColliderComponent::Shape)v;
+    }
+
+    int32_t get_collider_shape(wo_handle const &collider)
+    {
+        return (int32_t)coll_ptr(collider)->shape;
+    }
+
+    void set_collider_radius(wo_handle const &collider, float v)
+    {
+        coll_ptr(collider)->radius = v;
+    }
+
+    float get_collider_radius(wo_handle const &collider)
+    {
+        return coll_ptr(collider)->radius;
+    }
+
+    void set_collider_offset(wo_handle const &collider, XMFLOAT3 const &v)
+    {
+        coll_ptr(collider)->offset = v;
+    }
+
+    XMFLOAT3 get_collider_offset(wo_handle const &collider)
+    {
+        return coll_ptr(collider)->offset;
+    }
+
+    void set_collider_tail(wo_handle const &collider, XMFLOAT3 const &v)
+    {
+        coll_ptr(collider)->tail = v;
+    }
+
+    XMFLOAT3 get_collider_tail(wo_handle const &collider)
+    {
+        return coll_ptr(collider)->tail;
+    }
+
+    void set_collider_is_gpu_enabled(wo_handle const &collider, bool v)
+    {
+        coll_ptr(collider)->SetGPUEnabled(v);
+    }
+
+    void set_collider_is_cpu_enabled(wo_handle const &collider, bool v)
+    {
+        coll_ptr(collider)->SetCPUEnabled(v);
+    }
+
+    wo_handle create_collider_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        return {WK_COLLIDER, reinterpret_cast<int64_t>(&scene_ptr(scene)->colliders.Create(entity.name))};
+    }
+
+    wo_handle get_collider_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        return {WK_COLLIDER, reinterpret_cast<int64_t>(scene_ptr(scene)->colliders.GetComponent(entity.name))};
+    }
+
+    int32_t entity_collider_count(wo_handle const &scene)
+    {
+        return (int32_t)scene_ptr(scene)->colliders.GetCount();
+    }
+
+    wo_handle entity_collider_get(wo_handle const &scene, int32_t n)
+    {
+        return {WK_ENTITY, scene_ptr(scene)->colliders.GetEntity(n)};
+    }
+
+    XMFLOAT4X4* mx_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_MATRIX);
+        return reinterpret_cast<XMFLOAT4X4 *>(h.name);
+    }
+
+    wo_handle create_matrix4x4()
+    {
+        return {WK_MATRIX, reinterpret_cast<int64_t>(new XMFLOAT4X4())};
+    }
+
+    void load_from_xmmatrix(XMFLOAT4X4 *dest, XMMATRIX &src)
+    {
+        XMStoreFloat4x4(dest, src); 
+    }
+
+    void delete_matrix(wo_handle const &m)
+    {
+        delete mx_ptr(m);
+    }
+
+    void assign_matrix(wo_handle const &lhs, wo_handle const &rhs)
+    {
+        auto lm = mx_ptr(lhs);
+        auto rm = mx_ptr(rhs);
+        *lm = *rm;
+    }
+
+    void assign_matrix_rows(wo_handle const &m, XMFLOAT4 const &r1,
+                            XMFLOAT4 const &r2, XMFLOAT4 const &r3, XMFLOAT4 const &r4)
+    {
+        auto mp = mx_ptr(m);
+        memcpy(mp->m[0], &r1, sizeof(XMFLOAT4));
+        memcpy(mp->m[1], &r2, sizeof(XMFLOAT4)); 
+        memcpy(mp->m[2], &r3, sizeof(XMFLOAT4)); 
+        memcpy(mp->m[3], &r4, sizeof(XMFLOAT4)); 
+    }
+
+    XMFLOAT4 return_matrix_row(wo_handle const &m, int32_t r)
+    {
+        auto mp = mx_ptr(m);
+        XMFLOAT4 rv;
+        rv.x = mp->m[r][0];
+        rv.y = mp->m[r][1]; 
+        rv.z = mp->m[r][2]; 
+        rv.w = mp->m[r][3]; 
+        return rv;
+    }
+
+    void identity_matrix(wo_handle const &m)
+    {
+        auto mat = XMMatrixIdentity();
+        load_from_xmmatrix(mx_ptr(m), mat);
+    }
+    void translation_matrix(wo_handle const &m, XMFLOAT3 const &v)
+    {
+        XMMATRIX mat = XMMatrixTranslationFromVector(XMLoadFloat3(&v));
+        load_from_xmmatrix(mx_ptr(m), mat);
+    }
+
+
+    void rotation_euler_matrix(wo_handle const &m, XMFLOAT3 const &angles)
+    {
+        XMMATRIX mat = XMMatrixRotationRollPitchYawFromVector(XMLoadFloat3(&angles));
+        load_from_xmmatrix(mx_ptr(m), mat);
+    }
+
+    void rotation_x_matrix(wo_handle const &m, float a)
+    {
+        auto mat = XMMatrixRotationX(a);
+        load_from_xmmatrix(mx_ptr(m), mat);
+    }
+
+    void rotation_y_matrix(wo_handle const &m, float a)
+    {
+        auto mat = XMMatrixRotationY(a);
+        load_from_xmmatrix(mx_ptr(m), mat);
+    }
+
+    void rotation_z_matrix(wo_handle const &m, float a)
+    {
+        auto mat = XMMatrixRotationZ(a);
+        load_from_xmmatrix(mx_ptr(m), mat);
+    }
+
+    void rotation_quat_matrix(wo_handle const &m, XMFLOAT4 const &quat)
+    {
+        auto mat = XMMatrixRotationQuaternion(XMLoadFloat4(&quat));
+        load_from_xmmatrix(mx_ptr(m), mat);
+    }
+
+    void scaling_matrix(wo_handle const &m, XMFLOAT4 const &scale)
+    {
+        auto mat = XMMatrixScalingFromVector(XMLoadFloat4(&scale));
+        load_from_xmmatrix(mx_ptr(m), mat);
+    }
+
+    void look_to_matrix(wo_handle const &m, XMFLOAT3 const &eyepos,
+                        XMFLOAT3 const &eyedir, XMFLOAT3 const &up)
+    {
+        auto mat = XMMatrixLookToLH(XMLoadFloat3(&eyepos), XMLoadFloat3(&eyedir),
+                                    XMLoadFloat3(&up)); 
+        load_from_xmmatrix(mx_ptr(m), mat); 
+    }
+
+    void look_at_matrix(wo_handle const &m, XMFLOAT3 const &eyepos, 
+                        XMFLOAT3 const &focuspos, XMFLOAT3 const &up)
+    {
+        auto mat = XMMatrixLookAtLH(XMLoadFloat3(&eyepos), XMLoadFloat3(&focuspos),
+                                    XMLoadFloat3(&up));
+        load_from_xmmatrix(mx_ptr(m), mat); 
+    }
+
+    void multiply_matrix(wo_handle const &lhs, wo_handle const &rhs, wo_handle const &result)
+    {
+        auto mat = XMMatrixMultiply(XMLoadFloat4x4(mx_ptr(lhs)),
+                                    XMLoadFloat4x4(mx_ptr(rhs)));
+
+        load_from_xmmatrix(mx_ptr(result), mat);
+    }
+
+    void add_matrix(wo_handle const &lhs, wo_handle const &rhs, wo_handle const &result)
+    {
+        auto mat = XMLoadFloat4x4(mx_ptr(lhs)) +  XMLoadFloat4x4(mx_ptr(rhs));
+        load_from_xmmatrix(mx_ptr(result), mat);
+    }
+
+    void transpose_matrix(wo_handle const &m, wo_handle const& result)
+    {
+        auto mat = XMMatrixTranspose(XMLoadFloat4x4(mx_ptr(m)));
+        load_from_xmmatrix(mx_ptr(result), mat);
+    }
+
+    void invert_matrix(wo_handle const &m, wo_handle const &result)
+    {
+        XMVECTOR det;
+        auto mat = XMMatrixInverse(&det, XMLoadFloat4x4(mx_ptr(m)));
+        load_from_xmmatrix(mx_ptr(m), mat);
+    }
+
+    wo_handle get_transform_local_matrix(wo_handle const &tcomp)
+    {
+        auto mat = tc_ptr(tcomp)->GetLocalMatrix();
+        auto rv = create_matrix4x4();
+        load_from_xmmatrix(mx_ptr(rv), mat);
+        return rv;
+    }
+
+    wo_handle get_transform_world_matrix(wo_handle const &tcomp)
+    {
+        auto rv = create_matrix4x4();
+        *mx_ptr(rv) = tc_ptr(tcomp)->world;
+        return rv;
+    }
+
+    void transform_transform_matrix(wo_handle const &tcomp, wo_handle const &matrix)
+    {
+        tc_ptr(tcomp)->MatrixTransform(*mx_ptr(matrix));
+    }
+
+    void transform_camera_set_matrix(wo_handle const &camera, wo_handle const &matrix)
+    {
+        XMMATRIX mat = XMLoadFloat4x4(mx_ptr(matrix));
+        cam_ptr(camera)->TransformCamera(mat);
+    }
+
+    void set_camera_eye(wo_handle const &camera, XMFLOAT3 const &v)
+    {
+        cam_ptr(camera)->Eye = v;
+    }
+
+    XMFLOAT3 get_camera_eye(wo_handle const &camera)
+    {
+        return cam_ptr(camera)->Eye;
+    }
+
+    void set_camera_at(wo_handle const &camera, XMFLOAT3 const &v)
+    {
+        cam_ptr(camera)->At = v;
+    }
+
+    XMFLOAT3 get_camera_at(wo_handle const &camera)
+    {
+        return cam_ptr(camera)->At;
+    }
+
+    void set_camera_up(wo_handle const &camera, XMFLOAT3 const &v)
+    {
+        cam_ptr(camera)->Up = v;
+    }
+
+    XMFLOAT3 get_camera_up(wo_handle const &camera)
+    {
+        return cam_ptr(camera)->Up;
     }
 }
 

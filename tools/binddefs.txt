@@ -82,6 +82,12 @@ def create_camera_component(scene: H, entity: H) -> H
 "Creates a transform component on an entity"
 def create_transform_component(scene: H, entity: H) -> H
 
+"Creates a transform component attached to no scene or entity.  Seems to be used primarly for calculations from scripts"
+def create_transform() -> H
+
+"Deletes a transform created by create_transform()"
+def delete_transform(trans: H)
+
 "Returns the application fixed frame update rate"
 def get_fixed_update_rate() -> float
 
@@ -115,6 +121,14 @@ def transform_scale(tcomp: H, scale: float3)
 "Set this transform to be the linear interpolation of transforms 'a' and 'b'"
 def transform_lerp(tcomp: H, a: H, b: H, t: float)
 
+"gets the local matrix for the transform"
+def get_transform_local_matrix(tcomp: H) -> H 
+
+"gets the world matrix for the transform"
+def get_transform_world_matrix(tcomp: H) -> H
+
+"Trasforms the transform by the given matrix"
+def transform_transform_matrix(tcomp: H, matrix: H)
 
 "Gets camera component fov"
 def camera_fov(tcomp: H) -> float
@@ -149,6 +163,9 @@ def camera_set_focal_length(tcomp: H, l: float)
 "Updates the camera transforms"
 def camera_update(tcomp: H)
 
+"Sets the camera's transform from the matris"
+def transform_camera_set_matrix(camera: H, matrix: H)
+
 "Gets the camera component of an entity"
 def get_camera_component(scene: H, ent: H) -> H
 
@@ -157,6 +174,13 @@ def get_camera_count(scene: H) -> int
 
 "returns entity holding the nth camera in the scene"
 def get_camera_entity(scene: H, n: int) -> H
+
+"wi::scene::CameraComponent"
+struct camera!
+	eye: float3
+	at: float3
+	up: float3
+end
 
 
 
@@ -296,4 +320,91 @@ def renderpath_font_order(path: H, sprite_font: H) -> int
 
 "Sets the order for the given font"
 def renderpath_set_font_order(path: H, sprite_font: H, order: int)
+
+
+
+"wi::scene::ColliderComponent"
+struct collider!
+	shape: int
+	radius: float
+	offset: float3
+	tail: float3
+end
+
+"Set collider as gpu enabled"
+def set_collider_is_gpu_enabled(collider: H, v: bool)
+
+"Set collider as cpu enabled"
+def set_collider_is_cpu_enabled(collider: H, v: bool)
+
+
+"Creates a collider component for the given entity and returns a handle"
+def create_collider_component(scene: H, entity: H) -> H
+
+"Gets the collider component for the given entity."
+def get_collider_component(scene: H, entity: H) -> H
+
+"Returns the number of entities that have a collider component"
+def entity_collider_count(scene: H) -> int
+
+"Returns the nth entity that has a collider component"
+def entity_collider_get(scene: H, n: int) -> H
+
+
+"Creates a matrix"
+def create_matrix4x4() -> H
+
+"Deletes a matrix"
+def delete_matrix(m: H)
+
+"Initializes the matrix as an identity matrix"
+def identity_matrix(m: H)
+
+"Assigns matrix lhs the value from rhs"
+def assign_matrix(lhs: H, rhs: H)
+
+"Initializes a matrix from rows"
+def assign_matrix_rows(m: H, r1: float4, r2: float4, r3: float4, r4: float4)
+
+"Returns a row from a matrix"
+def return_matrix_row(m: H, r: int) -> float4
+
+"Set up as a translation matrix"
+def translation_matrix(m: H, v: float3)
+
+"Set up as a rotation matrix"
+def rotation_euler_matrix(m: H, angles: float3)
+
+"Set up as a rotation around x matrix"
+def rotation_x_matrix(m: H, a: float)
+
+"Set up as a rotation around y matrix"
+def rotation_y_matrix(m: H, a: float)
+
+"Set up as a rotation around z matrix"
+def rotation_z_matrix(m: H, a: float)
+
+"Set matrix as quaternion rotation"
+def rotation_quat_matrix(m: H, quat: float4)
+
+"Set up matrix as a scaling matrix"
+def scaling_matrix(m: H, scale: float4)
+
+"Set up matrix to look to a pos"
+def look_to_matrix(m: H, eyepos: float3, eyedir: float3, up: float3)
+
+"Set up matrix to look at a pos"
+def look_at_matrix(m: H, eyepos: float3, focuspos: float3, up: float3)
+
+"Multiply lhs by rhs and put the reuslt into result"
+def multiply_matrix(lhs: H, rhs: H, result: H)
+
+"Add lhs and rhs, and put the result in result"
+def add_matrix(lhs: H, rhs: H, result: H)
+
+"Transpose a matrix"
+def transpose_matrix(m: H, result: H)
+
+"Inverts 'm' and puts the result in 'result'"
+def invert_matrix(m: H, result: H)
 

@@ -4,6 +4,7 @@
 //          with the built in Lobster engine.
 import color
 
+import core.matrix
 import core.quat
 
 // wi::input::BUTTON enum 
@@ -85,6 +86,11 @@ def input_hold(button: int, frames = 30, continuous = false, playerindex = 0):
 def input_get_analog(axis: int, playerindex = 0):
    return wi_input_get_analog(axis, playerindex)
 
+// Returns position, scroll delta and pressure of mouse pointer
+def input_get_pointer() -> float2, float, float:
+   let pk = wi_input_get_pointer()
+   return float2{pk.x, pk.y}, pk.z, pk.w
+
 // Mirror of wi::backlog::LogLevel
 enum backlog_level:
    lev_none, lev_default, lev_warning, lev_error
@@ -104,7 +110,7 @@ def info(msg: string):
 // handles.
 enum wokind:
    wk_scene, wk_entity, wk_name_comp, wk_camera_comp, wk_transform_comp, wk_renderpath3,
-   wk_timer, wk_sprite_font, wk_font_params, wk_humanoid, wk_layer
+   wk_timer, wk_sprite_font, wk_font_params, wk_humanoid, wk_layer, wk_collider
 
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
@@ -171,6 +177,26 @@ class wi_camera_component: wi_component
    def update():
       wi_camera_update(handle)
 
+   def eye():
+      return wi_get_camera_eye(handle)
+
+   def set_eye(v):
+      wi_set_camera_eye(handle, v)
+
+   def at():
+      return wi_get_camera_at(handle)
+
+   def set_at(v):
+      wi_set_camera_at(handle, v)
+
+   def up():
+      return wi_get_camera_up(handle)
+
+   def set_up(v):
+      wi_set_camera_up(handle, v)
+
+
+
 
 constructor wi_camera_component(h: int2):
    assert h[0] == wk_camera_comp
@@ -192,7 +218,7 @@ class wi_transform_component: wi_component
    def rotation() -> float4:
       return wi_transform_rotation(handle)
 
-   def update_transform():
+   def update():
       wi_transform_update_transform(handle)
 
    def rotate_roll_pitch_yaw(angles: float3):
@@ -205,9 +231,19 @@ class wi_transform_component: wi_component
       wi_transform_lerp(handle, a.handle, b.handle, t)
 
 
+
 constructor wi_transform_component(h: int2):
    assert h[0] == wk_transform_comp
    return wi_transform_component{h}
+
+// Transform not attached to scene or entity, used for calculations.
+class wi_free_transform: wi_transform_component
+   def delete():
+      wi_delete_transform(handle)
+
+// Creates a unattached transform to be used for calculations.
+def create_transform():
+   return wi_free_transform{wi_create_transform()}
 
 struct wi_entity:
    handle: int2
@@ -350,10 +386,61 @@ constructor wi_humanoid_component(h: int2):
    return wi_humanoid_component{h}
    
 
+enum wi_collider_shape:
+   cs_spehere, cs_capsule, cs_plane
+
+class wi_collider_component: wi_component
+   def shape():
+      return wi_get_collider_shape(handle)
+
+   def set_shape(s: int):
+      wi_set_collider_shape(handle, s)
+
+   def radius():
+      return wi_get_collider_radius(handle)
+
+   def set_radius(v: float):
+      wi_set_collider_radius(handle, v)
+
+   def offset():
+      return wi_get_collider_offset(handle)
+
+   def set_offset(v: float3):
+      wi_set_collider_offset(handle, v)
+
+   def tail():
+      return wi_get_collider_tail(handle)
+
+   def set_tail(v: float3):
+      wi_set_collider_tail(handle, v)
+
+   def set_gpu_enabled(v: bool):
+      wi_set_collider_is_gpu_enabled(handle, v)
+
+   def set_cpu_enabled(v: bool):
+      wi_set_collider_is_cpu_enabled(handle, v)
+
+
+constructor wi_collider_component(h: int2):
+   assert h[0] == wk_collider
+   return wi_collider_component{h}
+
 // Wrapper for scenes.  This can be saved long term, 
 // it is only invalidated when the scene is deleted.
 class wi_scene:
    handle: int2   
+
+   def create_collider_component(ent: wi_entity):
+      return wi_collider_component(wi_create_collider_component(handle, ent.handle))
+
+   def get_collider_component(ent: wi_entity):
+      return wi_collider_component(wi_get_collider_component(handle, ent.handle))
+
+   def get_collider_count():
+      return wi_entity_collider_count(handle)
+
+   def get_collider_entity(n: int):
+      return wi_entity{wi_entity_collider_get(handle, n)}
 
    def is_descendant_entity(entity: wi_entity, ancestor: wi_entity):
       return wi_is_descendant_entity(handle, entity.handle, ancestor.handle)
@@ -446,6 +533,15 @@ def with_temp_scene(body):
    let scene = new_wi_scene()
    body(scene)
    scene.delete()
+
+def with_temp_object(obj, body):
+   body(obj)
+   obj.delete()
+
+def with_temp_object(obj, obj2, body):
+   body(obj, obj2)
+   obj2.delete()
+   obj.delete()
 
 // Delta time for application fixed update.
 def get_fixed_dt():
@@ -650,3 +746,75 @@ constructor wi_renderpath3d():
    assert(h[0] == wk_renderpath3)
    return wi_renderpath3d{h}
 
+struct wi_matrix:
+   handle: int2
+
+   def delete():
+      wi_delete_matrix(handle)
+
+   def assign(rhs: wi_matrix):
+      wi_assign_matrix(handle, rhs.handle)
+
+   def assign_rows(r1 = float4_x, r2 = float4_y, r3 = float4_z, r4 = float4_w):
+      wi_assign_rows(handle, r1, r2, r3, r4)
+
+   def row(r: int):
+      return wi_return_matrix_row(handle, r)
+
+   def identity():
+      wi_identity_matrix(handle)
+
+   def translation(v: float3):
+      wi_translation_matrix(handle, v)
+
+   def rotation_euler(angles: float3):
+      wi_rotation_euler_matrix(handle, angles)
+
+   def rotation_x(a: float):
+      wi_rotation_x_matrix(handle, a)
+
+   def rotation_y(a: float):
+      wi_rotation_y_matrix(handle, a)
+   
+   def rotation_z(a: float):
+      wi_rotation_z_matrix(handle, a)
+
+   def rotation_quat(q: quat):
+      wi_rotation_quat_matrix(handle, q.as_float4())
+
+   def scaling(scale: float3):
+      wi_scaling_matrix(handle, scale)
+
+   def look_to(eyepos: float3, dir: float3, up = float3_y):
+      wi_look_to_matrix(handle, eyepos, dir, up)
+
+   def look_at(eyepos: float3, focuspos: float3, up = float3_y):
+      wi_look_at_matrix(handle, eyepos, focuspos, up)
+
+   def multiply(rhs: wi_matrix, result: wi_matrix):
+      wi_multiply_matrix(handle, rhs.handle, result.handle)
+
+   def add(rhs: wi_matrix, result: wi_matrix):
+      wi_add_matrix(handle, rhs.handle, result.handle)
+
+   def transposed(result: wi_matrix):
+      wi_transpose_matrix(handle, result.handle)
+
+   def inverted(result: wi_matrix):
+      wi_invert_matrix(handle, result.handle)
+
+// Creates a new uninitialized matrix.
+def wi_matrix():
+   return wi_matrix{wi_create_matrix4x4()}
+
+def local_matrix(me:: wi_transform_component) -> wi_matrix:
+   return wi_matrix{wi_get_transform_local_matrix(handle)}
+
+def world_matrix(me:: wi_transform_component) -> wi_matrix:
+   return wi_matrix{wi_get_transform_world_matrix(handle)}
+
+def transform_by_matrix(me:: wi_transform_component, mat: wi_matrix):
+   wi_transform_transform_matrix(handle, mat.handle)
+
+def set_transform_from(me:: wi_camera_component, mat: wi_matrix):
+   wi_transform_camera_set_matrix(handle, mat.handle)

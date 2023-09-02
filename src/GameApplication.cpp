@@ -7,7 +7,15 @@
 //  RenderPath::FixedUpdate is also called from here for the active component
 void GameApplication::FixedUpdate()
 {
-    wi::Application::FixedUpdate();
     lobster_fixed_update();
+    wi::Application::FixedUpdate();
 }
 
+
+// This is where application-wide updates get executed once per frame.
+//  RenderPath::Update is also called from here for the active component
+void GameApplication::Update(float dt)
+{
+    lobster_variable_update(dt);
+    wi::Application::Update(dt);
+}

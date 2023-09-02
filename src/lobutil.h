@@ -10,7 +10,8 @@ struct lobster_options
 // Tags for wicked objects we may keep references to.
 enum WOKIND {
     WK_SCENE, WK_ENTITY, WK_NAME_COMP, WK_CAMERA_COMP, WK_TRANSFORM_COMP, WK_RENDERPATH3,
-    WK_TIMER, WK_SPRITE_FONT, WK_FONT_PARAMS, WK_HUMANOID, WK_LAYER
+    WK_TIMER, WK_SPRITE_FONT, WK_FONT_PARAMS, WK_HUMANOID, WK_LAYER, WK_COLLIDER, 
+    WK_MATRIX
 
 };
 
@@ -37,5 +38,7 @@ void dump_lobster_stack();
 
 // Called at Application::FixedUpdate
 void lobster_fixed_update();
+
+void lobster_variable_update(float dt);
 
 #endif

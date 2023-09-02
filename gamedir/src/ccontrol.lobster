@@ -3,6 +3,7 @@
 // example is a good way to guide areas to bind next.
 import std
 import wisupport
+import core.matrix
 
 let scene = global_scene()
 enum animation_names:
@@ -20,7 +21,7 @@ class character:
    model = INVALID_ENTITY
    target_rot_horizontal = 0.0
    target_rot_vertical = 0.0
-   target_height = 0.0
+   target_height = 1.0
    anims = [] :: wi_entity
    anim_amount = 1.0
    neck = INVALID_ENTITY
@@ -56,6 +57,13 @@ class character:
    state = ""
    state_prev = ""
    humanoid = INVALID_ENTITY
+   collider = INVALID_ENTITY
+
+def first_where(count: int, test):
+   for(count) i:
+      if test(i):
+         return i
+   return -1
 
 constructor character(mname: string, start_pos: float3, face: float3, controllable: bool):
    let rv = character{start_position: start_pos, face: face, controllable: controllable}
@@ -67,8 +75,12 @@ constructor character(mname: string, start_pos: float3, face: float3, controllab
       rv.state = "idle"
       rv.state_prev = rv.state
 
-      for(mscene.get_humanoid_count()) i:
-         let entity = mscene.get_humanoid_entity(i)
+      let humix = first_where(mscene.get_humanoid_count()): 
+         let ent = mscene.get_humanoid_entity(_)
+         mscene.is_descendant_entity(ent, rv.model)
+
+      if humix >= 0:
+         let entity = mscene.get_humanoid_entity(humix)
          guard mscene.is_descendant_entity(entity, rv.model)
          rv.humanoid = entity
          let humanoid = mscene.get_humanoid_component(entity)
@@ -83,13 +95,100 @@ constructor character(mname: string, start_pos: float3, face: float3, controllab
          rv.left_toes = humanoid.bone(hb_LeftToes)
          rv.right_toes = humanoid.bone(hb_RightToes)
 
-         info("ARF {rv}")
-
-         //NEXT collider component
-
+         if mscene.get_collider_component(entity).is_empty():
+            let collider = mscene.create_collider_component(entity)
+            collider.set_cpu_enabled(false)
+            collider.set_gpu_enabled(true)
+            collider.set_shape(cs_capsule)
+            collider.set_radius(0.3)
+            collider.set_offset(float3_y*collider.radius())
+            collider.set_tail(float3_y*1.4)
+            let head_transform = mscene.get_transform_component(rv.head)
+            if head_transform.is_valid():
+               collider.set_tail(head_transform.position())
+         rv.collider = entity
+      else:
+         warning("character: No humanoid component found for {mname}")
+         
+      //TODO line 397 in character controller
+      let necktr = mscene.get_transform_component(rv.neck)
+      rv.target_height = necktr.position().y
 
       scene.merge(mscene)
+
+   info("ARF {rv}")
    return rv
+
+class third_person_camera:
+   camera = INVALID_ENTITY
+   character: character
+   side_offset = 0.2
+   rest_distance = 1.0
+   rest_distance_new = 1.0
+   min_distance = 0.5
+   zoom_speed = 0.3
+   target_rot_horizontal = 0.0
+   target_rot_vertical = 0.0
+   target_height = 1.0
+
+   def update():
+      // Mouse scroll or gamepad trigggers will move the camera distance.
+      let mpos, iscroll, _pressure = input_get_pointer()
+      let ltrigger = input_get_analog(GAMEPAD_ANALOG_TRIGGER_R)
+      let rtrigger = input_get_analog(GAMEPAD_ANALOG_TRIGGER_L)
+      var scroll = iscroll + rtrigger.x
+      print("scronk p={mpos} {scroll}")
+      scroll -= ltrigger.x
+      scroll *= zoom_speed
+      rest_distance_new = max(rest_distance_new - scroll, min_distance)
+      rest_distance = lerp(rest_distance, rest_distance_new, 0.1)
+
+      // This will allow some smoothing for certain movements of camera target.
+      let character_transform = scene.get_transform_component(character.model)
+      let character_position = character_transform.position()
+
+      target_rot_horizontal = lerp(target_rot_horizontal, character.target_rot_horizontal, 0.1)
+      target_rot_vertical = lerp(target_rot_vertical, character.target_rot_vertical, 0.1)
+      target_height = lerp(target_height, character_position.y + character.target_height, 0.1)
+
+      let arm = rotation_4x4(float3_y, degrees(target_rot_horizontal)) * float4{0.0, 0.0, rest_distance, 1.0}
+      let cam_pos = character_position + float3{arm.x, target_height, arm.z}
+      let ccam = scene.get_camera_component(camera)
+
+      ccam.set_eye(cam_pos)
+      ccam.set_at(normalize(character_position + float3_y*character.target_height - cam_pos))
+      ccam.set_up(float3_y)
+      ccam.update()
+
+      //
+      //let camera_transform = scene.get_transform_component(camera)
+      //with_temp_object(create_transform(), wi_matrix()) target_transform, mat:
+      //   info("BARFAGE {character_position}")
+      //   target_transform.translate(float3{rnd_float() * 5.5 + character_position.x, target_height, character_position.z})
+      //   target_transform.rotate_roll_pitch_yaw(float3{target_rot_vertical, target_rot_horizontal, 0.0})
+      //   target_transform.update()
+      //
+      //   with_temp_object(target_transform.world_matrix()) tworld:
+      //      mat.translation(float3{side_offset, 0.0, -rest_distance})
+      //      mat.multiply(tworld, mat)
+      //      //camera_transform.clear()
+      //      //camera_transform.transform_by_matrix(mat)
+      //      //camera_transform.update()
+      //      let cc = scene.get_camera_component(camera)
+      //      cc.set_transform_from(mat)
+      //      cc.update()
+            
+
+
+constructor third_person_camera(sc: wi_scene, player: character):
+   let cam = sc.create_entity()
+   let rpath = wi_renderpath3d()
+   let cc = sc.create_camera_component(cam)
+   rpath.set_camera(cc)
+
+   return third_person_camera{
+      camera: cam,
+      character: player}
 
 
 def load_animations(fname):
@@ -104,10 +203,12 @@ let script_dir = "Content/scripts/character_controller"
 global_scene().load_model("{script_dir}/assets/level.wiscene", false)
 load_animations("{script_dir}/assets/animations.wiscene")
 let player = character("{script_dir}/assets/character.wiscene", float3_y*0.5, float3_z, true)
+let camera = third_person_camera(global_scene(), player)
 
-
-wi_set_app_fixed_frame_fn():
-   pass()
+wi_set_app_variable_frame_fn():
+   let dt = delta_time()
+   print("beans {dt}")
+   camera.update()
 
 
 wi_start_game()

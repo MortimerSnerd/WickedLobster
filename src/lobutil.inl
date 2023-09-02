@@ -216,6 +216,19 @@ auto scene = pop_wo_handle(sp);
 push_wo_handle(sp, wbnd::create_transform_component(scene, entity));
 });
 
+anfr("wi_create_transform", "", "", "I}:2",
+"Creates a transform component attached to no scene or entity.  Seems to be used primarly for calculations from scripts",
+   [](StackPtr& sp, VM& vm) {
+push_wo_handle(sp, wbnd::create_transform());
+});
+
+anfr("wi_delete_transform", "trans", "I}:2", "",
+"Deletes a transform created by create_transform()",
+   [](StackPtr& sp, VM& vm) {
+auto trans = pop_wo_handle(sp);
+wbnd::delete_transform(trans);
+});
+
 anfr("wi_get_fixed_update_rate", "", "", "F",
 "Returns the application fixed frame update rate",
    [](StackPtr& sp, VM& vm) {
@@ -304,6 +317,28 @@ auto tcomp = pop_wo_handle(sp);
 wbnd::transform_lerp(tcomp, a, b, t);
 });
 
+anfr("wi_get_transform_local_matrix", "tcomp", "I}:2", "I}:2",
+"gets the local matrix for the transform",
+   [](StackPtr& sp, VM& vm) {
+auto tcomp = pop_wo_handle(sp);
+push_wo_handle(sp, wbnd::get_transform_local_matrix(tcomp));
+});
+
+anfr("wi_get_transform_world_matrix", "tcomp", "I}:2", "I}:2",
+"gets the world matrix for the transform",
+   [](StackPtr& sp, VM& vm) {
+auto tcomp = pop_wo_handle(sp);
+push_wo_handle(sp, wbnd::get_transform_world_matrix(tcomp));
+});
+
+anfr("wi_transform_transform_matrix", "tcomp,matrix", "I}:2I}:2", "",
+"Trasforms the transform by the given matrix",
+   [](StackPtr& sp, VM& vm) {
+auto matrix = pop_wo_handle(sp);
+auto tcomp = pop_wo_handle(sp);
+wbnd::transform_transform_matrix(tcomp, matrix);
+});
+
 anfr("wi_camera_fov", "tcomp", "I}:2", "F",
 "Gets camera component fov",
    [](StackPtr& sp, VM& vm) {
@@ -387,6 +422,14 @@ auto tcomp = pop_wo_handle(sp);
 wbnd::camera_update(tcomp);
 });
 
+anfr("wi_transform_camera_set_matrix", "camera,matrix", "I}:2I}:2", "",
+"Sets the camera's transform from the matris",
+   [](StackPtr& sp, VM& vm) {
+auto matrix = pop_wo_handle(sp);
+auto camera = pop_wo_handle(sp);
+wbnd::transform_camera_set_matrix(camera, matrix);
+});
+
 anfr("wi_get_camera_component", "scene,ent", "I}:2I}:2", "I}:2",
 "Gets the camera component of an entity",
    [](StackPtr& sp, VM& vm) {
@@ -408,6 +451,54 @@ anfr("wi_get_camera_entity", "scene,n", "I}:2I", "I}:2",
 auto n = (int32_t)Pop(sp).ival();
 auto scene = pop_wo_handle(sp);
 push_wo_handle(sp, wbnd::get_camera_entity(scene, n));
+});
+
+anfr("wi_set_camera_eye", "camera,v", "I}:2F}:3", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT3 v;
+pop_xmfloat3(sp,v);
+auto camera = pop_wo_handle(sp);
+wbnd::set_camera_eye(camera, v);
+});
+
+anfr("wi_get_camera_eye", "camera", "I}:2", "F}:3",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto camera = pop_wo_handle(sp);
+push_xmfloat3(sp, wbnd::get_camera_eye(camera));
+});
+
+anfr("wi_set_camera_at", "camera,v", "I}:2F}:3", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT3 v;
+pop_xmfloat3(sp,v);
+auto camera = pop_wo_handle(sp);
+wbnd::set_camera_at(camera, v);
+});
+
+anfr("wi_get_camera_at", "camera", "I}:2", "F}:3",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto camera = pop_wo_handle(sp);
+push_xmfloat3(sp, wbnd::get_camera_at(camera));
+});
+
+anfr("wi_set_camera_up", "camera,v", "I}:2F}:3", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT3 v;
+pop_xmfloat3(sp,v);
+auto camera = pop_wo_handle(sp);
+wbnd::set_camera_up(camera, v);
+});
+
+anfr("wi_get_camera_up", "camera", "I}:2", "F}:3",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto camera = pop_wo_handle(sp);
+push_xmfloat3(sp, wbnd::get_camera_up(camera));
 });
 
 anfr("wi_input_down", "button,playerindex", "II", "B",
@@ -1079,5 +1170,285 @@ auto order = (int32_t)Pop(sp).ival();
 auto sprite_font = pop_wo_handle(sp);
 auto path = pop_wo_handle(sp);
 wbnd::renderpath_set_font_order(path, sprite_font, order);
+});
+
+anfr("wi_set_collider_shape", "collider,v", "I}:2I", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = (int32_t)Pop(sp).ival();
+auto collider = pop_wo_handle(sp);
+wbnd::set_collider_shape(collider, v);
+});
+
+anfr("wi_get_collider_shape", "collider", "I}:2", "I",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto collider = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_collider_shape(collider)));
+});
+
+anfr("wi_set_collider_radius", "collider,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto collider = pop_wo_handle(sp);
+wbnd::set_collider_radius(collider, v);
+});
+
+anfr("wi_get_collider_radius", "collider", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto collider = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_collider_radius(collider)));
+});
+
+anfr("wi_set_collider_offset", "collider,v", "I}:2F}:3", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT3 v;
+pop_xmfloat3(sp,v);
+auto collider = pop_wo_handle(sp);
+wbnd::set_collider_offset(collider, v);
+});
+
+anfr("wi_get_collider_offset", "collider", "I}:2", "F}:3",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto collider = pop_wo_handle(sp);
+push_xmfloat3(sp, wbnd::get_collider_offset(collider));
+});
+
+anfr("wi_set_collider_tail", "collider,v", "I}:2F}:3", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT3 v;
+pop_xmfloat3(sp,v);
+auto collider = pop_wo_handle(sp);
+wbnd::set_collider_tail(collider, v);
+});
+
+anfr("wi_get_collider_tail", "collider", "I}:2", "F}:3",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto collider = pop_wo_handle(sp);
+push_xmfloat3(sp, wbnd::get_collider_tail(collider));
+});
+
+anfr("wi_set_collider_is_gpu_enabled", "collider,v", "I}:2B", "",
+"Set collider as gpu enabled",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto collider = pop_wo_handle(sp);
+wbnd::set_collider_is_gpu_enabled(collider, v);
+});
+
+anfr("wi_set_collider_is_cpu_enabled", "collider,v", "I}:2B", "",
+"Set collider as cpu enabled",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto collider = pop_wo_handle(sp);
+wbnd::set_collider_is_cpu_enabled(collider, v);
+});
+
+anfr("wi_create_collider_component", "scene,entity", "I}:2I}:2", "I}:2",
+"Creates a collider component for the given entity and returns a handle",
+   [](StackPtr& sp, VM& vm) {
+auto entity = pop_wo_handle(sp);
+auto scene = pop_wo_handle(sp);
+push_wo_handle(sp, wbnd::create_collider_component(scene, entity));
+});
+
+anfr("wi_get_collider_component", "scene,entity", "I}:2I}:2", "I}:2",
+"Gets the collider component for the given entity.",
+   [](StackPtr& sp, VM& vm) {
+auto entity = pop_wo_handle(sp);
+auto scene = pop_wo_handle(sp);
+push_wo_handle(sp, wbnd::get_collider_component(scene, entity));
+});
+
+anfr("wi_entity_collider_count", "scene", "I}:2", "I",
+"Returns the number of entities that have a collider component",
+   [](StackPtr& sp, VM& vm) {
+auto scene = pop_wo_handle(sp);
+Push(sp, Value(wbnd::entity_collider_count(scene)));
+});
+
+anfr("wi_entity_collider_get", "scene,n", "I}:2I", "I}:2",
+"Returns the nth entity that has a collider component",
+   [](StackPtr& sp, VM& vm) {
+auto n = (int32_t)Pop(sp).ival();
+auto scene = pop_wo_handle(sp);
+push_wo_handle(sp, wbnd::entity_collider_get(scene, n));
+});
+
+anfr("wi_create_matrix4x4", "", "", "I}:2",
+"Creates a matrix",
+   [](StackPtr& sp, VM& vm) {
+push_wo_handle(sp, wbnd::create_matrix4x4());
+});
+
+anfr("wi_delete_matrix", "m", "I}:2", "",
+"Deletes a matrix",
+   [](StackPtr& sp, VM& vm) {
+auto m = pop_wo_handle(sp);
+wbnd::delete_matrix(m);
+});
+
+anfr("wi_identity_matrix", "m", "I}:2", "",
+"Initializes the matrix as an identity matrix",
+   [](StackPtr& sp, VM& vm) {
+auto m = pop_wo_handle(sp);
+wbnd::identity_matrix(m);
+});
+
+anfr("wi_assign_matrix", "lhs,rhs", "I}:2I}:2", "",
+"Assigns matrix lhs the value from rhs",
+   [](StackPtr& sp, VM& vm) {
+auto rhs = pop_wo_handle(sp);
+auto lhs = pop_wo_handle(sp);
+wbnd::assign_matrix(lhs, rhs);
+});
+
+anfr("wi_assign_matrix_rows", "m,r1,r2,r3,r4", "I}:2F}:4F}:4F}:4F}:4", "",
+"Initializes a matrix from rows",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT4 r4;
+pop_xmfloat4(sp,r4);
+XMFLOAT4 r3;
+pop_xmfloat4(sp,r3);
+XMFLOAT4 r2;
+pop_xmfloat4(sp,r2);
+XMFLOAT4 r1;
+pop_xmfloat4(sp,r1);
+auto m = pop_wo_handle(sp);
+wbnd::assign_matrix_rows(m, r1, r2, r3, r4);
+});
+
+anfr("wi_return_matrix_row", "m,r", "I}:2I", "F}:4",
+"Returns a row from a matrix",
+   [](StackPtr& sp, VM& vm) {
+auto r = (int32_t)Pop(sp).ival();
+auto m = pop_wo_handle(sp);
+push_xmfloat4(sp, wbnd::return_matrix_row(m, r));
+});
+
+anfr("wi_translation_matrix", "m,v", "I}:2F}:3", "",
+"Set up as a translation matrix",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT3 v;
+pop_xmfloat3(sp,v);
+auto m = pop_wo_handle(sp);
+wbnd::translation_matrix(m, v);
+});
+
+anfr("wi_rotation_euler_matrix", "m,angles", "I}:2F}:3", "",
+"Set up as a rotation matrix",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT3 angles;
+pop_xmfloat3(sp,angles);
+auto m = pop_wo_handle(sp);
+wbnd::rotation_euler_matrix(m, angles);
+});
+
+anfr("wi_rotation_x_matrix", "m,a", "I}:2F", "",
+"Set up as a rotation around x matrix",
+   [](StackPtr& sp, VM& vm) {
+auto a = Pop(sp).fltval();
+auto m = pop_wo_handle(sp);
+wbnd::rotation_x_matrix(m, a);
+});
+
+anfr("wi_rotation_y_matrix", "m,a", "I}:2F", "",
+"Set up as a rotation around y matrix",
+   [](StackPtr& sp, VM& vm) {
+auto a = Pop(sp).fltval();
+auto m = pop_wo_handle(sp);
+wbnd::rotation_y_matrix(m, a);
+});
+
+anfr("wi_rotation_z_matrix", "m,a", "I}:2F", "",
+"Set up as a rotation around z matrix",
+   [](StackPtr& sp, VM& vm) {
+auto a = Pop(sp).fltval();
+auto m = pop_wo_handle(sp);
+wbnd::rotation_z_matrix(m, a);
+});
+
+anfr("wi_rotation_quat_matrix", "m,quat", "I}:2F}:4", "",
+"Set matrix as quaternion rotation",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT4 quat;
+pop_xmfloat4(sp,quat);
+auto m = pop_wo_handle(sp);
+wbnd::rotation_quat_matrix(m, quat);
+});
+
+anfr("wi_scaling_matrix", "m,scale", "I}:2F}:4", "",
+"Set up matrix as a scaling matrix",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT4 scale;
+pop_xmfloat4(sp,scale);
+auto m = pop_wo_handle(sp);
+wbnd::scaling_matrix(m, scale);
+});
+
+anfr("wi_look_to_matrix", "m,eyepos,eyedir,up", "I}:2F}:3F}:3F}:3", "",
+"Set up matrix to look to a pos",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT3 up;
+pop_xmfloat3(sp,up);
+XMFLOAT3 eyedir;
+pop_xmfloat3(sp,eyedir);
+XMFLOAT3 eyepos;
+pop_xmfloat3(sp,eyepos);
+auto m = pop_wo_handle(sp);
+wbnd::look_to_matrix(m, eyepos, eyedir, up);
+});
+
+anfr("wi_look_at_matrix", "m,eyepos,focuspos,up", "I}:2F}:3F}:3F}:3", "",
+"Set up matrix to look at a pos",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT3 up;
+pop_xmfloat3(sp,up);
+XMFLOAT3 focuspos;
+pop_xmfloat3(sp,focuspos);
+XMFLOAT3 eyepos;
+pop_xmfloat3(sp,eyepos);
+auto m = pop_wo_handle(sp);
+wbnd::look_at_matrix(m, eyepos, focuspos, up);
+});
+
+anfr("wi_multiply_matrix", "lhs,rhs,result", "I}:2I}:2I}:2", "",
+"Multiply lhs by rhs and put the reuslt into result",
+   [](StackPtr& sp, VM& vm) {
+auto result = pop_wo_handle(sp);
+auto rhs = pop_wo_handle(sp);
+auto lhs = pop_wo_handle(sp);
+wbnd::multiply_matrix(lhs, rhs, result);
+});
+
+anfr("wi_add_matrix", "lhs,rhs,result", "I}:2I}:2I}:2", "",
+"Add lhs and rhs, and put the result in result",
+   [](StackPtr& sp, VM& vm) {
+auto result = pop_wo_handle(sp);
+auto rhs = pop_wo_handle(sp);
+auto lhs = pop_wo_handle(sp);
+wbnd::add_matrix(lhs, rhs, result);
+});
+
+anfr("wi_transpose_matrix", "m,result", "I}:2I}:2", "",
+"Transpose a matrix",
+   [](StackPtr& sp, VM& vm) {
+auto result = pop_wo_handle(sp);
+auto m = pop_wo_handle(sp);
+wbnd::transpose_matrix(m, result);
+});
+
+anfr("wi_invert_matrix", "m,result", "I}:2I}:2", "",
+"Inverts 'm' and puts the result in 'result'",
+   [](StackPtr& sp, VM& vm) {
+auto result = pop_wo_handle(sp);
+auto m = pop_wo_handle(sp);
+wbnd::invert_matrix(m, result);
 });
 
