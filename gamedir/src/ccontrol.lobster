@@ -205,10 +205,11 @@ load_animations("{script_dir}/assets/animations.wiscene")
 let player = character("{script_dir}/assets/character.wiscene", float3_y*0.5, float3_z, true)
 let camera = third_person_camera(global_scene(), player)
 
+
 wi_set_app_variable_frame_fn():
    let dt = delta_time()
-   print("beans {dt}")
    camera.update()
+   error("TF {test_function()}")
 
 
 wi_start_game()
