@@ -163,6 +163,9 @@ def camera_set_focal_length(tcomp: H, l: float)
 "Updates the camera transforms"
 def camera_update(tcomp: H)
 
+"Sets the camera transform from another transform component"
+def transform_camera(camera: H, tcomp: H)
+
 "Sets the camera's transform from the matris"
 def transform_camera_set_matrix(camera: H, matrix: H)
 
@@ -360,8 +363,14 @@ def delete_matrix(m: H)
 "Initializes the matrix as an identity matrix"
 def identity_matrix(m: H)
 
+"Transforms a vector with the matrix"
+def transform_vector(matrix: H, v: float4) -> float4
+
 "Assigns matrix lhs the value from rhs"
 def assign_matrix(lhs: H, rhs: H)
+
+"Returns the translation part of the given matrix"
+def get_matrix_translation(matrix: H) -> float3
 
 "Initializes a matrix from rows"
 def assign_matrix_rows(m: H, r1: float4, r2: float4, r3: float4, r4: float4)

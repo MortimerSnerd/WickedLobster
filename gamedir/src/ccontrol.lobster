@@ -2,6 +2,7 @@
 // After binding the basics, following the character controller
 // example is a good way to guide areas to bind next.
 import std
+import vec
 import wisupport
 import core.matrix
 
@@ -36,7 +37,7 @@ class character:
    face_next = float3_z
    force = float3_0
    velocity = float3_0
-   saved_pointer_pos = float3_0
+   saved_pointer_pos = float2_0
    walk_speed = 0.2
    jog_speed = 0.4
    run_speed = 0.8
@@ -58,6 +59,66 @@ class character:
    state_prev = ""
    humanoid = INVALID_ENTITY
    collider = INVALID_ENTITY
+   root = INVALID_ENTITY
+
+   def jump(f):
+      force = float3{force.x, f, force.z}
+      state = "jump"
+
+   def move_direction(dir):
+      with_temp_object(wi_matrix(), wi_matrix()) m1, m2:
+         m1.rotation_y(target_rot_horizontal)
+         m2.rotation_x(target_rot_vertical)
+         m1.multiply(m2, m1)
+         var tdir = m1.transform_pos(normalize(dir))
+         tdir = float3{tdir.x, 0.0, tdir.y}
+         let dp = dot(face, tdir)
+         if dp < 0.0:
+            m2.rotation_y(3.14591*0.01)
+            face = m2.transform_normal(face)
+         face_next = normalize(tdir)
+
+         if dp > 0.0:
+            var speed = 0.0
+            if state == "walk":
+               speed = walk_speed
+            elif state == "jog":
+               speed = jog_speed
+            elif state == "run":
+               speed = run_speed
+            elif state == "swim":
+               speed = swim_speed
+
+            force += face*speed
+
+   def update(dt: float):
+      let model_tr = scene.get_transform_component(model)
+      let saved_pos = model_tr.position()
+      model_tr.clear()
+      with_temp_object(wi_matrix()) m1:
+         m1.look_to(float3_0, face, float3_y)
+         m1.inverted(m1)
+         model_tr.transform_by_matrix(m1)
+      model_tr.scale(scale)
+      model_tr.rotate_roll_pitch_yaw(rotation)
+      model_tr.translate(saved_pos)
+      model_tr.update()
+
+      if controllable:
+         var diff = float2(input_get_analog(GAMEPAD_ANALOG_THUMBSTICK_R)) * dt * 4.0
+
+         if input_down(MOUSE_BUTTON_RIGHT):
+            diff += (input_get_pointer() - saved_pointer_pos) * dt * 0.3
+            input_set_pointer(saved_pointer_pos)
+            input_hide_pointer(true)
+         else:
+            saved_pointer_pos = input_get_pointer()
+            input_hide_pointer(false)
+
+         target_rot_horizontal += diff.x
+         target_rot_vertical = clamp(target_rot_vertical+diff.y, -math_pi*0.3, math_pi*0.4)
+
+      // STOP line 501
 
 def first_where(count: int, test):
    for(count) i:
@@ -110,13 +171,27 @@ constructor character(mname: string, start_pos: float3, face: float3, controllab
       else:
          warning("character: No humanoid component found for {mname}")
          
-      //TODO line 397 in character controller
+      //TODO line 397 in character controller, need expression controller
+
+      rv.root = mscene.find_entity_by_name("Root", rv.model)
+
+      //TODO line 411 retarget animation calls
+      rv.anims = animations
+
+      let model_tr = mscene.get_transform_component(rv.model)
+      if model_tr.is_valid():
+         model_tr.clear()
+         model_tr.scale(rv.scale)
+         model_tr.rotate_roll_pitch_yaw(rv.rotation)
+         model_tr.translate(rv.start_position)
+         model_tr.update()
+
       let necktr = mscene.get_transform_component(rv.neck)
       rv.target_height = necktr.position().y
 
       scene.merge(mscene)
 
-   info("ARF {rv}")
+   info("ARF {rv.model} {rv}")
    return rv
 
 class third_person_camera:
@@ -151,32 +226,23 @@ class third_person_camera:
       target_rot_vertical = lerp(target_rot_vertical, character.target_rot_vertical, 0.1)
       target_height = lerp(target_height, character_position.y + character.target_height, 0.1)
 
-      let arm = rotation_4x4(float3_y, degrees(target_rot_horizontal)) * float4{0.0, 0.0, rest_distance, 1.0}
-      let cam_pos = character_position + float3{arm.x, target_height, arm.z}
-      let ccam = scene.get_camera_component(camera)
+      let cam_tr = scene.get_transform_component(camera)
+      with_temp_object(create_transform(), wi_matrix()) targ_tr, m1:
+         targ_tr.translate(float3{character_position.x, target_height, character_position.z})
+         targ_tr.rotate_roll_pitch_yaw(float3{target_rot_vertical, target_rot_horizontal, 0.0})
+         targ_tr.update()
+         
+         m1.translation(float3{side_offset, 0.0, -rest_distance})
+         m1.multiply(targ_tr.world_matrix(), m1)
+         cam_tr.clear()
+         cam_tr.transform_by_matrix(m1)
+         cam_tr.update()
 
-      ccam.set_eye(cam_pos)
-      ccam.set_at(normalize(character_position + float3_y*character.target_height - cam_pos))
-      ccam.set_up(float3_y)
-      ccam.update()
+         //TODO skipped camera collision detection for obstacles
 
-      //
-      //let camera_transform = scene.get_transform_component(camera)
-      //with_temp_object(create_transform(), wi_matrix()) target_transform, mat:
-      //   info("BARFAGE {character_position}")
-      //   target_transform.translate(float3{rnd_float() * 5.5 + character_position.x, target_height, character_position.z})
-      //   target_transform.rotate_roll_pitch_yaw(float3{target_rot_vertical, target_rot_horizontal, 0.0})
-      //   target_transform.update()
-      //
-      //   with_temp_object(target_transform.world_matrix()) tworld:
-      //      mat.translation(float3{side_offset, 0.0, -rest_distance})
-      //      mat.multiply(tworld, mat)
-      //      //camera_transform.clear()
-      //      //camera_transform.transform_by_matrix(mat)
-      //      //camera_transform.update()
-      //      let cc = scene.get_camera_component(camera)
-      //      cc.set_transform_from(mat)
-      //      cc.update()
+         let cc = scene.get_camera_component(camera)
+         cc.transform(cam_tr)
+
             
 
 
@@ -184,6 +250,7 @@ constructor third_person_camera(sc: wi_scene, player: character):
    let cam = sc.create_entity()
    let rpath = wi_renderpath3d()
    let cc = sc.create_camera_component(cam)
+   let ct = sc.create_transform_component(cam)
    rpath.set_camera(cc)
 
    return third_person_camera{
@@ -208,8 +275,7 @@ let camera = third_person_camera(global_scene(), player)
 
 wi_set_app_variable_frame_fn():
    let dt = delta_time()
+   player.update(dt)
    camera.update()
-   error("TF {test_function()}")
-
 
 wi_start_game()

@@ -221,7 +221,7 @@ string run_lobster(lobster_options &args, function<void()> main)
         string_view src;
         string error_msg; 
         #if _DEBUG
-        auto checks = lobster::RUNTIME_ASSERT_PLUS;
+        auto checks = lobster::RUNTIME_DEBUG;
         #else
         auto checks = lobster::RUNTIME_ASSERT;
         #endif
@@ -263,6 +263,9 @@ void lobster_variable_update(float dt)
 
 void dump_lobster_stack()
 {
-    //TODO
-    printf("LOBSTER STACK GOES HERE\n");
+    if (active_vm) {
+        std::string tr;
+        active_vm->DumpStackTrace(tr);
+        printf("LOBSTER STACK\n%s\n", tr.data());
+    }
 }

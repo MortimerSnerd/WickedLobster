@@ -422,6 +422,14 @@ auto tcomp = pop_wo_handle(sp);
 wbnd::camera_update(tcomp);
 });
 
+anfr("wi_transform_camera", "camera,tcomp", "I}:2I}:2", "",
+"Sets the camera transform from another transform component",
+   [](StackPtr& sp, VM& vm) {
+auto tcomp = pop_wo_handle(sp);
+auto camera = pop_wo_handle(sp);
+wbnd::transform_camera(camera, tcomp);
+});
+
 anfr("wi_transform_camera_set_matrix", "camera,matrix", "I}:2I}:2", "",
 "Sets the camera's transform from the matris",
    [](StackPtr& sp, VM& vm) {
@@ -1301,12 +1309,28 @@ auto m = pop_wo_handle(sp);
 wbnd::identity_matrix(m);
 });
 
+anfr("wi_transform_vector", "matrix,v", "I}:2F}:4", "F}:4",
+"Transforms a vector with the matrix",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT4 v;
+pop_xmfloat4(sp,v);
+auto matrix = pop_wo_handle(sp);
+push_xmfloat4(sp, wbnd::transform_vector(matrix, v));
+});
+
 anfr("wi_assign_matrix", "lhs,rhs", "I}:2I}:2", "",
 "Assigns matrix lhs the value from rhs",
    [](StackPtr& sp, VM& vm) {
 auto rhs = pop_wo_handle(sp);
 auto lhs = pop_wo_handle(sp);
 wbnd::assign_matrix(lhs, rhs);
+});
+
+anfr("wi_get_matrix_translation", "matrix", "I}:2", "F}:3",
+"Returns the translation part of the given matrix",
+   [](StackPtr& sp, VM& vm) {
+auto matrix = pop_wo_handle(sp);
+push_xmfloat3(sp, wbnd::get_matrix_translation(matrix));
 });
 
 anfr("wi_assign_matrix_rows", "m,r1,r2,r3,r4", "I}:2F}:4F}:4F}:4F}:4", "",

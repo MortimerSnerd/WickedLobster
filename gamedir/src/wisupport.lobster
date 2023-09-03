@@ -7,6 +7,9 @@ import color
 import core.matrix
 import core.quat
 
+
+let math_pi = 3.14159265
+
 // wi::input::BUTTON enum 
 enum BUTTON:
    BUTTON_NONE = 0,
@@ -90,6 +93,24 @@ def input_get_analog(axis: int, playerindex = 0):
 def input_get_pointer() -> float2, float, float:
    let pk = wi_input_get_pointer()
    return float2{pk.x, pk.y}, pk.z, pk.w
+
+// Sets the pointer position and other properties.
+def input_set_pointer(pos: float2, scroll_delta = 0.0, pressure = 0.0):
+   let v = float4{pos.x, pos.y, scroll_delta, pressure}
+   wi_input_set_pointer(v)
+
+def input_hide_pointer(v: bool):
+   wi_input_hide_pointer(v)
+
+// Some utility functions that should probably go somewhere else once this settles
+def float2(v: float4) -> float2:
+   return float2{v.x, v.y}
+
+def float3(v: float4) -> float3:
+   return float3{v.x, v.y, v.z}
+
+def float4(v: float3, f: float) -> float4:
+   return float4{v.x, v.y, v.z, f}
 
 // Mirror of wi::backlog::LogLevel
 enum backlog_level:
@@ -749,6 +770,17 @@ constructor wi_renderpath3d():
 struct wi_matrix:
    handle: int2
 
+   def transform(v: float4) -> float4:
+      return wi_transform_vector(handle, v)
+
+   def transform_pos(v: float3):
+      let r = transform(float4{v.x, v.y, v.z, 1.0})
+      return float3{r.x, r.y, r.z}
+
+   def transform_normal(v: float3):
+      let r = transform(float4{v.x, v.y, v.z, 0.0})
+      return float3{r.x, r.y, r.z}
+
    def delete():
       wi_delete_matrix(handle)
 
@@ -766,6 +798,9 @@ struct wi_matrix:
 
    def translation(v: float3):
       wi_translation_matrix(handle, v)
+
+   def get_translation() -> float3:
+      return wi_get_matrix_translation(handle)
 
    def rotation_euler(angles: float3):
       wi_rotation_euler_matrix(handle, angles)
@@ -816,5 +851,8 @@ def world_matrix(me:: wi_transform_component) -> wi_matrix:
 def transform_by_matrix(me:: wi_transform_component, mat: wi_matrix):
    wi_transform_transform_matrix(handle, mat.handle)
 
-def set_transform_from(me:: wi_camera_component, mat: wi_matrix):
+def transform(me:: wi_camera_component, mat: wi_matrix):
    wi_transform_camera_set_matrix(handle, mat.handle)
+
+def transform(me:: wi_camera_component, tr: wi_transform_component):
+   wi_transform_camera(handle, tr.handle)

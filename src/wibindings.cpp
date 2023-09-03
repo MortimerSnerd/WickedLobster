@@ -1034,6 +1034,16 @@ namespace wbnd
         *lm = *rm;
     }
 
+    XMFLOAT3 get_matrix_translation(wo_handle const &matrix)
+    {   
+        auto mat = XMLoadFloat4x4(mx_ptr(matrix));
+        XMVECTOR t, s, r;
+        XMFLOAT3 rv;
+        XMMatrixDecompose(&s, &r, &t, mat);
+        XMStoreFloat3(&rv, t);
+        return rv;
+    }
+
     void assign_matrix_rows(wo_handle const &m, XMFLOAT4 const &r1,
                             XMFLOAT4 const &r2, XMFLOAT4 const &r3, XMFLOAT4 const &r4)
     {
@@ -1127,6 +1137,16 @@ namespace wbnd
         load_from_xmmatrix(mx_ptr(result), mat);
     }
 
+    XMFLOAT4 transform_vector(wo_handle const &matrix, XMFLOAT4 const &v)
+    {
+        auto mat = XMLoadFloat4x4(mx_ptr(matrix));
+        XMFLOAT4 rv;
+
+        XMStoreFloat4(&rv, XMVector4Transform(XMLoadFloat4(&v), mat));
+        return rv;
+    }
+
+
     void add_matrix(wo_handle const &lhs, wo_handle const &rhs, wo_handle const &result)
     {
         auto mat = XMLoadFloat4x4(mx_ptr(lhs)) +  XMLoadFloat4x4(mx_ptr(rhs));
@@ -1170,6 +1190,11 @@ namespace wbnd
     {
         XMMATRIX mat = XMLoadFloat4x4(mx_ptr(matrix));
         cam_ptr(camera)->TransformCamera(mat);
+    }
+
+    void transform_camera(wo_handle const &camera, wo_handle const &tcomp)
+    {
+        cam_ptr(camera)->TransformCamera(*tc_ptr(tcomp));
     }
 
     void set_camera_eye(wo_handle const &camera, XMFLOAT3 const &v)
