@@ -55,15 +55,15 @@ class character:
    foot_placed_right = false
    mood = MoodRelaxed
    mood_amount = 1.0
-   state = ""
-   state_prev = ""
+   state = IDLE
+   state_prev = IDLE
    humanoid = INVALID_ENTITY
    collider = INVALID_ENTITY
    root = INVALID_ENTITY
 
    def jump(f):
       force = float3{force.x, f, force.z}
-      state = "jump"
+      state = JUMP
 
    def move_direction(dir):
       with_temp_object(wi_matrix(), wi_matrix()) m1, m2:
@@ -80,13 +80,13 @@ class character:
 
          if dp > 0.0:
             var speed = 0.0
-            if state == "walk":
+            if state == WALK:
                speed = walk_speed
-            elif state == "jog":
+            elif state == JOG:
                speed = jog_speed
-            elif state == "run":
+            elif state == RUN:
                speed = run_speed
-            elif state == "swim":
+            elif state == SWIM:
                speed = swim_speed
 
             force += face*speed
@@ -118,7 +118,30 @@ class character:
          target_rot_horizontal += diff.x
          target_rot_vertical = clamp(target_rot_vertical+diff.y, -math_pi*0.3, math_pi*0.4)
 
-      // STOP line 501
+      // skipped expression handling line 501
+      let current_anim = scene.get_animation_component(anims[state])
+      if current_anim.is_valid():
+         current_anim.play()
+         if state_prev != state:
+            current_anim.set_timer(current_anim.start())
+            state_prev = state
+
+         if state == JUMP:
+            if current_anim.timer() > current_anim.end():
+               state = IDLE
+         else:
+            if magnitude(velocity) < 0.1 and state != SWIM_IDLE and state != SWIM:
+               state = IDLE
+
+      if dt > 0.2:
+         return   // avoid processing too large delta times to avoid instability.
+
+      // STOP 539
+      //if neck.is_valid():
+      //   let water_threshold = 0.1
+      //   let neck_pos = scene.get_transform_component(neck).position() - float3_y*water_threshold
+      //   ray ray
+
 
 def first_where(count: int, test):
    for(count) i:
@@ -133,7 +156,7 @@ constructor character(mname: string, start_pos: float3, face: float3, controllab
    with_temp_scene() mscene:
       rv.model = mscene.load_model(mname, true) 
       mscene.get_layer_component(rv.model).set_layer_mask(rv.layer_mask)
-      rv.state = "idle"
+      rv.state = IDLE
       rv.state_prev = rv.state
 
       let humix = first_where(mscene.get_humanoid_count()): 
@@ -175,9 +198,6 @@ constructor character(mname: string, start_pos: float3, face: float3, controllab
 
       rv.root = mscene.find_entity_by_name("Root", rv.model)
 
-      //TODO line 411 retarget animation calls
-      rv.anims = animations
-
       let model_tr = mscene.get_transform_component(rv.model)
       if model_tr.is_valid():
          model_tr.clear()
@@ -190,6 +210,8 @@ constructor character(mname: string, start_pos: float3, face: float3, controllab
       rv.target_height = necktr.position().y
 
       scene.merge(mscene)
+
+   rv.anims = map(animations): scene.retarget_animation(rv.humanoid, _, false)
 
    info("ARF {rv.model} {rv}")
    return rv
@@ -207,12 +229,11 @@ class third_person_camera:
    target_height = 1.0
 
    def update():
-      // Mouse scroll or gamepad trigggers will move the camera distance.
+      // Mouse scroll or gamepad triggers will move the camera distance.
       let mpos, iscroll, _pressure = input_get_pointer()
       let ltrigger = input_get_analog(GAMEPAD_ANALOG_TRIGGER_R)
       let rtrigger = input_get_analog(GAMEPAD_ANALOG_TRIGGER_L)
       var scroll = iscroll + rtrigger.x
-      print("scronk p={mpos} {scroll}")
       scroll -= ltrigger.x
       scroll *= zoom_speed
       rest_distance_new = max(rest_distance_new - scroll, min_distance)
@@ -272,6 +293,14 @@ load_animations("{script_dir}/assets/animations.wiscene")
 let player = character("{script_dir}/assets/character.wiscene", float3_y*0.5, float3_z, true)
 let camera = third_person_camera(global_scene(), player)
 
+let rpath = wi_renderpath3d()
+rpath.set_light_shafts_strength(0.01)
+rpath.set_ao(AO_MSAO)
+rpath.set_ao_power(0.25)
+rpath.set_outline_threshold(0.11)
+rpath.set_outline_thickness(1.7)
+rpath.set_outline_color(float4{0.0, 0.0, 0.0, 0.6})
+rpath.set_bloom_threshold(5.0)
 
 wi_set_app_variable_frame_fn():
    let dt = delta_time()

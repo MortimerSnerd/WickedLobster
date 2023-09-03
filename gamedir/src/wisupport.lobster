@@ -131,7 +131,8 @@ def info(msg: string):
 // handles.
 enum wokind:
    wk_scene, wk_entity, wk_name_comp, wk_camera_comp, wk_transform_comp, wk_renderpath3,
-   wk_timer, wk_sprite_font, wk_font_params, wk_humanoid, wk_layer, wk_collider
+   wk_timer, wk_sprite_font, wk_font_params, wk_humanoid, wk_layer, wk_collider,
+   wk_matrix, wk_animation_comp
 
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
@@ -251,8 +252,6 @@ class wi_transform_component: wi_component
    def lerp(a: wi_transform_component, b: wi_transform_component, t: float):
       wi_transform_lerp(handle, a.handle, b.handle, t)
 
-
-
 constructor wi_transform_component(h: int2):
    assert h[0] == wk_transform_comp
    return wi_transform_component{h}
@@ -265,6 +264,66 @@ class wi_free_transform: wi_transform_component
 // Creates a unattached transform to be used for calculations.
 def create_transform():
    return wi_free_transform{wi_create_transform()}
+
+
+class wi_animation_component: wi_component
+   def start():   
+      return wi_get_animation_start(handle)
+
+   def set_start(v):
+      wi_set_animation_start(handle, v)
+
+   def end():
+      return wi_get_animation_end(handle)
+
+   def set_end(v):
+      wi_set_animation_end(handle, v)
+
+   def timer():
+      return wi_get_animation_timer(handle)
+
+   def set_timer(v):
+      wi_set_animation_timer(handle, v)
+
+   def amount():
+      return wi_get_animation_amount(handle)
+
+   def set_amount(v):
+      wi_set_animation_amount(handle, v)
+
+   def speed():
+      return wi_get_animation_speed(handle)
+
+   def set_speed(v):
+      wi_set_animation_speed(handle, v)
+
+   def is_playing():
+      return wi_is_animation_playing(handle)
+
+   def is_looped():
+      return wi_is_animation_looped(handle)
+
+   def anim_length():
+      return wi_get_animation_length(handle)
+
+   def is_ended():
+      return wi_get_is_animation_ended(handle)
+
+   def play():
+      wi_play_animation(handle)
+
+   def pause():
+      wi_pause_animation(handle)
+
+   def stop():
+      wi_stop_animation(handle)
+
+   def set_looped(v: bool):
+      wi_set_animation_looped(handle, v)
+
+constructor wi_animation_component(h: int2):
+   assert(h[0] == wk_animation_comp)
+   return wi_animation_component{h}
 
 struct wi_entity:
    handle: int2
@@ -450,6 +509,21 @@ constructor wi_collider_component(h: int2):
 // it is only invalidated when the scene is deleted.
 class wi_scene:
    handle: int2   
+
+   def retarget_animation(dest: wi_entity, src: wi_entity, bake_data: bool) -> wi_entity:
+      return wi_entity{wi_retarget_animation(handle, dest.handle, src.handle, bake_data)}
+
+   def create_animation_component(ent: wi_entity):
+      return wi_animation_component(wi_create_animation_component(handle, ent.handle))
+
+   def get_animation_component(ent: wi_entity):
+      return wi_animation_component(wi_get_animation_component(handle, ent.handle))
+
+   def get_animation_count():
+      return wi_entity_animation_count(handle)
+
+   def get_animation_entity(n: int):
+      return wi_entity{wi_entity_animation_get(handle, n)}
 
    def create_collider_component(ent: wi_entity):
       return wi_collider_component(wi_create_collider_component(handle, ent.handle))
@@ -738,6 +812,14 @@ struct wi_sprite_font:
 constructor wi_sprite_font():
    return wi_sprite_font{wi_create_sprite_font()}
 
+// Settings for renderpath3d.set_ao
+enum AO:
+   AO_DISABLED	// no ambient occlusion
+   AO_SSAO		// simple brute force screen space ambient occlusion
+   AO_HBAO		// horizon based screen space ambient occlusion
+   AO_MSAO		// multi scale screen space ambient occlusion
+   AO_RTAO		// ray traced ambient occlusion
+
 
 // wi::RenderPath3D
 class wi_renderpath3d:
@@ -761,6 +843,301 @@ class wi_renderpath3d:
 
    def clear_fonts():
       wi_renderpath_clear_fonts(handle)
+
+   def exposure():
+      return wi_get_renderpath3d_exposure(handle)
+
+   def set_exposure(v):
+      wi_set_renderpath3d_exposure(handle, v)
+
+   def brightness():
+      return wi_get_renderpath3d_brightness(handle)
+
+   def set_brightness(v):
+      wi_set_renderpath3d_brightness(handle, v)
+
+   def contrast():
+      return wi_get_renderpath3d_contrast(handle)
+
+   def set_contrast(v):
+      wi_set_renderpath3d_contrast(handle, v)
+
+   def saturation():
+      return wi_get_renderpath3d_saturation(handle)
+
+   def set_saturation(v):
+      wi_set_renderpath3d_saturation(handle, v)
+
+   def bloom_threshold():
+      return wi_get_renderpath3d_bloom_threshold(handle)
+
+   def set_bloom_threshold(v):
+      wi_set_renderpath3d_bloom_threshold(handle, v)
+
+   def motion_blur_strength():
+      return wi_get_renderpath3d_motion_blur_strength(handle)
+
+   def set_motion_blur_strength(v):
+      wi_set_renderpath3d_motion_blur_strength(handle, v)
+
+   def depth_of_field_strength():
+      return wi_get_renderpath3d_depth_of_field_strength(handle)
+
+   def set_depth_of_field_strength(v):
+      wi_set_renderpath3d_depth_of_field_strength(handle, v)
+
+   def sharpen_filter_amount():
+      return wi_get_renderpath3d_sharpen_filter_amount(handle)
+
+   def set_sharpen_filter_amount(v):
+      wi_set_renderpath3d_sharpen_filter_amount(handle, v)
+
+   def outline_threshold():
+      return wi_get_renderpath3d_outline_threshold(handle)
+
+   def set_outline_threshold(v):
+      wi_set_renderpath3d_outline_threshold(handle, v)
+
+   def outline_thickness():
+      return wi_get_renderpath3d_outline_thickness(handle)
+
+   def set_outline_thickness(v):
+      wi_set_renderpath3d_outline_thickness(handle, v)
+
+   def outline_color():
+      return wi_get_renderpath3d_outline_color(handle)
+
+   def set_outline_color(v):
+      wi_set_renderpath3d_outline_color(handle, v)
+
+   def ao_range():
+      return wi_get_renderpath3d_ao_range(handle)
+
+   def set_ao_range(v):
+      wi_set_renderpath3d_ao_range(handle, v)
+
+   def ao_sample_count():
+      return wi_get_renderpath3d_ao_sample_count(handle)
+
+   def set_ao_sample_count(v):
+      wi_set_renderpath3d_ao_sample_count(handle, v)
+
+   def ao_power():
+      return wi_get_renderpath3d_ao_power(handle)
+
+   def set_ao_power(v):
+      wi_set_renderpath3d_ao_power(handle, v)
+
+   def chromatic_aberration_amount():
+      return wi_get_renderpath3d_chromatic_aberration_amount(handle)
+
+   def set_chromatic_aberration_amount(v):
+      wi_set_renderpath3d_chromatic_aberration_amount(handle, v)
+
+   def screen_space_shadow_sample_count():
+      return wi_get_renderpath3d_screen_space_shadow_sample_count(handle)
+
+   def set_screen_space_shadow_sample_count(v):
+      wi_set_renderpath3d_screen_space_shadow_sample_count(handle, v)
+
+   def screen_space_shadow_range():
+      return wi_get_renderpath3d_screen_space_shadow_range(handle)
+
+   def set_screen_space_shadow_range(v):
+      wi_set_renderpath3d_screen_space_shadow_range(handle, v)
+
+   def eye_adaption_key():
+      return wi_get_renderpath3d_eye_adaption_key(handle)
+
+   def set_eye_adaption_key(v):
+      wi_set_renderpath3d_eye_adaption_key(handle, v)
+
+   def eye_adaption_rate():
+      return wi_get_renderpath3d_eye_adaption_rate(handle)
+
+   def set_eye_adaption_rate(v):
+      wi_set_renderpath3d_eye_adaption_rate(handle, v)
+
+   def fsr_sharpness():
+      return wi_get_renderpath3d_fsr_sharpness(handle)
+
+   def set_fsr_sharpness(v):
+      wi_set_renderpath3d_fsr_sharpness(handle, v)
+
+   def fsr2_sharpness():
+      return wi_get_renderpath3d_fsr2_sharpness(handle)
+
+   def set_fsr2_sharpness(v):
+      wi_set_renderpath3d_fsr2_sharpness(handle, v)
+
+   def light_shafts_strength():
+      return wi_get_renderpath3d_light_shafts_strength(handle)
+
+   def set_light_shafts_strength(v):
+      wi_set_renderpath3d_light_shafts_strength(handle, v)
+
+   def raytraced_diffuse_image():
+      return wi_get_renderpath3d_raytraced_diffuse_image(handle)
+
+   def set_raytraced_diffuse_image(v):
+      wi_set_renderpath3d_raytraced_diffuse_image(handle, v)
+
+   def raytraced_reflections_range():
+      return wi_get_renderpath3d_raytraced_reflections_range(handle)
+
+   def set_raytraced_reflections_range(v):
+      wi_set_renderpath3d_raytraced_reflections_range(handle, v)
+
+   def reflection_roughness_cutoff():
+      return wi_get_renderpath3d_reflection_roughness_cutoff(handle)
+
+   def set_reflection_roughness_cutoff(v):
+      wi_set_renderpath3d_reflection_roughness_cutoff(handle, v)
+
+   def ssr_enabled():
+      return wi_get_renderpath3d_ssr_enabled(handle)
+
+   def set_ssr_enabled(v):
+      wi_set_renderpath3d_ssr_enabled(handle, v)
+
+   def raytraced_diffuse_enabled():
+      return wi_get_renderpath3d_raytraced_diffuse_enabled(handle)
+
+   def set_raytraced_diffuse_enabled(v):
+      wi_set_renderpath3d_raytraced_diffuse_enabled(handle, v)
+
+   def raytraced_reflection_enabled():
+      return wi_get_renderpath3d_raytraced_reflection_enabled(handle)
+
+   def set_raytraced_reflection_enabled(v):
+      wi_set_renderpath3d_raytraced_reflection_enabled(handle, v)
+
+   def shadows_enabled():
+      return wi_get_renderpath3d_shadows_enabled(handle)
+
+   def set_shadows_enabled(v):
+      wi_set_renderpath3d_shadows_enabled(handle, v)
+
+   def reflections_enabled():
+      return wi_get_renderpath3d_reflections_enabled(handle)
+
+   def set_reflections_enabled(v):
+      wi_set_renderpath3d_reflections_enabled(handle, v)
+
+   def fxaa_enabled():
+      return wi_get_renderpath3d_fxaa_enabled(handle)
+
+   def set_fxaa_enabled(v):
+      wi_set_renderpath3d_fxaa_enabled(handle, v)
+
+   def bloom_enabled():
+      return wi_get_renderpath3d_bloom_enabled(handle)
+
+   def set_bloom_enabled(v):
+      wi_set_renderpath3d_bloom_enabled(handle, v)
+
+   def color_grading_enabled():
+      return wi_get_renderpath3d_color_grading_enabled(handle)
+
+   def set_color_grading_enabled(v):
+      wi_set_renderpath3d_color_grading_enabled(handle, v)
+
+   def volume_lights_enabled():
+      return wi_get_renderpath3d_volume_lights_enabled(handle)
+
+   def set_volume_lights_enabled(v):
+      wi_set_renderpath3d_volume_lights_enabled(handle, v)
+
+   def light_shafts_enabled():
+      return wi_get_renderpath3d_light_shafts_enabled(handle)
+
+   def set_light_shafts_enabled(v):
+      wi_set_renderpath3d_light_shafts_enabled(handle, v)
+
+   def lens_flare_enabled():
+      return wi_get_renderpath3d_lens_flare_enabled(handle)
+
+   def set_lens_flare_enabled(v):
+      wi_set_renderpath3d_lens_flare_enabled(handle, v)
+
+   def motion_blur_enabled():
+      return wi_get_renderpath3d_motion_blur_enabled(handle)
+
+   def set_motion_blur_enabled(v):
+      wi_set_renderpath3d_motion_blur_enabled(handle, v)
+
+   def depth_of_field_enabled():
+      return wi_get_renderpath3d_depth_of_field_enabled(handle)
+
+   def set_depth_of_field_enabled(v):
+      wi_set_renderpath3d_depth_of_field_enabled(handle, v)
+
+   def eye_adaptation_enabled():
+      return wi_get_renderpath3d_eye_adaptation_enabled(handle)
+
+   def set_eye_adaptation_enabled(v):
+      wi_set_renderpath3d_eye_adaptation_enabled(handle, v)
+
+   def sharpen_filter_enabled():
+      return wi_get_renderpath3d_sharpen_filter_enabled(handle)
+
+   def set_sharpen_filter_enabled(v):
+      wi_set_renderpath3d_sharpen_filter_enabled(handle, v)
+
+   def outline_enabled():
+      return wi_get_renderpath3d_outline_enabled(handle)
+
+   def set_outline_enabled(v):
+      wi_set_renderpath3d_outline_enabled(handle, v)
+
+   def chromatic_aberration_enabled():
+      return wi_get_renderpath3d_chromatic_aberration_enabled(handle)
+
+   def set_chromatic_aberration_enabled(v):
+      wi_set_renderpath3d_chromatic_aberration_enabled(handle, v)
+
+   def dither_enabled():
+      return wi_get_renderpath3d_dither_enabled(handle)
+
+   def set_dither_enabled(v):
+      wi_set_renderpath3d_dither_enabled(handle, v)
+
+   def occlusion_culling_disabled():
+      return wi_get_renderpath3d_occlusion_culling_disabled(handle)
+
+   def set_occlusion_culling_disabled(v):
+      wi_set_renderpath3d_occlusion_culling_disabled(handle, v)
+
+   def scene_update_enabled():
+      return wi_get_renderpath3d_scene_update_enabled(handle)
+
+   def set_scene_update_enabled(v):
+      wi_set_renderpath3d_scene_update_enabled(handle, v)
+
+   def fsr_enabled():
+      return wi_get_renderpath3d_fsr_enabled(handle)
+
+   def set_fsr_enabled(v):
+      wi_set_renderpath3d_fsr_enabled(handle, v)
+
+   def fsr2_enabled():
+      return wi_get_renderpath3d_fsr2_enabled(handle)
+
+   def set_fsr2_enabled(v):
+      wi_set_renderpath3d_fsr2_enabled(handle, v)
+
+   def vxgi_resolve_full_resolution_enabled():
+      return wi_get_renderpath3d_vxgi_resolve_full_resolution_enabled(handle)
+
+   def set_vxgi_resolve_full_resolution_enabled(v):
+      wi_set_renderpath3d_vxgi_resolve_full_resolution_enabled(handle, v)
+
+   def ao_enabled():
+      return wi_get_renderpath3d_ao_enabled(handle)
+
+   def set_ao(v: int):
+      wi_set_renderpath3d_ao(handle, v)
+
 
 constructor wi_renderpath3d():
    let h = wi_get_renderpath3d()

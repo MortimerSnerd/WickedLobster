@@ -13,6 +13,9 @@ def global_scene() -> H
 "Returns true if 'entity' is descendant of 'ancestor'"
 def is_descendant_entity(scene: H, entity: H, ancestor: H) -> bool
 
+"Retargets an animation from one humanoid to another and returns resulting entity"
+def retarget_animation(scene: H, dest_entity: H, src_entity: H, bake_data: bool) -> H
+
 "Deletes an entity from the scene"
 def remove_entity(scene: H, entity: H, recursive: bool)
 
@@ -183,7 +186,7 @@ struct camera!
 	eye: float3
 	at: float3
 	up: float3
-end
+endstruct
 
 
 
@@ -251,7 +254,7 @@ struct font_params
 	cursor: float4
 	hdr_scaling: float
 
-end
+endstruct
 
 
 "Creates a SpriteFont"
@@ -284,7 +287,7 @@ struct humanoid!
 	eye_rotation_max: float2
 	eye_rotation_speed: float
 	look_at: float3
-end
+endstruct
 
 "Returns number of bones in humanoid component"
 def humanoid_bone_count(hum: H) -> int
@@ -303,7 +306,7 @@ def humanoid_set_lookat_enabled(hum: H, v: bool)
 struct layer!
 	mask: int
 	propagation_mask: int
-end
+endstruct
 
 
 "Returns the games RenderPath3d"
@@ -324,6 +327,63 @@ def renderpath_font_order(path: H, sprite_font: H) -> int
 "Sets the order for the given font"
 def renderpath_set_font_order(path: H, sprite_font: H, order: int)
 
+"wi::RenderPath3d"
+struct renderpath3d!
+	exposure: float
+	brightness: float
+	contrast: float
+	saturation: float
+	bloom_threshold: float
+	motion_blur_strength: float
+	depth_of_field_strength: float
+	sharpen_filter_amount: float
+	outline_threshold: float
+	outline_thickness: float
+	outline_color: float4
+	ao_range: float
+	ao_sample_count: int
+	ao_power: float
+	chromatic_aberration_amount: float
+	screen_space_shadow_sample_count: int
+	screen_space_shadow_range: float
+	eye_adaption_key: float
+	eye_adaption_rate: float
+	fsr_sharpness: float
+	fsr2_sharpness: float
+	light_shafts_strength: float
+	raytraced_diffuse_range: float
+	raytraced_reflections_range: float
+	reflection_roughness_cutoff: float
+	ssr_enabled: bool
+	raytraced_diffuse_enabled: bool
+	raytraced_reflection_enabled: bool
+	shadows_enabled: bool
+	reflections_enabled: bool
+	fxaa_enabled: bool
+	bloom_enabled: bool
+	color_grading_enabled: bool
+	volume_lights_enabled: bool
+	light_shafts_enabled: bool
+	lens_flare_enabled: bool
+	motion_blur_enabled: bool
+	depth_of_field_enabled: bool
+	eye_adaptation_enabled: bool
+	sharpen_filter_enabled: bool
+	outline_enabled: bool
+	chromatic_aberration_enabled: bool
+	dither_enabled: bool
+	occlusion_culling_enabled: bool
+	scene_update_enabled: bool
+	fsr_enabled: bool
+	fsr2_enabled: bool
+	vxgi_resolve_full_resolution_enabled: bool
+endstruct
+
+"Returns true if AO is enabled"
+def get_renderpath3d_ao_enabled(renderpath3d: H) -> bool
+
+"Set the AO mode"
+def set_renderpath3d_ao(renderpath3d: H, v: int)
 
 
 "wi::scene::ColliderComponent"
@@ -332,7 +392,7 @@ struct collider!
 	radius: float
 	offset: float3
 	tail: float3
-end
+endstruct
 
 "Set collider as gpu enabled"
 def set_collider_is_gpu_enabled(collider: H, v: bool)
@@ -416,4 +476,50 @@ def transpose_matrix(m: H, result: H)
 
 "Inverts 'm' and puts the result in 'result'"
 def invert_matrix(m: H, result: H)
+
+
+"wi::scene::AnimationComponent"
+struct animation!
+	start: float
+	end: float
+	timer: float
+	amount: float
+	speed: float
+endstruct
+
+"Returns true if animation is playing"
+def is_animation_playing(anim: H) -> bool
+
+"Returns true if the animation is looped"
+def is_animation_looped(anim: H) -> bool
+
+"Returns the length of the animation"
+def get_animation_length(anim: H) -> float
+
+"Returns true if the animation has ended"
+def is_animation_ended(anim: H) -> float
+
+"Plays an animation"
+def play_animation(anim: H)
+
+"Pauses an animation"
+def pause_animation(anim: H)
+
+"Stops an animation"
+def stop_animation(anim: H)
+
+"Sets the animation as looped/not-looped"
+def set_animation_looped(anim: H, v: bool)
+
+"Creates a animation component for the given entity and returns a handle"
+def create_animation_component(scene: H, entity: H) -> H
+
+"Gets the animation component for the given entity."
+def get_animation_component(scene: H, entity: H) -> H
+
+"Returns the number of entities that have a animation component"
+def entity_animation_count(scene: H) -> int
+
+"Returns the nth entity that has a animation component"
+def entity_animation_get(scene: H, n: int) -> H
 

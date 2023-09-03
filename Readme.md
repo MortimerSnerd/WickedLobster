@@ -34,21 +34,29 @@ with the Wicked Engine library.
   from both Lobster and Wicked Engine.  I've just copied mine manually, 
   but it would be better to build a script to do that. 
 
+## Done
+- Automation of the binding boilerplate code.  tools\bindgen.lobster takes the
+  binddefs.txt file and generates the code that gets the data out of the lobster
+  VM, and the headers for the functions that implement the functionality.
 
 ## oof - bad things and reminders
 - had to change wicked engine lib to use multithreaded runtime (not mt dll), and
   add a preprocessor to set ITERATOR_DEBUG_LEVEL to the same level set in Lobster.
 
-- Getting more experience with bindings, starting to get some ideas of how 
-  to automate the worst of the boilerplate.  There's not as much I can reuse
-  from the \*LuaBind classes, so I still may need to make a manual list.  The
-  Lobster side is fairly mechanical based on types, and on the wibinding.h side, 
-  can at least generate the function headers leave the wicked api calls a manual work.
+- Most Wicked Engine objects are long lived, and the lobster code can ignore
+  lifetime issues.  The minority does require remembering to delete temporaries, 
+  most annoyingly with matrices.  Can make some of these objects lifetime
+  managed by Lobster using the lobster::Resource subclass AlienResource, but
+  haven't decided which of the problem objects deserves this treatment. 
 
 ### Things to copy into gamedir
 - WickedEngine
     - Content/
-    - WickedEngine/shaders/
+    - Editor/shaders/
+        Probably doing something wrong that prevents shader recompilation, shouldn't
+	need to copy the ones the editor has compiled.  Check editor code to see what
+	it is doing differently.  Or see if there's a command line recompile we can do 
+	instead of copying this.
 - Lobster
     - data/
     - modules/

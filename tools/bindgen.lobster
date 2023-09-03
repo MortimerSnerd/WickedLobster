@@ -186,7 +186,7 @@ def parse_bindings(fname: string) -> string?, [fundef]:
       if L.matched_word("!"):
          make_constructor = false
 
-      while L.chars_left() and not L.matched_word("end"):
+      while L.chars_left() and not L.matched_word("endstruct"):
          push(members, parse_param())
          L.skip_ws()
 

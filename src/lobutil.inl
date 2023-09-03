@@ -35,6 +35,16 @@ auto scene = pop_wo_handle(sp);
 Push(sp, Value(wbnd::is_descendant_entity(scene, entity, ancestor)));
 });
 
+anfr("wi_retarget_animation", "scene,dest_entity,src_entity,bake_data", "I}:2I}:2I}:2B", "I}:2",
+"Retargets an animation from one humanoid to another and returns resulting entity",
+   [](StackPtr& sp, VM& vm) {
+auto bake_data = Pop(sp).True();
+auto src_entity = pop_wo_handle(sp);
+auto dest_entity = pop_wo_handle(sp);
+auto scene = pop_wo_handle(sp);
+push_wo_handle(sp, wbnd::retarget_animation(scene, dest_entity, src_entity, bake_data));
+});
+
 anfr("wi_remove_entity", "scene,entity,recursive", "I}:2I}:2B", "",
 "Deletes an entity from the scene",
    [](StackPtr& sp, VM& vm) {
@@ -1180,6 +1190,742 @@ auto path = pop_wo_handle(sp);
 wbnd::renderpath_set_font_order(path, sprite_font, order);
 });
 
+anfr("wi_set_renderpath3d_exposure", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_exposure(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_exposure", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_exposure(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_brightness", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_brightness(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_brightness", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_brightness(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_contrast", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_contrast(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_contrast", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_contrast(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_saturation", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_saturation(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_saturation", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_saturation(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_bloom_threshold", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_bloom_threshold(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_bloom_threshold", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_bloom_threshold(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_motion_blur_strength", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_motion_blur_strength(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_motion_blur_strength", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_motion_blur_strength(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_depth_of_field_strength", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_depth_of_field_strength(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_depth_of_field_strength", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_depth_of_field_strength(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_sharpen_filter_amount", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_sharpen_filter_amount(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_sharpen_filter_amount", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_sharpen_filter_amount(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_outline_threshold", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_outline_threshold(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_outline_threshold", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_outline_threshold(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_outline_thickness", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_outline_thickness(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_outline_thickness", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_outline_thickness(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_outline_color", "renderpath3d,v", "I}:2F}:4", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+XMFLOAT4 v;
+pop_xmfloat4(sp,v);
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_outline_color(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_outline_color", "renderpath3d", "I}:2", "F}:4",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+push_xmfloat4(sp, wbnd::get_renderpath3d_outline_color(renderpath3d));
+});
+
+anfr("wi_set_renderpath3d_ao_range", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_ao_range(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_ao_range", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_ao_range(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_ao_sample_count", "renderpath3d,v", "I}:2I", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = (int32_t)Pop(sp).ival();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_ao_sample_count(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_ao_sample_count", "renderpath3d", "I}:2", "I",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_ao_sample_count(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_ao_power", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_ao_power(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_ao_power", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_ao_power(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_chromatic_aberration_amount", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_chromatic_aberration_amount(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_chromatic_aberration_amount", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_chromatic_aberration_amount(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_screen_space_shadow_sample_count", "renderpath3d,v", "I}:2I", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = (int32_t)Pop(sp).ival();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_screen_space_shadow_sample_count(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_screen_space_shadow_sample_count", "renderpath3d", "I}:2", "I",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_screen_space_shadow_sample_count(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_screen_space_shadow_range", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_screen_space_shadow_range(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_screen_space_shadow_range", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_screen_space_shadow_range(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_eye_adaption_key", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_eye_adaption_key(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_eye_adaption_key", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_eye_adaption_key(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_eye_adaption_rate", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_eye_adaption_rate(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_eye_adaption_rate", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_eye_adaption_rate(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_fsr_sharpness", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_fsr_sharpness(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_fsr_sharpness", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_fsr_sharpness(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_fsr2_sharpness", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_fsr2_sharpness(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_fsr2_sharpness", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_fsr2_sharpness(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_light_shafts_strength", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_light_shafts_strength(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_light_shafts_strength", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_light_shafts_strength(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_raytraced_diffuse_range", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_raytraced_diffuse_range(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_raytraced_diffuse_range", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_raytraced_diffuse_range(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_raytraced_reflections_range", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_raytraced_reflections_range(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_raytraced_reflections_range", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_raytraced_reflections_range(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_reflection_roughness_cutoff", "renderpath3d,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_reflection_roughness_cutoff(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_reflection_roughness_cutoff", "renderpath3d", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_reflection_roughness_cutoff(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_ssr_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_ssr_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_ssr_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_ssr_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_raytraced_diffuse_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_raytraced_diffuse_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_raytraced_diffuse_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_raytraced_diffuse_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_raytraced_reflection_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_raytraced_reflection_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_raytraced_reflection_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_raytraced_reflection_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_shadows_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_shadows_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_shadows_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_shadows_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_reflections_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_reflections_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_reflections_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_reflections_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_fxaa_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_fxaa_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_fxaa_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_fxaa_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_bloom_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_bloom_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_bloom_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_bloom_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_color_grading_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_color_grading_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_color_grading_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_color_grading_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_volume_lights_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_volume_lights_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_volume_lights_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_volume_lights_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_light_shafts_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_light_shafts_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_light_shafts_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_light_shafts_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_lens_flare_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_lens_flare_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_lens_flare_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_lens_flare_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_motion_blur_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_motion_blur_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_motion_blur_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_motion_blur_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_depth_of_field_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_depth_of_field_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_depth_of_field_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_depth_of_field_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_eye_adaptation_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_eye_adaptation_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_eye_adaptation_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_eye_adaptation_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_sharpen_filter_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_sharpen_filter_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_sharpen_filter_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_sharpen_filter_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_outline_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_outline_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_outline_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_outline_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_chromatic_aberration_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_chromatic_aberration_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_chromatic_aberration_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_chromatic_aberration_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_dither_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_dither_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_dither_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_dither_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_occlusion_culling_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_occlusion_culling_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_occlusion_culling_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_occlusion_culling_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_scene_update_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_scene_update_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_scene_update_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_scene_update_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_fsr_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_fsr_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_fsr_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_fsr_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_fsr2_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_fsr2_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_fsr2_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_fsr2_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_vxgi_resolve_full_resolution_enabled", "renderpath3d,v", "I}:2B", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_vxgi_resolve_full_resolution_enabled(renderpath3d, v);
+});
+
+anfr("wi_get_renderpath3d_vxgi_resolve_full_resolution_enabled", "renderpath3d", "I}:2", "B",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_vxgi_resolve_full_resolution_enabled(renderpath3d)));
+});
+
+anfr("wi_get_renderpath3d_ao_enabled", "renderpath3d", "I}:2", "B",
+"Returns true if AO is enabled",
+   [](StackPtr& sp, VM& vm) {
+auto renderpath3d = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_renderpath3d_ao_enabled(renderpath3d)));
+});
+
+anfr("wi_set_renderpath3d_ao", "renderpath3d,v", "I}:2I", "",
+"Set the AO mode",
+   [](StackPtr& sp, VM& vm) {
+auto v = (int32_t)Pop(sp).ival();
+auto renderpath3d = pop_wo_handle(sp);
+wbnd::set_renderpath3d_ao(renderpath3d, v);
+});
+
 anfr("wi_set_collider_shape", "collider,v", "I}:2I", "",
 "",
    [](StackPtr& sp, VM& vm) {
@@ -1474,5 +2220,168 @@ anfr("wi_invert_matrix", "m,result", "I}:2I}:2", "",
 auto result = pop_wo_handle(sp);
 auto m = pop_wo_handle(sp);
 wbnd::invert_matrix(m, result);
+});
+
+anfr("wi_set_animation_start", "animation,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto animation = pop_wo_handle(sp);
+wbnd::set_animation_start(animation, v);
+});
+
+anfr("wi_get_animation_start", "animation", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto animation = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_animation_start(animation)));
+});
+
+anfr("wi_set_animation_end", "animation,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto animation = pop_wo_handle(sp);
+wbnd::set_animation_end(animation, v);
+});
+
+anfr("wi_get_animation_end", "animation", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto animation = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_animation_end(animation)));
+});
+
+anfr("wi_set_animation_timer", "animation,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto animation = pop_wo_handle(sp);
+wbnd::set_animation_timer(animation, v);
+});
+
+anfr("wi_get_animation_timer", "animation", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto animation = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_animation_timer(animation)));
+});
+
+anfr("wi_set_animation_amount", "animation,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto animation = pop_wo_handle(sp);
+wbnd::set_animation_amount(animation, v);
+});
+
+anfr("wi_get_animation_amount", "animation", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto animation = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_animation_amount(animation)));
+});
+
+anfr("wi_set_animation_speed", "animation,v", "I}:2F", "",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).fltval();
+auto animation = pop_wo_handle(sp);
+wbnd::set_animation_speed(animation, v);
+});
+
+anfr("wi_get_animation_speed", "animation", "I}:2", "F",
+"",
+   [](StackPtr& sp, VM& vm) {
+auto animation = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_animation_speed(animation)));
+});
+
+anfr("wi_is_animation_playing", "anim", "I}:2", "B",
+"Returns true if animation is playing",
+   [](StackPtr& sp, VM& vm) {
+auto anim = pop_wo_handle(sp);
+Push(sp, Value(wbnd::is_animation_playing(anim)));
+});
+
+anfr("wi_is_animation_looped", "anim", "I}:2", "B",
+"Returns true if the animation is looped",
+   [](StackPtr& sp, VM& vm) {
+auto anim = pop_wo_handle(sp);
+Push(sp, Value(wbnd::is_animation_looped(anim)));
+});
+
+anfr("wi_get_animation_length", "anim", "I}:2", "F",
+"Returns the length of the animation",
+   [](StackPtr& sp, VM& vm) {
+auto anim = pop_wo_handle(sp);
+Push(sp, Value(wbnd::get_animation_length(anim)));
+});
+
+anfr("wi_is_animation_ended", "anim", "I}:2", "F",
+"Returns true if the animation has ended",
+   [](StackPtr& sp, VM& vm) {
+auto anim = pop_wo_handle(sp);
+Push(sp, Value(wbnd::is_animation_ended(anim)));
+});
+
+anfr("wi_play_animation", "anim", "I}:2", "",
+"Plays an animation",
+   [](StackPtr& sp, VM& vm) {
+auto anim = pop_wo_handle(sp);
+wbnd::play_animation(anim);
+});
+
+anfr("wi_pause_animation", "anim", "I}:2", "",
+"Pauses an animation",
+   [](StackPtr& sp, VM& vm) {
+auto anim = pop_wo_handle(sp);
+wbnd::pause_animation(anim);
+});
+
+anfr("wi_stop_animation", "anim", "I}:2", "",
+"Stops an animation",
+   [](StackPtr& sp, VM& vm) {
+auto anim = pop_wo_handle(sp);
+wbnd::stop_animation(anim);
+});
+
+anfr("wi_set_animation_looped", "anim,v", "I}:2B", "",
+"Sets the animation as looped/not-looped",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+auto anim = pop_wo_handle(sp);
+wbnd::set_animation_looped(anim, v);
+});
+
+anfr("wi_create_animation_component", "scene,entity", "I}:2I}:2", "I}:2",
+"Creates a animation component for the given entity and returns a handle",
+   [](StackPtr& sp, VM& vm) {
+auto entity = pop_wo_handle(sp);
+auto scene = pop_wo_handle(sp);
+push_wo_handle(sp, wbnd::create_animation_component(scene, entity));
+});
+
+anfr("wi_get_animation_component", "scene,entity", "I}:2I}:2", "I}:2",
+"Gets the animation component for the given entity.",
+   [](StackPtr& sp, VM& vm) {
+auto entity = pop_wo_handle(sp);
+auto scene = pop_wo_handle(sp);
+push_wo_handle(sp, wbnd::get_animation_component(scene, entity));
+});
+
+anfr("wi_entity_animation_count", "scene", "I}:2", "I",
+"Returns the number of entities that have a animation component",
+   [](StackPtr& sp, VM& vm) {
+auto scene = pop_wo_handle(sp);
+Push(sp, Value(wbnd::entity_animation_count(scene)));
+});
+
+anfr("wi_entity_animation_get", "scene,n", "I}:2I", "I}:2",
+"Returns the nth entity that has a animation component",
+   [](StackPtr& sp, VM& vm) {
+auto n = (int32_t)Pop(sp).ival();
+auto scene = pop_wo_handle(sp);
+push_wo_handle(sp, wbnd::entity_animation_get(scene, n));
 });
 

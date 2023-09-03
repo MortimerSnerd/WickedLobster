@@ -41,6 +41,7 @@ namespace wbnd
         case WK_HUMANOID:
         case WK_MATRIX:
         case WK_COLLIDER:
+        case WK_ANIMATION_COMP:
             if (h.name == 0) {
                 printf("Null handle pointer, kind=%d\n", (int)h.kind);
                 dump_lobster_stack();
@@ -1226,5 +1227,626 @@ namespace wbnd
     {
         return cam_ptr(camera)->Up;
     }
+
+    wi::scene::AnimationComponent* anim_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_ANIMATION_COMP);
+        return reinterpret_cast<wi::scene::AnimationComponent *>(h.name);
+    }
+
+    void set_animation_start(wo_handle const &animation, float v)
+    {
+        anim_ptr(animation)->start = v;
+    }
+
+    float get_animation_start(wo_handle const &animation)
+    {
+        return anim_ptr(animation)->start;
+    }
+
+    void set_animation_end(wo_handle const &animation, float v)
+    {
+        anim_ptr(animation)->end = v;
+    }
+
+    float get_animation_end(wo_handle const &animation)
+    {
+        return anim_ptr(animation)->end;
+    }
+
+    void set_animation_timer(wo_handle const &animation, float v)
+    {
+        anim_ptr(animation)->timer = v;
+    }
+
+    float get_animation_timer(wo_handle const &animation)
+    {
+        return anim_ptr(animation)->timer;
+    }
+
+    void set_animation_amount(wo_handle const &animation, float v)
+    {
+        anim_ptr(animation)->amount = v;
+    }
+
+    float get_animation_amount(wo_handle const &animation)
+    {
+        return anim_ptr(animation)->amount;
+    }
+
+    void set_animation_speed(wo_handle const &animation, float v)
+    {
+        anim_ptr(animation)->speed = v;
+    }
+
+    float get_animation_speed(wo_handle const &animation)
+    {
+        return anim_ptr(animation)->speed;
+    }
+
+    bool is_animation_playing(wo_handle const &anim)
+    {
+        return anim_ptr(anim)->IsPlaying();
+    }
+
+    bool is_animation_looped(wo_handle const &anim)
+    {
+        return anim_ptr(anim)->IsLooped();
+    }
+
+    float get_animation_length(wo_handle const &anim)
+    {
+        return anim_ptr(anim)->GetLength();
+    }
+
+    float is_animation_ended(wo_handle const &anim)
+    {
+        return anim_ptr(anim)->IsEnded();
+    }
+
+    void play_animation(wo_handle const &anim)
+    {
+        anim_ptr(anim)->Play();
+    }
+
+    void pause_animation(wo_handle const &anim)
+    {
+        anim_ptr(anim)->Pause();
+    }
+
+    void stop_animation(wo_handle const &anim)
+    {
+        anim_ptr(anim)->Stop();
+    }
+
+    void set_animation_looped(wo_handle const &anim, bool v)
+    {
+        anim_ptr(anim)->SetLooped(v);
+    }
+
+    wo_handle create_animation_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        return {WK_ANIMATION_COMP,
+            reinterpret_cast<int64_t>(&scene_ptr(scene)->animations.Create(entity.name))};
+    }
+
+    wo_handle get_animation_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        return {WK_ANIMATION_COMP,
+            reinterpret_cast<int64_t>(scene_ptr(scene)->animations.GetComponent(entity.name))};
+    }
+
+    int32_t entity_animation_count(wo_handle const &scene)
+    {
+        return (int32_t)scene_ptr(scene)->animations.GetCount();
+    }
+
+    wo_handle entity_animation_get(wo_handle const &scene, int32_t n)
+    {
+        return {WK_ENTITY,
+            scene_ptr(scene)->animations.GetEntity(n)};
+    }
+
+    wo_handle retarget_animation(wo_handle const &scene,
+                                 wo_handle const &dest_entity,
+                                 wo_handle const &src_entity, bool bake_data)
+    {
+        handle_check(dest_entity, WK_ENTITY);
+        handle_check(src_entity, WK_ENTITY);
+
+        return {WK_ENTITY,
+            scene_ptr(scene)->RetargetAnimation(dest_entity.name, src_entity.name, bake_data)};
+    }
+
+    void set_renderpath3d_exposure(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setExposure(v);
+    }
+
+    float get_renderpath3d_exposure(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getExposure();
+    }
+
+    void set_renderpath3d_brightness(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setBrightness(v);
+    }
+
+    float get_renderpath3d_brightness(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getBrightness();
+    }
+
+    void set_renderpath3d_contrast(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setContrast(v);
+    }
+
+    float get_renderpath3d_contrast(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getContrast();
+    }
+
+    void set_renderpath3d_saturation(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setSaturation(v);
+    }
+
+    float get_renderpath3d_saturation(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getSaturation();
+    }
+
+    void set_renderpath3d_bloom_threshold(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setBloomThreshold(v);
+    }
+
+    float get_renderpath3d_bloom_threshold(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getBloomThreshold();
+    }
+
+    void set_renderpath3d_motion_blur_strength(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setMotionBlurStrength(v);
+    }
+
+    float get_renderpath3d_motion_blur_strength(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getMotionBlurStrength();
+    }
+
+    void set_renderpath3d_depth_of_field_strength(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setDepthOfFieldStrength(v);
+    }
+
+    float get_renderpath3d_depth_of_field_strength(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getDepthOfFieldStrength();
+    }
+
+    void set_renderpath3d_sharpen_filter_amount(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setSharpenFilterAmount(v);
+    }
+
+    float get_renderpath3d_sharpen_filter_amount(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getSharpenFilterAmount();
+    }
+
+    void set_renderpath3d_outline_threshold(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setOutlineThreshold(v);
+    }
+
+    float get_renderpath3d_outline_threshold(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getOutlineThreshold();
+    }
+
+    void set_renderpath3d_outline_thickness(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setOutlineThickness(v);
+    }
+
+    float get_renderpath3d_outline_thickness(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getOutlineThickness();
+    }
+
+    void set_renderpath3d_outline_color(wo_handle const &renderpath3d, XMFLOAT4 const &v)
+    {
+        rpath_ptr(renderpath3d)->setOutlineColor(v);
+    }
+
+    XMFLOAT4 get_renderpath3d_outline_color(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getOutlineColor();
+    }
+
+    void set_renderpath3d_ao_range(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setAORange(v);
+    }
+
+    float get_renderpath3d_ao_range(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getAORange();
+    }
+
+    void set_renderpath3d_ao_sample_count(wo_handle const &renderpath3d, int32_t v)
+    {
+        rpath_ptr(renderpath3d)->setAOSampleCount(v);
+    }
+
+    int32_t get_renderpath3d_ao_sample_count(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getAOSampleCount();
+    }
+
+    void set_renderpath3d_ao_power(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setAOPower(v);
+    }
+
+    float get_renderpath3d_ao_power(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getAOPower();
+    }
+
+    void set_renderpath3d_chromatic_aberration_amount(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setChromaticAberrationAmount(v);
+    }
+
+    float get_renderpath3d_chromatic_aberration_amount(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getChromaticAberrationAmount();
+    }
+
+    void set_renderpath3d_screen_space_shadow_sample_count(wo_handle const &renderpath3d, int32_t v)
+    {
+        rpath_ptr(renderpath3d)->setScreenSpaceShadowSampleCount(v);
+    }
+
+    int32_t get_renderpath3d_screen_space_shadow_sample_count(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getScreenSpaceShadowSampleCount();
+    }
+
+    void set_renderpath3d_screen_space_shadow_range(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setScreenSpaceShadowRange(v);
+    }
+
+    float get_renderpath3d_screen_space_shadow_range(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getScreenSpaceShadowRange();
+    }
+
+    void set_renderpath3d_eye_adaption_key(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setEyeAdaptionKey(v);
+    }
+
+    float get_renderpath3d_eye_adaption_key(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getEyeAdaptionKey();
+    }
+
+    void set_renderpath3d_eye_adaption_rate(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setEyeAdaptionRate(v);
+    }
+
+    float get_renderpath3d_eye_adaption_rate(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getEyeAdaptionRate();
+    }
+
+    void set_renderpath3d_fsr_sharpness(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setFSRSharpness(v);
+    }
+
+    float get_renderpath3d_fsr_sharpness(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getFSRSharpness();
+    }
+
+    void set_renderpath3d_fsr2_sharpness(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setFSR2Sharpness(v);
+    }
+
+    float get_renderpath3d_fsr2_sharpness(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getFSR2Sharpness();
+    }
+
+    void set_renderpath3d_light_shafts_strength(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setLightShaftsStrength(v);
+    }
+
+    float get_renderpath3d_light_shafts_strength(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getLightShaftsStrength();
+    }
+
+    void set_renderpath3d_raytraced_diffuse_range(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setRaytracedDiffuseRange(v);
+    }
+
+    float get_renderpath3d_raytraced_diffuse_range(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getRaytracedDiffuseRange();
+    }
+
+    void set_renderpath3d_raytraced_reflections_range(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setRaytracedReflectionsRange(v);
+    }
+
+    float get_renderpath3d_raytraced_reflections_range(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getRaytracedReflectionsRange();
+    }
+
+    void set_renderpath3d_reflection_roughness_cutoff(wo_handle const &renderpath3d, float v)
+    {
+        rpath_ptr(renderpath3d)->setReflectionRoughnessCutoff(v);
+    }
+
+    float get_renderpath3d_reflection_roughness_cutoff(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getReflectionRoughnessCutoff();
+    }
+
+    void set_renderpath3d_ao(wo_handle const &renderpath3d, int32_t v)
+    {
+        rpath_ptr(renderpath3d)->setAO((wi::RenderPath3D::AO)v);
+    }
+
+    bool get_renderpath3d_ao_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getAOEnabled();
+    }
+
+    void set_renderpath3d_ssr_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setSSREnabled(v);
+    }
+
+    bool get_renderpath3d_ssr_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getSSREnabled();
+    }
+
+    void set_renderpath3d_raytraced_diffuse_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setRaytracedDiffuseEnabled(v);
+    }
+
+    bool get_renderpath3d_raytraced_diffuse_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getRaytracedDiffuseEnabled();
+    }
+
+    void set_renderpath3d_raytraced_reflection_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setRaytracedReflectionsEnabled(v);
+    }
+
+    bool get_renderpath3d_raytraced_reflection_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getRaytracedReflectionEnabled();
+    }
+
+    void set_renderpath3d_shadows_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setShadowsEnabled(v);
+    }
+
+    bool get_renderpath3d_shadows_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getShadowsEnabled();
+    }
+
+    void set_renderpath3d_reflections_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setReflectionsEnabled(v);
+    }
+
+    bool get_renderpath3d_reflections_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getReflectionsEnabled();
+    }
+
+    void set_renderpath3d_fxaa_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setFXAAEnabled(v);
+    }
+
+    bool get_renderpath3d_fxaa_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getFXAAEnabled();
+    }
+
+    void set_renderpath3d_bloom_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setBloomEnabled(v);
+    }
+
+    bool get_renderpath3d_bloom_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getBloomEnabled();
+    }
+
+    void set_renderpath3d_color_grading_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setColorGradingEnabled(v);
+    }
+
+    bool get_renderpath3d_color_grading_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getColorGradingEnabled();
+    }
+
+    void set_renderpath3d_volume_lights_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setVolumeLightsEnabled(v);
+    }
+
+    bool get_renderpath3d_volume_lights_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getVolumeLightsEnabled();
+    }
+
+    void set_renderpath3d_light_shafts_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setLightShaftsEnabled(v);
+    }
+
+    bool get_renderpath3d_light_shafts_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getLightShaftsEnabled();
+    }
+
+    void set_renderpath3d_lens_flare_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setLensFlareEnabled(v);
+    }
+
+    bool get_renderpath3d_lens_flare_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getLensFlareEnabled();
+    }
+
+    void set_renderpath3d_motion_blur_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setMotionBlurEnabled(v);
+    }
+
+    bool get_renderpath3d_motion_blur_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getMotionBlurEnabled();
+    }
+
+    void set_renderpath3d_depth_of_field_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setDepthOfFieldEnabled(v);
+    }
+
+    bool get_renderpath3d_depth_of_field_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getDepthOfFieldEnabled();
+    }
+
+    void set_renderpath3d_eye_adaptation_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setEyeAdaptionEnabled(v);
+    }
+
+    bool get_renderpath3d_eye_adaptation_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getEyeAdaptionEnabled();
+    }
+
+    void set_renderpath3d_sharpen_filter_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setSharpenFilterEnabled(v);
+    }
+
+    bool get_renderpath3d_sharpen_filter_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getSharpenFilterEnabled();
+    }
+
+    void set_renderpath3d_outline_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setOutlineEnabled(v);
+    }
+
+    bool get_renderpath3d_outline_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getOutlineEnabled();
+    }
+
+    void set_renderpath3d_chromatic_aberration_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setChromaticAberrationEnabled(v);
+    }
+
+    bool get_renderpath3d_chromatic_aberration_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getChromaticAberrationEnabled();
+    }
+
+    void set_renderpath3d_dither_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setDitherEnabled(v);
+    }
+
+    bool get_renderpath3d_dither_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getDitherEnabled();
+    }
+
+    void set_renderpath3d_occlusion_culling_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setOcclusionCullingEnabled(v);
+    }
+
+    bool get_renderpath3d_occlusion_culling_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getOcclusionCullingEnabled();
+    }
+
+    void set_renderpath3d_scene_update_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setSceneUpdateEnabled(v);
+    }
+
+    bool get_renderpath3d_scene_update_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getSceneUpdateEnabled();
+    }
+
+    void set_renderpath3d_fsr_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setFSREnabled(v);
+    }
+
+    bool get_renderpath3d_fsr_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getFSREnabled();
+    }
+
+    void set_renderpath3d_fsr2_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setFSR2Enabled(v);
+    }
+
+    bool get_renderpath3d_fsr2_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getFSR2Enabled();
+    }
+
+    void set_renderpath3d_vxgi_resolve_full_resolution_enabled(wo_handle const &renderpath3d, bool v)
+    {
+        rpath_ptr(renderpath3d)->setVXGIResolveFullResolutionEnabled(v);
+    }
+
+    bool get_renderpath3d_vxgi_resolve_full_resolution_enabled(wo_handle const &renderpath3d)
+    {
+        return rpath_ptr(renderpath3d)->getVXGIResolveFullResolutionEnabled();
+    }
+
 }
 
