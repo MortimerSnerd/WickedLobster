@@ -85,9 +85,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                     lobster_fixed_update();
                     application.Run(); // run the update - render loop (mandatory)
                 }
+                if (app_wants_to_quit()) {
+                    break;
+                }
             }
 
-            rval = (int)msg.wParam;
+            if (app_wants_to_quit()) {
+                rval = 0;
+            } else {
+                rval = (int)msg.wParam;
+            }
 
     });
     if (!errmsg.empty()) {

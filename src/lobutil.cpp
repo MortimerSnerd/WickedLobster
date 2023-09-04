@@ -51,6 +51,8 @@ namespace {
 
     // Set upon call to lobster_variable_update
     float update_dt = 0.0;
+
+    bool app_should_quit = false;
 }
 
 // Some stubs we need to make since LOBSTER_ENGINE=0
@@ -146,6 +148,12 @@ namespace
 void add_wl_builtins(lobster::NativeRegistry &anfr)
 {
     using namespace lobster;
+    anfr("wi_quit_game", "", "", "",
+         "Call to exit the application",
+        [](StackPtr &, VM &) {
+            app_should_quit = true;
+    });
+
     anfr("wi_start_game", "", "", "",
          "The lobster code should call this to start the game after any "
          "wanted function callbacks are set up.",
@@ -268,4 +276,9 @@ void dump_lobster_stack()
         active_vm->DumpStackTrace(tr);
         printf("LOBSTER STACK\n%s\n", tr.data());
     }
+}
+
+bool app_wants_to_quit()
+{
+    return app_should_quit;
 }

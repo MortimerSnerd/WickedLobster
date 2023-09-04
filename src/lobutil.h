@@ -41,4 +41,6 @@ void lobster_fixed_update();
 
 void lobster_variable_update(float dt);
 
+bool app_wants_to_quit();
+
 #endif
