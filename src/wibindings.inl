@@ -155,6 +155,8 @@ void renderpath_remove_font(wo_handle const& path, wo_handle const& sprite_font)
 void renderpath_clear_fonts(wo_handle const& path);
 int32_t renderpath_font_order(wo_handle const& path, wo_handle const& sprite_font);
 void renderpath_set_font_order(wo_handle const& path, wo_handle const& sprite_font, int32_t order);
+XMINT2 get_renderpath_physical_dims(wo_handle const& path);
+XMFLOAT2 get_renderpath_logical_dims(wo_handle const& path);
 void set_renderpath3d_exposure(wo_handle const& renderpath3d, float v);
 float get_renderpath3d_exposure(wo_handle const& renderpath3d);
 void set_renderpath3d_brightness(wo_handle const& renderpath3d, float v);
@@ -310,3 +312,5 @@ wo_handle create_animation_component(wo_handle const& scene, wo_handle const& en
 wo_handle get_animation_component(wo_handle const& scene, wo_handle const& entity);
 int32_t entity_animation_count(wo_handle const& scene);
 wo_handle entity_animation_get(wo_handle const& scene, int32_t n);
+void renderer_set_vxgi_enabled(bool v);
+bool renderer_vxgi_enabled();

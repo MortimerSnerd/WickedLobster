@@ -7,7 +7,7 @@ var charent = INVALID_ENTITY
 var cament = INVALID_ENTITY
 var char_yaw = 0.0
 var char_pitch = 0.0
-var last_mouse = float2_0
+var pinned_mouse_pos = float2_0
 let debug_msg = wi_sprite_font()
 var first_frame = true
 
@@ -58,12 +58,17 @@ def load_initial_scene():
    let rpath = wi_renderpath3d()
    rpath.set_camera(cc)
    rpath.add_font(debug_msg)
+   rpath.set_ao(AO_MSAO)
+   rpath.set_ao_power(0.25)
+   //rpath.set_raytraced_diffuse_enabled(true)
+   //wi_renderer_set_vxgi_enabled(true)
 
    let fp = wi_font_params()
-   fp.set_position(float3{10.0, 300.0, 0.0})
+   let sdim = rpath.physical_dims()
+   fp.set_position(float3{10.0, float(sdim.y - 50), 0.0})
    debug_msg.set_params(fp)
 
-   last_mouse = input_get_pointer()
+   pinned_mouse_pos = input_get_pointer()
    input_hide_pointer(true)
 
 wi_set_app_variable_frame_fn():
@@ -76,17 +81,22 @@ wi_set_app_variable_frame_fn():
    let dt = delta_time()
    let spd = 5.0
    let rot_speed = 15.0
+   var mpos = float2_0
+   var mdiff = float2_0
 
    if first_frame:
+      // pin the mouse to the center of the screen, so it won't go out of the window
+      let center = float(wi_renderpath3d().physical_dims()) * 0.5
+      pinned_mouse_pos = center
+      input_set_pointer(pinned_mouse_pos)
       first_frame = false
-      last_mouse = input_get_pointer()
-
-   let mpos = input_get_pointer()
-   let mdiff = mpos - last_mouse
-   last_mouse = mpos
+   else:
+      mpos = input_get_pointer()
+      mdiff = mpos - pinned_mouse_pos
+      input_set_pointer(pinned_mouse_pos)
 
    char_yaw += mdiff.x * rot_speed * dt
-   char_pitch += mdiff.y * rot_speed * dt
+   char_pitch = clamp(char_pitch + mdiff.y * rot_speed * dt, -45.0, 45.0)
    debug_msg.set_text("yaw={char_yaw} pitch={char_pitch}")
 
    let char_tr = gscene.get_transform_component(charent)

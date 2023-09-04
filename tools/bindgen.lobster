@@ -72,6 +72,13 @@ let known_types = [
       storefn: fn(expr): "push_xmfloat2(sp, {expr});", 
       pass_as_constref: true
    },
+   TD{name: "int2", 
+      lobster_tyspec: "I}}:2", 
+      wbnd_tyname: "XMINT2", 
+      loadfn: fn(name): "XMINT2 {name};\npop_xmint2(sp,{name});", 
+      storefn: fn(expr): "push_xmint2(sp, {expr});", 
+      pass_as_constref: true
+   },
    TD{
       name: "string",
       lobster_tyspec: "S",

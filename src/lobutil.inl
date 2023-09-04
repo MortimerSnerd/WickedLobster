@@ -1196,6 +1196,20 @@ auto path = pop_wo_handle(sp);
 wbnd::renderpath_set_font_order(path, sprite_font, order);
 });
 
+anfr("wi_get_renderpath_physical_dims", "path", "I}:2", "I}:2",
+"Returns the physical pixel dimensions of the renderpath",
+   [](StackPtr& sp, VM& vm) {
+auto path = pop_wo_handle(sp);
+push_xmint2(sp, wbnd::get_renderpath_physical_dims(path));
+});
+
+anfr("wi_get_renderpath_logical_dims", "path", "I}:2", "F}:2",
+"Returns the logical dims of the renderpath",
+   [](StackPtr& sp, VM& vm) {
+auto path = pop_wo_handle(sp);
+push_xmfloat2(sp, wbnd::get_renderpath_logical_dims(path));
+});
+
 anfr("wi_set_renderpath3d_exposure", "renderpath3d,v", "I}:2F", "",
 "",
    [](StackPtr& sp, VM& vm) {
@@ -2389,5 +2403,18 @@ anfr("wi_entity_animation_get", "scene,n", "I}:2I", "I}:2",
 auto n = (int32_t)Pop(sp).ival();
 auto scene = pop_wo_handle(sp);
 push_wo_handle(sp, wbnd::entity_animation_get(scene, n));
+});
+
+anfr("wi_renderer_set_vxgi_enabled", "v", "B", "",
+"Controls VXGI",
+   [](StackPtr& sp, VM& vm) {
+auto v = Pop(sp).True();
+wbnd::renderer_set_vxgi_enabled(v);
+});
+
+anfr("wi_renderer_vxgi_enabled", "", "", "B",
+"Returns true if VXGI is enabled",
+   [](StackPtr& sp, VM& vm) {
+Push(sp, Value(wbnd::renderer_vxgi_enabled()));
 });
 

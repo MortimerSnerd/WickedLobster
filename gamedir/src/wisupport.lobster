@@ -826,6 +826,12 @@ enum AO:
 class wi_renderpath3d:
    handle: int2
 
+   def physical_dims() -> int2:
+      return wi_get_renderpath_physical_dims(handle)
+
+   def logical_dims() -> float2:
+      return wi_get_rendrpath_logical_dims(handle)
+
    def set_camera(cc: wi_camera_component):
       wi_renderpath3d_set_camera(handle, cc.handle)
 

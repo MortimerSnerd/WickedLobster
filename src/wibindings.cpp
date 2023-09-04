@@ -224,6 +224,18 @@ namespace wbnd
         rp->camera = cc;
     }
 
+    XMINT2 get_renderpath_physical_dims(wo_handle const &path)
+    {
+        auto pp = rpath_ptr(path);
+        return {(int32_t)pp->GetPhysicalWidth(), (int32_t)pp->GetPhysicalHeight()};
+    }
+
+    XMFLOAT2 get_renderpath_logical_dims(wo_handle const &path)
+    {
+        auto pp = rpath_ptr(path);
+        return {pp->GetLogicalWidth(), pp->GetLogicalHeight()};
+    }
+
     void transform_translate(wo_handle const &trans, const XMFLOAT3 &value)
     {
         handle_check(trans, WK_TRANSFORM_COMP);
@@ -1851,6 +1863,16 @@ namespace wbnd
     bool get_renderpath3d_vxgi_resolve_full_resolution_enabled(wo_handle const &renderpath3d)
     {
         return rpath_ptr(renderpath3d)->getVXGIResolveFullResolutionEnabled();
+    }
+
+    void renderer_set_vxgi_enabled(bool v)
+    {
+        wi::renderer::SetVXGIEnabled(v);
+    }
+
+    bool renderer_vxgi_enabled()
+    {
+        return wi::renderer::GetVXGIEnabled();
     }
 
 }

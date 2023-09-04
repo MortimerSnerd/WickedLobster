@@ -98,6 +98,21 @@ namespace
         return {(int)i2[0], i2[1]};
     }
 
+    void push_xmint2(lobster::StackPtr &sp, XMINT2 const &v)
+    {
+        int2 lv = {v.x, v.y};
+        PushVec(sp, lv);
+
+    }
+
+    void pop_xmint2(lobster::StackPtr &sp, XMINT2 &dest)
+    {
+        auto f = PopVec<geom::int2>(sp);
+        dest.x = f.x;
+        dest.y = f.y;
+    }
+
+
     void push_xmfloat2(lobster::StackPtr &sp, XMFLOAT2 const &v)
     {
         float2 lv = {v.x, v.y};

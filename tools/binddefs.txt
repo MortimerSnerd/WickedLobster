@@ -330,6 +330,12 @@ def renderpath_font_order(path: H, sprite_font: H) -> int
 "Sets the order for the given font"
 def renderpath_set_font_order(path: H, sprite_font: H, order: int)
 
+"Returns the physical pixel dimensions of the renderpath"
+def get_renderpath_physical_dims(path: H) -> int2
+
+"Returns the logical dims of the renderpath"
+def get_renderpath_logical_dims(path: H) -> float2
+
 "wi::RenderPath3d"
 struct renderpath3d!
 	exposure: float
@@ -526,3 +532,11 @@ def entity_animation_count(scene: H) -> int
 "Returns the nth entity that has a animation component"
 def entity_animation_get(scene: H, n: int) -> H
 
+
+
+
+"Controls VXGI"
+def renderer_set_vxgi_enabled(v: bool)
+
+"Returns true if VXGI is enabled"
+def renderer_vxgi_enabled() -> bool
