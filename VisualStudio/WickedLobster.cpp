@@ -67,6 +67,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 
     lobster_options opts;
+    opts.root_src = "scenetest.lobster";
     int rval = 0;
     auto errmsg = run_lobster(opts,
         [&rval, hInstance]() {

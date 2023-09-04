@@ -26,6 +26,7 @@ int32_t entity_names_count(wo_handle const& scene);
 wo_handle entity_names_get(wo_handle const& scene, int32_t n);
 wo_handle find_entity_by_name(wo_handle const& scene, std::string_view const& name, wo_handle const& ancestor_entity);
 void backlog(int32_t level, std::string_view const& msg);
+bool is_backlog_active();
 wo_handle create_camera_component(wo_handle const& scene, wo_handle const& entity);
 wo_handle create_transform_component(wo_handle const& scene, wo_handle const& entity);
 wo_handle create_transform();

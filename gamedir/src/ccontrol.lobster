@@ -121,7 +121,7 @@ class character:
       // skipped expression handling line 501
       let current_anim = scene.get_animation_component(anims[state])
       if current_anim.is_valid():
-         current_anim.play()
+         //current_anim.play()
          if state_prev != state:
             current_anim.set_timer(current_anim.start())
             state_prev = state
@@ -136,11 +136,49 @@ class character:
       if dt > 0.2:
          return   // avoid processing too large delta times to avoid instability.
 
-      // STOP 539
-      //if neck.is_valid():
-      //   let water_threshold = 0.1
-      //   let neck_pos = scene.get_transform_component(neck).position() - float3_y*water_threshold
-      //   ray ray
+      // skip swimming 539
+
+      if not wi_is_backlog_active():
+         var lookdir = float3_0
+
+         if input_down('A'):
+            lookdir -= float3_x
+
+         if input_down('D'):
+            lookdir += float3_x
+
+         if input_down('W'):
+            lookdir += float3_z
+
+         if input_down('S'):
+            lookdir -= float3_z
+
+         let analog = input_get_analog(GAMEPAD_ANALOG_THUMBSTICK_L)
+         lookdir += float3{analog.x, 0.0, analog.y}
+
+         if state != JUMP and state_prev != JUMP and velocity.y == 0.0:
+            if magnitude(lookdir) > 0.0:
+               if state == SWIM_IDLE:
+                  state = SWIM
+               else:
+                  if input_down(KEYBOARD_BUTTON_LSHIFT) or input_down(GAMEPAD_BUTTON_6):
+                     if input_down('E') or input_down(GAMEPAD_BUTTON_5):
+                        state = RUN
+                     else:
+                        state = JOG
+                  else:
+                     state = WALK
+               move_direction(lookdir)
+
+            if input_press(KEYBOARD_BUTTON_SPACE) or input_press(GAMEPAD_BUTTON_3):
+               jump(jump_speed)
+         elif velocity.y > 0.0:
+            move_direction(lookdir)
+      
+         velocity = force
+      //DEBUG
+      model_tr.translate(velocity*dt)
+      velocity = velocity*0.9
 
 
 def first_where(count: int, test):

@@ -79,6 +79,9 @@ def find_entity_by_name(scene: H, name: string, ancestor_entity: H) -> H
 "Logs to Wicked Engine backlog with given log level"
 def backlog(level: int, msg: string)
 
+"Returns true if the backlog is active"
+def is_backlog_active() -> bool
+
 "Creates a camera component on an entity."
 def create_camera_component(scene: H, entity: H) -> H
 

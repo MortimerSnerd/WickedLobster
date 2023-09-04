@@ -139,6 +139,11 @@ namespace wbnd
         wi::backlog::post(std::string(msg), (wi::backlog::LogLevel)level);
     }
 
+    bool is_backlog_active()
+    {
+        return wi::backlog::isActive();
+    }
+
     wi::scene::Scene* create_component_common(wo_handle const &scene, 
                                               wo_handle const &entity)
     {

@@ -210,6 +210,12 @@ auto level = (int32_t)Pop(sp).ival();
 wbnd::backlog(level, msg);
 });
 
+anfr("wi_is_backlog_active", "", "", "B",
+"Returns true if the backlog is active",
+   [](StackPtr& sp, VM& vm) {
+Push(sp, Value(wbnd::is_backlog_active()));
+});
+
 anfr("wi_create_camera_component", "scene,entity", "I}:2I}:2", "I}:2",
 "Creates a camera component on an entity.",
    [](StackPtr& sp, VM& vm) {

@@ -252,6 +252,7 @@ class wi_transform_component: wi_component
    def lerp(a: wi_transform_component, b: wi_transform_component, t: float):
       wi_transform_lerp(handle, a.handle, b.handle, t)
 
+
 constructor wi_transform_component(h: int2):
    assert h[0] == wk_transform_comp
    return wi_transform_component{h}
@@ -1154,7 +1155,7 @@ struct wi_matrix:
       let r = transform(float4{v.x, v.y, v.z, 1.0})
       return float3{r.x, r.y, r.z}
 
-   def transform_normal(v: float3):
+   def transform_vector(v: float3):
       let r = transform(float4{v.x, v.y, v.z, 0.0})
       return float3{r.x, r.y, r.z}
 
@@ -1233,3 +1234,10 @@ def transform(me:: wi_camera_component, mat: wi_matrix):
 
 def transform(me:: wi_camera_component, tr: wi_transform_component):
    wi_transform_camera(handle, tr.handle)
+
+// Copies the transform information from another transform.
+def copy_from(me:: wi_transform_component, other: wi_transform_component):
+   with_temp_object(other.world_matrix()) om:
+      clear()
+      transform_by_matrix(om)
+
