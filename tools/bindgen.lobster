@@ -147,8 +147,10 @@ class fundef:
    name = ""
    params = [] :: param
    doc = ""
-   returns = -1
+   returns = [] :: int
 
+def retval_param_name(ix: int):
+   return "retval{ix+1}"
 
 def parse_bindings(fname: string) -> string?, [fundef]:
    let contents = read_file(fname)
@@ -205,13 +207,13 @@ def parse_bindings(fname: string) -> string?, [fundef]:
          push(funs, fundef{
             name: "create_{sname}", 
             params: [], 
-            returns: hix})
+            returns: [hix]})
          push(funs, fundef{
             name: "delete_{sname}", 
             params: [param{
                name: sname, 
                type: hix}], 
-            returns: -1})
+            returns: []})
 
       // Accessors
       for(members) m:
@@ -225,7 +227,7 @@ def parse_bindings(fname: string) -> string?, [fundef]:
                   name: "v", 
                   type: m.type}
             ],
-            returns: -1})
+            returns: []})
          push(funs, fundef{
             name: "get_{sname}_{m.name}", 
             params: [
@@ -233,7 +235,7 @@ def parse_bindings(fname: string) -> string?, [fundef]:
                   name: sname, 
                   type: hix}
             ],
-            returns: m.type})
+            returns: [m.type]})
 
    L.skip_ws()
    while L.chars_left():
@@ -258,14 +260,17 @@ def parse_bindings(fname: string) -> string?, [fundef]:
          L.skip_ws()
 
          if L.matched_word("->"):
-            let rty = identifier()
-            let ti = find(known_types): _.name == rty
-            if ti >= 0:
-               fd.returns = ti
-            else:
-               error("unrecognized return type {rty}")
-
-            L.skip_ws()
+            while true:
+               L.skip_ws()
+               let rty = identifier()
+               let ti = find(known_types): _.name == rty
+               if ti >= 0:
+                  push(fd.returns, ti)
+               else:
+                  error("unrecognized return type {rty}")
+               L.skip_ws()
+               if not L.matched_word(","):
+                  break
 
          push(funs, fd)
       else:
@@ -300,8 +305,9 @@ def write_lobster_binding_code(defs) -> string?:
       out.add("\"")
       out.add(join(ltys, ""))
       out.add("\", ")
-      if d.returns >= 0:
-         out.add("\"{known_types[d.returns].lobster_tyspec}\"")
+      if length(d.returns) > 0:
+         let rstr = join(map(d.returns) ti: known_types[ti].lobster_tyspec, "")
+         out.add("\"{rstr}\"")
       else:
          out.add("\"\"")
       out.line(",")
@@ -314,15 +320,33 @@ def write_lobster_binding_code(defs) -> string?:
          let loadf = known_types[p.type].loadfn
          out.line(loadf(p.name))
 
+      let param_valnames = map(d.params): _.name
+
+      // If there is more than one return value, create locals to hold the values
+      // passed as out parameters.
+      for_range(1, length(d.returns)) i:
+         let ty = known_types[d.returns[i]]
+         let pname = retval_param_name(i)
+         out.line("{ty.wbnd_tyname} {pname};")
+         push(param_valnames, pname)
+
       // build up call to wbnd:: function 
       let cout = str_appender{}
       cout.add("wbnd::{d.name}(")
-      cout.add(join(map(d.params): _.name, ", "))
+      cout.add(join(param_valnames, ", "))
       cout.add(")")
 
-      if d.returns >= 0:
-         let store = known_types[d.returns].storefn
-         out.line("{store(cout.result())}")
+      if length(d.returns) > 0:
+         // Stores the direct return of the function.
+         let storefst = known_types[d.returns[0]].storefn
+         out.line("{storefst(cout.result())}")
+
+         // If there are multiple returns, this catches the rest.
+         for_range(1, length(d.returns)) i:
+               let ti = d.returns[i]
+               let store = known_types[ti].storefn
+               let pname = retval_param_name(i)
+               out.line("{store(pname)}")
       else:
          out.line("{cout.result()};")
 
@@ -340,14 +364,21 @@ def write_wbnd_prototypes(defs):
    out.line("// GENERATED for inclusion in wibindings.h by tools/bindgen.lobster, do not edit")
 
    for(defs) d:
-      if d.returns >= 0:
-         out.add("{known_types[d.returns].wbnd_tyname} ")
+      if length(d.returns) > 0:
+         // Just the first return gets to be a return type for the C++ function
+         out.add("{known_types[d.returns[0]].wbnd_tyname} ")
       else:
          out.add("void ")
 
       // this is included in namespace decl, so we don't need qualification.
       out.add("{d.name}(")
       let pdecls = map(d.params): "{_.fun_ptype()} {_.name}"
+
+      // Add return parameters if there are more than one return from the function.
+      for_range(1, length(d.returns)) i:
+         let ty = known_types[d.returns[i]]
+         push(pdecls, "{ty.wbnd_tyname}& {retval_param_name(i)}")
+
       out.add(join(pdecls, ", "))
       out.line(");")
 

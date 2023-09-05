@@ -533,10 +533,13 @@ def entity_animation_count(scene: H) -> int
 def entity_animation_get(scene: H, n: int) -> H
 
 
-
-
 "Controls VXGI"
 def renderer_set_vxgi_enabled(v: bool)
 
 "Returns true if VXGI is enabled"
 def renderer_vxgi_enabled() -> bool
+
+
+"Primitive to primitive intersection test, returns true|false,distance,direction"
+def sphere_sphere_intersects(sphere0: H, sphere1: H) -> bool,float,float3
+

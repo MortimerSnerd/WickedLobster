@@ -1875,5 +1875,32 @@ namespace wbnd
         return wi::renderer::GetVXGIEnabled();
     }
 
+    bool sphere_sphere_intersects(wo_handle const &sphere0, wo_handle const &sphere1, float &retval2, XMFLOAT3 &retval3)
+    {
+        retval2 = 2.2f;
+        retval3 = {1.0, 2.0, 3.0};
+        return true;
+    }
+
 }
+// TODO for binddefs
+
+//"wi::primitive::Sphere"
+//struct primitive_sphere
+//center: float3
+//radius: float
+//endstruct
+//
+//
+//"wi::scene::Scene::SphereIntersectionResult"
+//struct sphere_intersection_result
+//entity: H
+//position: float3
+//normal: float3
+//velocity: float3
+//depth: float
+//endstruct
+//
+//"Tests a sphere intersection with a scene, and returns a SphereIntersectionResult"
+//def scene_sphere_intersects(scene: H, sphere: H, result: H, filter_mask: int, layer_mask: int, lod: int)->H
 

@@ -125,6 +125,9 @@ wi_set_app_variable_frame_fn():
    char_tr.rotate_roll_pitch_yaw(float3{0.0, radians(char_yaw), 0.0})
    char_tr.translate(newpos)
    char_tr.update()
+
+let a, b, c = wi_sphere_sphere_intersects(int2_0, int2_0)
+print("a={a}, b={b}, c={c}")
    
 load_initial_scene()
 wi_start_game()

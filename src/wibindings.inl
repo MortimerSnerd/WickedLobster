@@ -314,3 +314,4 @@ int32_t entity_animation_count(wo_handle const& scene);
 wo_handle entity_animation_get(wo_handle const& scene, int32_t n);
 void renderer_set_vxgi_enabled(bool v);
 bool renderer_vxgi_enabled();
+bool sphere_sphere_intersects(wo_handle const& sphere0, wo_handle const& sphere1, float& retval2, XMFLOAT3& retval3);
