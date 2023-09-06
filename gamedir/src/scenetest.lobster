@@ -1,6 +1,9 @@
 import color
 import core.quat
 import wisupport
+let player_layer = 1 << 0
+let static_layer = 1 << 1
+let dynobjs_layer = 1 << 2
 
 let gscene = global_scene()
 var charent = INVALID_ENTITY
@@ -10,6 +13,7 @@ var char_pitch = 0.0
 var pinned_mouse_pos = float2_0
 let debug_msg = wi_sprite_font()
 var first_frame = true
+let fwd_sphere = create_primitive_sphere()
 
 // NB - LH, so fwd is +z
 
@@ -40,6 +44,7 @@ def load_initial_scene():
       assert charent.is_valid()
       cament = csc.find_entity_by_name("eyepoint", charent)
       assert cament.is_valid()
+      csc.set_layer(charent, player_layer)
       gscene.merge(csc)
 
    // Move character to spawnpoint, and extract yaw, pitch, etc...
@@ -115,6 +120,20 @@ wi_set_app_variable_frame_fn():
 
    mv *= spd * dt
 
+   // Testing scene intersection binding
+   fwd_sphere.set_center(char_tr.position() + fwd*1.3 + float3_y*0.5)
+   fwd_sphere.set_radius(0.5)
+   with_temp_object(gscene.sphere_intersects(fwd_sphere)) sin:
+      var ename = "?"
+      let en = gscene.get_name_component(sin.entity())
+      if en.is_valid():
+         ename = en.get_name()
+      debug_msg.set_text("INTERSECT ent={ename}/{sin.entity()} p={sin.position()} n={sin.normal()} v={sin.velocity()} depth={sin.depth()}")
+   //TODO add primitive capsule
+   //     extract capsule from collider component
+   //     ...
+   //     profit
+
    // Apply changes to character.
    let cam_tr = gscene.get_transform_component(cament)
    cam_tr.clear()
@@ -126,8 +145,5 @@ wi_set_app_variable_frame_fn():
    char_tr.translate(newpos)
    char_tr.update()
 
-let a, b, c = wi_sphere_sphere_intersects(int2_0, int2_0)
-print("a={a}, b={b}, c={c}")
-   
 load_initial_scene()
 wi_start_game()

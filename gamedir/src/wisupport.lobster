@@ -137,6 +137,64 @@ enum wokind:
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
 
+struct wi_primitive_sphere:
+   handle: int2
+
+   def center():
+      return wi_get_primitive_sphere_center(handle)
+
+   def set_center(v):
+      wi_set_primitive_sphere_center(handle, v)
+
+   def radius():
+      return wi_get_primitive_sphere_radius(handle)
+
+   def set_radius(v):
+      wi_set_primitive_sphere_radius(handle, v)
+
+   def delete():
+      wi_delete_primitive_sphere(handle)
+
+   def intersects(other: wi_primitive_sphere) -> bool, float, float3:
+      return wi_sphere_sphere_intersects(handle, other.handle)
+
+def create_primitive_sphere() -> wi_primitive_sphere:
+   return wi_primitive_sphere{wi_create_primitive_sphere()}
+
+struct wi_sphere_intersection:
+   handle: int2
+
+   def set_entity(v):
+      wi_set_sphere_intersection_result_entity(handle, v)
+
+   def position():
+      return wi_get_sphere_intersection_result_position(handle)
+
+   def set_position(v):
+      wi_set_sphere_intersection_result_position(handle, v)
+
+   def normal():
+      return wi_get_sphere_intersection_result_normal(handle)
+
+   def set_normal(v):
+      wi_set_sphere_intersection_result_normal(handle, v)
+
+   def velocity():
+      return wi_get_sphere_intersection_result_velocity(handle)
+
+   def set_velocity(v):
+      wi_set_sphere_intersection_result_velocity(handle, v)
+
+   def depth():
+      return wi_get_sphere_intersection_result_depth(handle)
+
+   def set_depth(v):
+      wi_set_sphere_intersection_result_depth(handle, v)
+
+   def delete():
+      wi_delete_sphere_intersection_result(handle)
+
+
 // Note: for components, when you get one, do what you need to do with it
 // and then discard it.  These can be invalidated by any code that
 // creates or removes components, and the result would probably be a crash.
@@ -506,10 +564,24 @@ constructor wi_collider_component(h: int2):
    assert h[0] == wk_collider
    return wi_collider_component{h}
 
+enum wi_filter:
+		FILTER_NONE = 0,
+		FILTER_OPAQUE = 1 << 0,
+		FILTER_TRANSPARENT = 1 << 1,
+		FILTER_WATER = 1 << 2,
+		FILTER_NAVIGATION_MESH = 1 << 3,
+		FILTER_OBJECT_ALL = FILTER_OPAQUE | FILTER_TRANSPARENT | FILTER_WATER | FILTER_NAVIGATION_MESH,
+		FILTER_COLLIDER = 1 << 4,
+		FILTER_ALL = ~0
+
+
 // Wrapper for scenes.  This can be saved long term, 
 // it is only invalidated when the scene is deleted.
 class wi_scene:
    handle: int2   
+
+   def sphere_intersects(sphere: wi_primitive_sphere, filter_mask = FILTER_OPAQUE, layer_mask = ~0, lod = 0) -> wi_sphere_intersection:
+      return wi_sphere_intersection{wi_scene_sphere_intersects(handle, sphere.handle, filter_mask, layer_mask, lod)}
 
    def retarget_animation(dest: wi_entity, src: wi_entity, bake_data: bool) -> wi_entity:
       return wi_entity{wi_retarget_animation(handle, dest.handle, src.handle, bake_data)}
@@ -618,6 +690,14 @@ class wi_scene:
 
    def merge(src: wi_scene):
       wi_scene_merge(handle, src.handle)
+
+   // Convenience method that sets the layer for the entity, creating the 
+   // component if necessary.
+   def set_layer(ent: wi_entity, layer: int):
+      var lc = get_layer_component(ent)
+      if lc.is_empty():
+         lc = create_layer_component(ent)
+      lc.set_layer_mask(layer)
 
 def new_wi_scene() -> wi_scene:
    return wi_scene{wi_new_scene()}
@@ -1246,4 +1326,8 @@ def copy_from(me:: wi_transform_component, other: wi_transform_component):
    with_temp_object(other.world_matrix()) om:
       clear()
       transform_by_matrix(om)
+
+def entity(me:: wi_sphere_intersection):
+   return wi_entity{wi_get_sphere_intersection_result_entity(handle)}
+
 

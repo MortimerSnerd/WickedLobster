@@ -42,6 +42,7 @@ namespace wbnd
         case WK_MATRIX:
         case WK_COLLIDER:
         case WK_ANIMATION_COMP:
+        case WK_SPHERE:
             if (h.name == 0) {
                 printf("Null handle pointer, kind=%d\n", (int)h.kind);
                 dump_lobster_stack();
@@ -1875,32 +1876,118 @@ namespace wbnd
         return wi::renderer::GetVXGIEnabled();
     }
 
-    bool sphere_sphere_intersects(wo_handle const &sphere0, wo_handle const &sphere1, float &retval2, XMFLOAT3 &retval3)
+    wi::primitive::Sphere* sphere_ptr(wo_handle const &h)
     {
-        retval2 = 2.2f;
-        retval3 = {1.0, 2.0, 3.0};
-        return true;
+        handle_check(h, WK_SPHERE);
+        return reinterpret_cast<wi::primitive::Sphere *>(h.name);
     }
 
+    wo_handle create_primitive_sphere()
+    {
+        return {WK_SPHERE, reinterpret_cast<int64_t>(new wi::primitive::Sphere())};
+    }
+
+    void delete_primitive_sphere(wo_handle const &primitive_sphere)
+    {
+        delete sphere_ptr(primitive_sphere);
+    }
+
+    void set_primitive_sphere_center(wo_handle const &primitive_sphere, XMFLOAT3 const &v)
+    {
+        sphere_ptr(primitive_sphere)->center = v;
+    }
+
+    XMFLOAT3 get_primitive_sphere_center(wo_handle const &primitive_sphere)
+    {
+        return sphere_ptr(primitive_sphere)->center;
+    }
+
+    void set_primitive_sphere_radius(wo_handle const &primitive_sphere, float v)
+    {
+        sphere_ptr(primitive_sphere)->radius = v;
+    }
+
+    float get_primitive_sphere_radius(wo_handle const &primitive_sphere)
+    {
+        return sphere_ptr(primitive_sphere)->radius;
+    }
+
+    bool sphere_sphere_intersects(wo_handle const &sphere0, wo_handle const &sphere1, float &retval2, XMFLOAT3 &retval3)
+    {
+        return sphere_ptr(sphere0)->intersects(*sphere_ptr(sphere1), retval2, retval3);
+    }
+
+    wi::scene::Scene::SphereIntersectionResult* sir_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_SPHEREINTERSECTION);
+        return reinterpret_cast<wi::scene::Scene::SphereIntersectionResult *>(h.name);
+    }
+
+    wo_handle create_sphere_intersection_result()
+    {
+        return {WK_SPHEREINTERSECTION, reinterpret_cast<int64_t>(new wi::scene::Scene::SphereIntersectionResult())};
+    }
+
+    void delete_sphere_intersection_result(wo_handle const &sphere_intersection_result)
+    {
+        delete sir_ptr(sphere_intersection_result);
+    }
+
+    void set_sphere_intersection_result_entity(wo_handle const &sphere_intersection_result, wo_handle const &v)
+    {
+        handle_check(v, WK_ENTITY);
+        sir_ptr(sphere_intersection_result)->entity = v.name;
+    }
+
+    wo_handle get_sphere_intersection_result_entity(wo_handle const &sphere_intersection_result)
+    {
+        return {WK_ENTITY, sir_ptr(sphere_intersection_result)->entity};
+    }
+
+    void set_sphere_intersection_result_position(wo_handle const &sphere_intersection_result, XMFLOAT3 const &v)
+    {
+        sir_ptr(sphere_intersection_result)->position = v;
+    }
+
+    XMFLOAT3 get_sphere_intersection_result_position(wo_handle const &sphere_intersection_result)
+    {
+        return sir_ptr(sphere_intersection_result)->position;
+    }
+
+    void set_sphere_intersection_result_normal(wo_handle const &sphere_intersection_result, XMFLOAT3 const &v)
+    {
+        sir_ptr(sphere_intersection_result)->normal = v;
+    }
+
+    XMFLOAT3 get_sphere_intersection_result_normal(wo_handle const &sphere_intersection_result)
+    {
+        return sir_ptr(sphere_intersection_result)->normal;
+    }
+
+    void set_sphere_intersection_result_velocity(wo_handle const &sphere_intersection_result, XMFLOAT3 const &v)
+    {
+        sir_ptr(sphere_intersection_result)->velocity = v;
+    }
+
+    XMFLOAT3 get_sphere_intersection_result_velocity(wo_handle const &sphere_intersection_result)
+    {
+        return sir_ptr(sphere_intersection_result)->velocity;
+    }
+
+    void set_sphere_intersection_result_depth(wo_handle const &sphere_intersection_result, float v)
+    {
+        sir_ptr(sphere_intersection_result)->depth = v;
+    }
+
+    float get_sphere_intersection_result_depth(wo_handle const &sphere_intersection_result)
+    {
+        return sir_ptr(sphere_intersection_result)->depth;
+    }
+
+    wo_handle scene_sphere_intersects(wo_handle const &scene, wo_handle const &sphere, int32_t filter_mask, int32_t layer_mask, int32_t lod)
+    {
+        auto rv = new wi::scene::Scene::SphereIntersectionResult();
+        *rv = scene_ptr(scene)->Intersects(*sphere_ptr(sphere), filter_mask, layer_mask, lod);
+        return {WK_SPHEREINTERSECTION, reinterpret_cast<int64_t>(rv)};
+    }
 }
-// TODO for binddefs
-
-//"wi::primitive::Sphere"
-//struct primitive_sphere
-//center: float3
-//radius: float
-//endstruct
-//
-//
-//"wi::scene::Scene::SphereIntersectionResult"
-//struct sphere_intersection_result
-//entity: H
-//position: float3
-//normal: float3
-//velocity: float3
-//depth: float
-//endstruct
-//
-//"Tests a sphere intersection with a scene, and returns a SphereIntersectionResult"
-//def scene_sphere_intersects(scene: H, sphere: H, result: H, filter_mask: int, layer_mask: int, lod: int)->H
-

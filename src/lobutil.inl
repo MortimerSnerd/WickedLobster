@@ -2418,6 +2418,50 @@ anfr("wi_renderer_vxgi_enabled", "", "", "B",
         Push(sp, Value(wbnd::renderer_vxgi_enabled()));
 });
 
+anfr("wi_create_primitive_sphere", "", "", "I}:2",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        push_wo_handle(sp, wbnd::create_primitive_sphere());
+});
+
+anfr("wi_delete_primitive_sphere", "primitive_sphere", "I}:2", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto primitive_sphere = pop_wo_handle(sp);
+        wbnd::delete_primitive_sphere(primitive_sphere);
+});
+
+anfr("wi_set_primitive_sphere_center", "primitive_sphere,v", "I}:2F}:3", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT3 v;
+        pop_xmfloat3(sp, v);
+        auto primitive_sphere = pop_wo_handle(sp);
+        wbnd::set_primitive_sphere_center(primitive_sphere, v);
+});
+
+anfr("wi_get_primitive_sphere_center", "primitive_sphere", "I}:2", "F}:3",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto primitive_sphere = pop_wo_handle(sp);
+        push_xmfloat3(sp, wbnd::get_primitive_sphere_center(primitive_sphere));
+});
+
+anfr("wi_set_primitive_sphere_radius", "primitive_sphere,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                = Pop(sp).fltval();
+        auto primitive_sphere = pop_wo_handle(sp);
+        wbnd::set_primitive_sphere_radius(primitive_sphere, v);
+});
+
+anfr("wi_get_primitive_sphere_radius", "primitive_sphere", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto primitive_sphere = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_primitive_sphere_radius(primitive_sphere)));
+});
+
 anfr("wi_sphere_sphere_intersects", "sphere0,sphere1", "I}:2I}:2", "BFF}:3",
      "Primitive to primitive intersection test, returns true|false,distance,direction",
     [](StackPtr &sp, VM &vm) {
@@ -2428,6 +2472,108 @@ anfr("wi_sphere_sphere_intersects", "sphere0,sphere1", "I}:2I}:2", "BFF}:3",
         Push(sp, Value(wbnd::sphere_sphere_intersects(sphere0, sphere1, retval2, retval3)));
         Push(sp, Value(retval2));
         push_xmfloat3(sp, retval3);
+});
+
+anfr("wi_create_sphere_intersection_result", "", "", "I}:2",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        push_wo_handle(sp, wbnd::create_sphere_intersection_result());
+});
+
+anfr("wi_delete_sphere_intersection_result", "sphere_intersection_result", "I}:2", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        wbnd::delete_sphere_intersection_result(sphere_intersection_result);
+});
+
+anfr("wi_set_sphere_intersection_result_entity", "sphere_intersection_result,v", "I}:2I}:2", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                          = pop_wo_handle(sp);
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        wbnd::set_sphere_intersection_result_entity(sphere_intersection_result, v);
+});
+
+anfr("wi_get_sphere_intersection_result_entity", "sphere_intersection_result", "I}:2", "I}:2",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::get_sphere_intersection_result_entity(sphere_intersection_result));
+});
+
+anfr("wi_set_sphere_intersection_result_position", "sphere_intersection_result,v", "I}:2F}:3", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT3 v;
+        pop_xmfloat3(sp, v);
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        wbnd::set_sphere_intersection_result_position(sphere_intersection_result, v);
+});
+
+anfr("wi_get_sphere_intersection_result_position", "sphere_intersection_result", "I}:2", "F}:3",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        push_xmfloat3(sp, wbnd::get_sphere_intersection_result_position(sphere_intersection_result));
+});
+
+anfr("wi_set_sphere_intersection_result_normal", "sphere_intersection_result,v", "I}:2F}:3", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT3 v;
+        pop_xmfloat3(sp, v);
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        wbnd::set_sphere_intersection_result_normal(sphere_intersection_result, v);
+});
+
+anfr("wi_get_sphere_intersection_result_normal", "sphere_intersection_result", "I}:2", "F}:3",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        push_xmfloat3(sp, wbnd::get_sphere_intersection_result_normal(sphere_intersection_result));
+});
+
+anfr("wi_set_sphere_intersection_result_velocity", "sphere_intersection_result,v", "I}:2F}:3", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT3 v;
+        pop_xmfloat3(sp, v);
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        wbnd::set_sphere_intersection_result_velocity(sphere_intersection_result, v);
+});
+
+anfr("wi_get_sphere_intersection_result_velocity", "sphere_intersection_result", "I}:2", "F}:3",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        push_xmfloat3(sp, wbnd::get_sphere_intersection_result_velocity(sphere_intersection_result));
+});
+
+anfr("wi_set_sphere_intersection_result_depth", "sphere_intersection_result,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                          = Pop(sp).fltval();
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        wbnd::set_sphere_intersection_result_depth(sphere_intersection_result, v);
+});
+
+anfr("wi_get_sphere_intersection_result_depth", "sphere_intersection_result", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto sphere_intersection_result = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_sphere_intersection_result_depth(sphere_intersection_result)));
+});
+
+anfr("wi_scene_sphere_intersects", "scene,sphere,filter_mask,layer_mask,lod", "I}:2I}:2III", "I}:2",
+     "Tests a sphere intersection with a scene, and returns a SphereIntersectionResult",
+    [](StackPtr &sp, VM &vm) {
+        auto lod         = (int32_t)Pop(sp).ival();
+        auto layer_mask  = (int32_t)Pop(sp).ival();
+        auto filter_mask = (int32_t)Pop(sp).ival();
+        auto sphere      = pop_wo_handle(sp);
+        auto scene       = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::scene_sphere_intersects(scene, sphere, filter_mask, layer_mask, lod));
 }); 
 
 

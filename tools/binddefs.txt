@@ -539,7 +539,25 @@ def renderer_set_vxgi_enabled(v: bool)
 "Returns true if VXGI is enabled"
 def renderer_vxgi_enabled() -> bool
 
+"wi::primitive::Sphere"
+struct primitive_sphere
+	center: float3
+	radius: float
+endstruct
 
 "Primitive to primitive intersection test, returns true|false,distance,direction"
 def sphere_sphere_intersects(sphere0: H, sphere1: H) -> bool,float,float3
+
+
+"wi::scene::Scene::SphereIntersectionResult"
+struct sphere_intersection_result
+	entity: H
+	position: float3
+	normal: float3
+	velocity: float3
+	depth: float
+endstruct
+
+"Tests a sphere intersection with a scene, and returns a SphereIntersectionResult"
+def scene_sphere_intersects(scene: H, sphere: H, filter_mask: int, layer_mask: int, lod: int)->H
 
