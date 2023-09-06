@@ -43,6 +43,7 @@ namespace wbnd
         case WK_COLLIDER:
         case WK_ANIMATION_COMP:
         case WK_SPHERE:
+        case WK_RIGIDBODY:
             if (h.name == 0) {
                 printf("Null handle pointer, kind=%d\n", (int)h.kind);
                 dump_lobster_stack();
@@ -272,6 +273,22 @@ namespace wbnd
     {
         auto tp = tc_ptr(tcomp);
         return tp->GetRotation();
+    }
+
+    XMFLOAT3 decompose_transform(wo_handle const &tcomp, XMFLOAT4 &retval2, XMFLOAT3 &retval3)
+    {
+        XMVECTOR S, R, T;
+        XMFLOAT3 rv;
+        XMMatrixDecompose(&S, &R, &T, XMLoadFloat4x4(&tc_ptr(tcomp)->world));
+        XMStoreFloat3(&rv, T);
+        XMStoreFloat4(&retval2, R);
+        XMStoreFloat3(&retval3, S);
+        return rv;
+    }
+
+    XMFLOAT3 transform_scaling(wo_handle const &tcomp)
+    {
+        return tc_ptr(tcomp)->GetScale();
     }
 
     void transform_update_transform(wo_handle const &tcomp)
@@ -1989,5 +2006,237 @@ namespace wbnd
         auto rv = new wi::scene::Scene::SphereIntersectionResult();
         *rv = scene_ptr(scene)->Intersects(*sphere_ptr(sphere), filter_mask, layer_mask, lod);
         return {WK_SPHEREINTERSECTION, reinterpret_cast<int64_t>(rv)};
+    }
+
+    wi::primitive::Capsule* cap_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_CAPSULE);
+        return reinterpret_cast<wi::primitive::Capsule *>(h.name);
+    }
+
+    wo_handle create_primitive_capsule()
+    {
+        return {WK_CAPSULE, reinterpret_cast<int64_t>(new wi::primitive::Capsule())};
+    }
+
+    void delete_primitive_capsule(wo_handle const &primitive_capsule)
+    {
+        delete cap_ptr(primitive_capsule);
+    }
+
+    void set_primitive_capsule_base(wo_handle const &primitive_capsule, XMFLOAT3 const &v)
+    {
+        cap_ptr(primitive_capsule)->base = v;
+    }
+
+    XMFLOAT3 get_primitive_capsule_base(wo_handle const &primitive_capsule)
+    {
+        return cap_ptr(primitive_capsule)->base;
+    }
+
+    void set_primitive_capsule_tip(wo_handle const &primitive_capsule, XMFLOAT3 const &v)
+    {
+        cap_ptr(primitive_capsule)->tip = v;
+    }
+
+    XMFLOAT3 get_primitive_capsule_tip(wo_handle const &primitive_capsule)
+    {
+        return cap_ptr(primitive_capsule)->tip;
+    }
+
+    void set_primitive_capsule_radius(wo_handle const &primitive_capsule, float v)
+    {
+        cap_ptr(primitive_capsule)->radius = v;
+    }
+
+    float get_primitive_capsule_radius(wo_handle const &primitive_capsule)
+    {
+        return cap_ptr(primitive_capsule)->radius;
+    }
+
+    bool capsule_capsule_intersects(wo_handle const &cap0, wo_handle const &cap1, XMFLOAT3 &retval2, XMFLOAT3 &retval3, float &retval4)
+    {
+        return cap_ptr(cap0)->intersects(*cap_ptr(cap1), retval2, retval3, retval4); 
+    }
+
+    bool capsule_sphere_intersects(wo_handle const &cap, wo_handle const &sphere, float &retval2, XMFLOAT3 &retval3)
+    {
+        return cap_ptr(cap)->intersects(*sphere_ptr(sphere), retval2, retval3);
+    }
+
+    bool sphere_capsule_intersects(wo_handle const &sphere, wo_handle const &cap, float &retval2, XMFLOAT3 &retval3)
+    {
+        return sphere_ptr(sphere)->intersects(*cap_ptr(cap), retval2, retval3);
+    }
+
+    wo_handle scene_capsule_intersects(wo_handle const &scene, wo_handle const &cap, int32_t filter_mask, int32_t layer_mask, int32_t lod)
+    {
+        auto rv = create_sphere_intersection_result();
+        *sir_ptr(rv) = scene_ptr(scene)->Intersects(*cap_ptr(cap), filter_mask, layer_mask, lod);
+        return rv;
+    }
+
+    wo_handle get_collider_capsule(wo_handle const &collider)
+    {
+        return {WK_CAPSULE, reinterpret_cast<int64_t>(&coll_ptr(collider)->capsule)};
+    }
+
+    wi::scene::RigidBodyPhysicsComponent* rigid_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_RIGIDBODY);
+        return reinterpret_cast<wi::scene::RigidBodyPhysicsComponent *>(h.name);
+    }
+
+    void set_rigidbody_physics_shape(wo_handle const &rigidbody_physics, int32_t v)
+    {
+        rigid_ptr(rigidbody_physics)->shape = (wi::scene::RigidBodyPhysicsComponent::CollisionShape)v;
+    }
+
+    int32_t get_rigidbody_physics_shape(wo_handle const &rigidbody_physics)
+    {
+        return (int32_t)rigid_ptr(rigidbody_physics)->shape;
+    }
+
+    void set_rigidbody_physics_mass(wo_handle const &rigidbody_physics, float v)
+    {
+        rigid_ptr(rigidbody_physics)->mass = v;
+    }
+
+    float get_rigidbody_physics_mass(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->mass;
+    }
+
+    void set_rigidbody_physics_friction(wo_handle const &rigidbody_physics, float v)
+    {
+        rigid_ptr(rigidbody_physics)->friction = v;
+    }
+
+    float get_rigidbody_physics_friction(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->friction;
+    }
+
+    void set_rigidbody_physics_restitution(wo_handle const &rigidbody_physics, float v)
+    {
+        rigid_ptr(rigidbody_physics)->restitution = v;
+    }
+
+    float get_rigidbody_physics_restitution(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->restitution;
+    }
+
+    void set_rigidbody_physics_damping_linear(wo_handle const &rigidbody_physics, float v)
+    {
+        rigid_ptr(rigidbody_physics)->damping_linear = v;
+    }
+
+    float get_rigidbody_physics_damping_linear(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->damping_linear;
+    }
+
+    void set_rigidbody_physics_damping_angular(wo_handle const &rigidbody_physics, float v)
+    {
+        rigid_ptr(rigidbody_physics)->damping_angular = v;
+    }
+
+    float get_rigidbody_physics_damping_angular(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->damping_angular;
+    }
+
+    void set_rigidbody_physics_box_halfextents(wo_handle const &rigidbody_physics, XMFLOAT3 const &v)
+    {
+        rigid_ptr(rigidbody_physics)->box.halfextents = v;
+    }
+
+    XMFLOAT3 get_rigidbody_physics_box_halfextents(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->box.halfextents;
+    }
+
+    void set_rigidbody_physics_sphere_radius(wo_handle const &rigidbody_physics, float v)
+    {
+        rigid_ptr(rigidbody_physics)->sphere.radius = v;
+    }
+
+    float get_rigidbody_physics_sphere_radius(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->sphere.radius;
+    }
+
+    void set_rigidbody_physics_capsule_radius(wo_handle const &rigidbody_physics, float v)
+    {
+        rigid_ptr(rigidbody_physics)->capsule.radius = v;
+    }
+
+    float get_rigidbody_physics_capsule_radius(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->capsule.radius;
+    }
+
+    void set_rigidbody_physics_capsule_height(wo_handle const &rigidbody_physics, float v)
+    {
+        rigid_ptr(rigidbody_physics)->capsule.height = v;
+    }
+
+    float get_rigidbody_physics_capsule_height(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->capsule.height;
+    }
+
+    void set_rigidbody_physics_mesh_lod(wo_handle const &rigidbody_physics, int32_t v)
+    {
+        rigid_ptr(rigidbody_physics)->mesh_lod = v;
+    }
+
+    int32_t get_rigidbody_physics_mesh_lod(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->mesh_lod;
+    }
+
+    void set_rigidbody_physics_disable_deactivation(wo_handle const &rigidbody_physics, bool v)
+    {
+        rigid_ptr(rigidbody_physics)->SetDisableDeactivation(v);
+    }
+
+    bool get_rigidbody_physics_disable_deactivation(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->IsDisableDeactivation();
+    }
+
+    void set_rigidbody_physics_kinematic(wo_handle const &rigidbody_physics, bool v)
+    {
+        rigid_ptr(rigidbody_physics)->SetKinematic(v);
+    }
+
+    bool get_rigidbody_physics_kinematic(wo_handle const &rigidbody_physics)
+    {
+        return rigid_ptr(rigidbody_physics)->IsKinematic();
+    }
+
+    wo_handle create_rigidbody_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_RIGIDBODY, reinterpret_cast<int64_t>(&scene_ptr(scene)->rigidbodies.Create(entity.name))};
+    }
+
+    wo_handle get_rigidbody_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_RIGIDBODY, reinterpret_cast<int64_t>(scene_ptr(scene)->rigidbodies.GetComponent(entity.name))};
+    }
+
+    int32_t entity_rigidbody_count(wo_handle const &scene)
+    {          
+        return (int32_t)scene_ptr(scene)->rigidbodies.GetCount();
+    }
+
+
+    wo_handle entity_rigidbody_get(wo_handle const &scene, int32_t n)
+    {
+        return {WK_ENTITY, scene_ptr(scene)->rigidbodies.GetEntity(n)};
     }
 }

@@ -112,6 +112,12 @@ def transform_position(tcomp: H) -> float3
 "Gets transform rotation"
 def transform_rotation(tcomp: H) -> float4
 
+"Gets the transform's scaling"
+def transform_scaling(tcomp: H) -> float3
+
+"Decomposes transform pieces into position, rotation, scale"
+def decompose_transform(tcomp: H) -> float3, float4, float3
+
 "Applies local space to world space matrix for transform"
 def transform_update_transform(tcomp: H)
 
@@ -422,6 +428,8 @@ def entity_collider_count(scene: H) -> int
 "Returns the nth entity that has a collider component"
 def entity_collider_get(scene: H, n: int) -> H
 
+"Returns the primitive capsule for the collider, only valid if the shape is CAPSULE.  Returns value does not need to be deleted, valid until there is an ecs change in the scene"
+def get_collider_capsule(collider: H) -> H
 
 "Creates a matrix"
 def create_matrix4x4() -> H
@@ -560,4 +568,54 @@ endstruct
 
 "Tests a sphere intersection with a scene, and returns a SphereIntersectionResult"
 def scene_sphere_intersects(scene: H, sphere: H, filter_mask: int, layer_mask: int, lod: int)->H
+
+
+"wi::primitive::Capsule"
+struct primitive_capsule
+	base: float3
+	tip: float3
+	radius: float
+endstruct
+
+"Capsule to capsule intersection test, returns true/false, position, normal, penetration_depth"
+def capsule_capsule_intersects(cap0: H, cap1: H) -> bool, float3, float3, float
+
+"Capsule to sphere intersection test, returns bool, dist, direction"
+def capsule_sphere_intersects(cap: H, sphere: H) -> bool, float, float3
+
+"Sphere to capsule intersection test, returns bool, dist, direction"
+def sphere_capsule_intersects(sphere: H, cap: H) -> bool, float, float3
+
+"Tests whether a capsule intersects anything in the scene, returning a SphereIntersectionResult (not a typo)"
+def scene_capsule_intersects(scene: H, cap: H, filter_mask: int, layer_mask: int, lod: int) -> H
+
+
+"wi::scene::RigidBodyPhysicsComponent"
+struct rigidbody_physics!
+	shape: int
+	mass: float
+	friction: float
+	restitution: float
+	damping_linear: float
+	damping_angular: float
+	box_halfextents: float3
+	sphere_radius: float
+	capsule_radius: float
+	capsule_height: float
+	mesh_lod: int
+	disable_deactivation: bool
+	kinematic: bool
+endstruct
+
+"Creates a rigidbody component for the given entity and returns a handle"
+def create_rigidbody_component(scene: H, entity: H) -> H
+
+"Gets the rigidbody component for the given entity."
+def get_rigidbody_component(scene: H, entity: H) -> H
+
+"Returns the number of entities that have a rigidbody component"
+def entity_rigidbody_count(scene: H) -> int
+
+"Returns the nth entity that has a rigidbody component"
+def entity_rigidbody_get(scene: H, n: int) -> H
 

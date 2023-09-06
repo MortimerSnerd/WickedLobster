@@ -13,7 +13,6 @@ var char_pitch = 0.0
 var pinned_mouse_pos = float2_0
 let debug_msg = wi_sprite_font()
 var first_frame = true
-let fwd_sphere = create_primitive_sphere()
 
 // NB - LH, so fwd is +z
 
@@ -32,6 +31,18 @@ def fwd_vector_from_yaw(y: float):
    let q = mk_quat(float3_y, y)
    return q.transform(float3_z)
    
+def place_at_spawnpoint(spawnent, ent):
+   let ent_tr = gscene.get_transform_component(ent)
+   // haha, don't copy the transform, we don't want to apply the spawnpoint's scaling.
+   let sp_tr = gscene.get_transform_component(spawnent)
+   let sp_pos, sp_rot = sp_tr.decompose()
+   let ent_s = ent_tr.scaling()
+
+   ent_tr.clear()
+   ent_tr.rotate(sp_rot)
+   ent_tr.translate(sp_pos)
+   ent_tr.scale(ent_s)
+   ent_tr.update()
 
 def load_initial_scene():
    set_print_decimals(3)
@@ -40,19 +51,18 @@ def load_initial_scene():
    // Load up our character model, and attach the camera to it.
    // It's just a box right now.
    with_temp_scene() csc:
-      charent = csc.load_model("spudge/fpchar.wiscene", true)
+      csc.load_model("spudge/fpchar.wiscene", false)
+      charent = csc.find_entity_by_name("boxybrown")
       assert charent.is_valid()
       cament = csc.find_entity_by_name("eyepoint", charent)
       assert cament.is_valid()
-      csc.set_layer(charent, player_layer)
       gscene.merge(csc)
 
    // Move character to spawnpoint, and extract yaw, pitch, etc...
    let char_tr = gscene.get_transform_component(charent)
    let spawn = gscene.find_entity_by_name("spawnpoint")
    assert spawn.is_valid()
-   char_tr.copy_from(gscene.get_transform_component(spawn))
-   char_tr.update()
+   place_at_spawnpoint(spawn, charent)
    let fwd = get_fwd_vector(char_tr)
    char_yaw = atan2(float2{fwd.z, fwd.x})
 
@@ -63,7 +73,7 @@ def load_initial_scene():
    let rpath = wi_renderpath3d()
    rpath.set_camera(cc)
    rpath.add_font(debug_msg)
-   rpath.set_ao(AO_MSAO)
+   rpath.set_ao(AO_SSAO)
    rpath.set_ao_power(0.25)
    //rpath.set_raytraced_diffuse_enabled(true)
    //wi_renderer_set_vxgi_enabled(true)
@@ -118,21 +128,23 @@ wi_set_app_variable_frame_fn():
    if input_down('D'):
       mv += right
 
+   // Debug controls to move up and down to vary collisions.
+   if input_down('Q'):
+      mv += float3_y*0.3
+   if input_down('E'):
+      mv -= float3_y*0.3
+
    mv *= spd * dt
 
    // Testing scene intersection binding
-   fwd_sphere.set_center(char_tr.position() + fwd*1.3 + float3_y*0.5)
-   fwd_sphere.set_radius(0.5)
-   with_temp_object(gscene.sphere_intersects(fwd_sphere)) sin:
+   let char_rb = gscene.get_rigidbody_component(charent)
+   let cap = get_rigidbody_capsule(char_tr, char_rb)
+   with_temp_object(gscene.capsule_intersects(cap, FILTER_OPAQUE, ~player_layer)) sin:
       var ename = "?"
       let en = gscene.get_name_component(sin.entity())
       if en.is_valid():
          ename = en.get_name()
       debug_msg.set_text("INTERSECT ent={ename}/{sin.entity()} p={sin.position()} n={sin.normal()} v={sin.velocity()} depth={sin.depth()}")
-   //TODO add primitive capsule
-   //     extract capsule from collider component
-   //     ...
-   //     profit
 
    // Apply changes to character.
    let cam_tr = gscene.get_transform_component(cament)
@@ -140,9 +152,14 @@ wi_set_app_variable_frame_fn():
    cam_tr.rotate_roll_pitch_yaw(float3{radians(char_pitch), 0.0, 0.0})
    cam_tr.update()
    let newpos = char_tr.position() + mv
+
+   // Oddball case, since our "test" character model actually has scaling.
+   // Probably should not be true for real models.
+   let orig_s = char_tr.scaling()
    char_tr.clear()
    char_tr.rotate_roll_pitch_yaw(float3{0.0, radians(char_yaw), 0.0})
    char_tr.translate(newpos)
+   char_tr.scale(orig_s)
    char_tr.update()
 
 load_initial_scene()

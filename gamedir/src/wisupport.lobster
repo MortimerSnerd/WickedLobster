@@ -132,10 +132,43 @@ def info(msg: string):
 enum wokind:
    wk_scene, wk_entity, wk_name_comp, wk_camera_comp, wk_transform_comp, wk_renderpath3,
    wk_timer, wk_sprite_font, wk_font_params, wk_humanoid, wk_layer, wk_collider,
-   wk_matrix, wk_animation_comp
+   wk_matrix, wk_animation_comp, wk_sphere, wk_sphereintersection, wk_capsule, 
+   wk_rigidbody
 
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
+
+struct wi_primitive_capsule:
+   handle: int2
+
+   def delete():
+      wi_delete_primitive_capsule(handle)
+
+   def base():
+      return wi_get_primitive_capsule_base(handle)
+
+   def set_base(v):
+      wi_set_primitive_capsule_base(handle, v)
+
+   def tip():
+      return wi_get_primitive_capsule_tip(handle)
+
+   def set_tip(v):
+      wi_set_primitive_capsule_tip(handle, v)
+
+   def radius():
+      return wi_get_primitive_capsule_radius(handle)
+
+   def set_radius(v):
+      wi_set_primitive_capsule_radius(handle, v)
+
+   // Returns bool, position, normal, penetration depth
+   def intersects(other: wi_primitive_capsule) -> bool, float3, float3, float:
+      return wi_capsule_capsule_intersects(handle, other.handle)
+
+
+def create_primitive_capsule() -> wi_primitive_capsule:
+   return wi_primitive_capsule{wi_create_primitive_capsule()}
 
 struct wi_primitive_sphere:
    handle: int2
@@ -157,6 +190,13 @@ struct wi_primitive_sphere:
 
    def intersects(other: wi_primitive_sphere) -> bool, float, float3:
       return wi_sphere_sphere_intersects(handle, other.handle)
+
+   // Returns bool, dist, direction
+   def intersects(other: wi_primitive_capsule) -> bool, float, float3:
+      return wi_sphere_capsule_intersects(handle, other.handle)
+
+def intersects(me:: wi_primitive_capsule, other: wi_primitive_sphere) -> bool, float, float3:
+   return wi_capsule_sphere_intersects(handle, other.handle)
 
 def create_primitive_sphere() -> wi_primitive_sphere:
    return wi_primitive_sphere{wi_create_primitive_sphere()}
@@ -222,6 +262,89 @@ constructor wi_name_component(h: int2):
    assert h[0] == wk_name_comp
    return wi_name_component{h}
 
+
+class wi_rigidbody_component: wi_component
+   def shape():
+      return wi_get_rigidbody_physics_shape(handle)
+
+   def set_shape(v):
+      wi_set_rigidbody_physics_shape(handle, v)
+
+   def mass():
+      return wi_get_rigidbody_physics_mass(handle)
+
+   def set_mass(v):
+      wi_set_rigidbody_physics_mass(handle, v)
+
+   def friction():
+      return wi_get_rigidbody_physics_friction(handle)
+
+   def set_friction(v):
+      wi_set_rigidbody_physics_friction(handle, v)
+
+   def restitution():
+      return wi_get_rigidbody_physics_restitution(handle)
+
+   def set_restitution(v):
+      wi_set_rigidbody_physics_restitution(handle, v)
+
+   def damping_linear():
+      return wi_get_rigidbody_physics_damping_linear(handle)
+
+   def set_damping_linear(v):
+      wi_set_rigidbody_physics_damping_linear(handle, v)
+
+   def damping_angular():
+      return wi_get_rigidbody_physics_damping_angular(handle)
+
+   def set_damping_angular(v):
+      wi_set_rigidbody_physics_damping_angular(handle, v)
+
+   def box_halfextents():
+      return wi_get_rigidbody_physics_box_halfextents(handle)
+
+   def set_box_halfextents(v):
+      wi_set_rigidbody_physics_box_halfextents(handle, v)
+
+   def sphere_radius():
+      return wi_get_rigidbody_physics_sphere_radius(handle)
+
+   def set_sphere_radius(v):
+      wi_set_rigidbody_physics_sphere_radius(handle, v)
+
+   def capsule_radius():
+      return wi_get_rigidbody_physics_capsule_radius(handle)
+
+   def set_capsule_radius(v):
+      wi_set_rigidbody_physics_capsule_radius(handle, v)
+
+   def capsule_height():
+      return wi_get_rigidbody_physics_capsule_height(handle)
+
+   def set_capsule_height(v):
+      wi_set_rigidbody_physics_capsule_height(handle, v)
+
+   def mesh_lod():
+      return wi_get_rigidbody_physics_mesh_lod(handle)
+
+   def set_mesh_lod(v):
+      wi_set_rigidbody_physics_mesh_lod(handle, v)
+
+   def disable_deactivation():
+      return wi_get_rigidbody_physics_disable_deactivation(handle)
+
+   def set_disable_deactivation(v):
+      wi_set_rigidbody_physics_disable_deactivation(handle, v)
+
+   def kinematic():
+      return wi_get_rigidbody_physics_kinematic(handle)
+
+   def set_kinematic(v):
+      wi_set_rigidbody_physics_kinematic(handle, v)
+
+constructor wi_rigidbody_component(h: int2):
+   assert h[0] == wk_rigidbody
+   return wi_rigidbody_component{h}
 
 class wi_camera_component: wi_component
    def fov() -> float:
@@ -289,14 +412,22 @@ class wi_transform_component: wi_component
    def clear():
       wi_transform_clear(handle)
 
+   // Decomposes transform into translation, rotation, scale
+   def decompose() -> float3, quat, float3:
+      let t, r, s = wi_decompose_transform(handle)
+      return t, mk_quat(r), s
+
+   def scaling() -> float3:
+      return wi_transform_scaling(handle)
+
    def rotate(q: quat):
       wi_transform_rotate(handle, q.as_float4())
 
    def position() -> float3:
       return wi_transform_position(handle)
 
-   def rotation() -> float4:
-      return wi_transform_rotation(handle)
+   def rotation() -> quat:
+      return mk_quat(wi_transform_rotation(handle))
 
    def update():
       wi_transform_update_transform(handle)
@@ -532,6 +663,10 @@ class wi_collider_component: wi_component
    def shape():
       return wi_get_collider_shape(handle)
 
+   // Return value valid only as long as there are not ecs changes on the enity.
+   def capsule() -> wi_primitive_capsule:
+      return wi_primitive_capsule{wi_get_collider_capsule(handle)}
+
    def set_shape(s: int):
       wi_set_collider_shape(handle, s)
 
@@ -579,6 +714,21 @@ enum wi_filter:
 // it is only invalidated when the scene is deleted.
 class wi_scene:
    handle: int2   
+
+   def create_rigidbody_component(ent: wi_entity):
+      return wi_rigidbody_component(wi_create_rigidbody_component(handle, ent.handle))
+
+   def get_rigidbody_component(ent: wi_entity):
+      return wi_rigidbody_component(wi_get_rigidbody_component(handle, ent.handle))
+
+   def get_rigidbody_count():
+      return wi_entity_rigidbody_count(handle)
+
+   def get_rigidbody_entity(n: int):
+      return wi_entity{wi_entity_rigidbody_get(handle, n)}
+
+   def capsule_intersects(capsule: wi_primitive_capsule, filter_mask = FILTER_OPAQUE, layer_mask = ~0, lod = 0) -> wi_sphere_intersection:
+      return wi_sphere_intersection{wi_scene_capsule_intersects(handle, capsule.handle, filter_mask, layer_mask, lod)}
 
    def sphere_intersects(sphere: wi_primitive_sphere, filter_mask = FILTER_OPAQUE, layer_mask = ~0, lod = 0) -> wi_sphere_intersection:
       return wi_sphere_intersection{wi_scene_sphere_intersects(handle, sphere.handle, filter_mask, layer_mask, lod)}
@@ -699,11 +849,13 @@ class wi_scene:
          lc = create_layer_component(ent)
       lc.set_layer_mask(layer)
 
+
 def new_wi_scene() -> wi_scene:
    return wi_scene{wi_new_scene()}
 
 def global_scene() -> wi_scene:
    return wi_scene{wi_global_scene()}
+
 
 def with_temp_scene(body):
    let scene = new_wi_scene()
@@ -718,6 +870,22 @@ def with_temp_object(obj, obj2, body):
    body(obj, obj2)
    obj2.delete()
    obj.delete()
+
+// Helper that calculates a capsule from the rididbody component data.  Capsule must be deleted
+// when you're done with it.  Assuming position is center of entity.
+def get_rigidbody_capsule(rb_tr: wi_transform_component, rb: wi_rigidbody_component) -> wi_primitive_capsule:
+   // The btCapsule is y axis aligned, so we assume that.
+   let epos, _rot, escale = rb_tr.decompose()
+   let cheight = rb.capsule_height()
+   let cradius = rb.capsule_radius()
+   let vextent = float3_y*(cheight*0.5 + cradius)*escale.y
+   let rv = create_primitive_capsule()
+   rv.set_base(epos - vextent)
+   rv.set_tip(epos + vextent)
+   rv.set_radius(cradius)
+   //print("RBC scale={escale} pos={rb_tr.position()} base={rv.base()} tip={rv.tip()}")
+   return rv
+   
 
 // Delta time for application fixed update.
 def get_fixed_dt():

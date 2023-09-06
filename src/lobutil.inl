@@ -291,6 +291,24 @@ anfr("wi_transform_rotation", "tcomp", "I}:2", "F}:4",
         push_xmfloat4(sp, wbnd::transform_rotation(tcomp));
 });
 
+anfr("wi_transform_scaling", "tcomp", "I}:2", "F}:3",
+     "Gets the transform's scaling",
+    [](StackPtr &sp, VM &vm) {
+        auto tcomp = pop_wo_handle(sp);
+        push_xmfloat3(sp, wbnd::transform_scaling(tcomp));
+});
+
+anfr("wi_decompose_transform", "tcomp", "I}:2", "F}:3F}:4F}:3",
+     "Decomposes transform pieces into position, rotation, scale",
+    [](StackPtr &sp, VM &vm) {
+        auto     tcomp   = pop_wo_handle(sp);
+        XMFLOAT4 retval2;
+        XMFLOAT3 retval3;
+        push_xmfloat3(sp, wbnd::decompose_transform(tcomp, retval2, retval3));
+        push_xmfloat4(sp, retval2);
+        push_xmfloat3(sp, retval3);
+});
+
 anfr("wi_transform_update_transform", "tcomp", "I}:2", "",
      "Applies local space to world space matrix for transform",
     [](StackPtr &sp, VM &vm) {
@@ -2055,6 +2073,13 @@ anfr("wi_entity_collider_get", "scene,n", "I}:2I", "I}:2",
         push_wo_handle(sp, wbnd::entity_collider_get(scene, n));
 });
 
+anfr("wi_get_collider_capsule", "collider", "I}:2", "I}:2",
+     "Returns the primitive capsule for the collider, only valid if the shape is CAPSULE.  Returns value does not need to be deleted, valid until there is an ecs change in the scene",
+    [](StackPtr &sp, VM &vm) {
+        auto collider = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::get_collider_capsule(collider));
+});
+
 anfr("wi_create_matrix4x4", "", "", "I}:2",
      "Creates a matrix",
     [](StackPtr &sp, VM &vm) {
@@ -2574,6 +2599,342 @@ anfr("wi_scene_sphere_intersects", "scene,sphere,filter_mask,layer_mask,lod", "I
         auto sphere      = pop_wo_handle(sp);
         auto scene       = pop_wo_handle(sp);
         push_wo_handle(sp, wbnd::scene_sphere_intersects(scene, sphere, filter_mask, layer_mask, lod));
+});
+
+anfr("wi_create_primitive_capsule", "", "", "I}:2",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        push_wo_handle(sp, wbnd::create_primitive_capsule());
+});
+
+anfr("wi_delete_primitive_capsule", "primitive_capsule", "I}:2", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto primitive_capsule = pop_wo_handle(sp);
+        wbnd::delete_primitive_capsule(primitive_capsule);
+});
+
+anfr("wi_set_primitive_capsule_base", "primitive_capsule,v", "I}:2F}:3", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT3 v;
+        pop_xmfloat3(sp, v);
+        auto primitive_capsule = pop_wo_handle(sp);
+        wbnd::set_primitive_capsule_base(primitive_capsule, v);
+});
+
+anfr("wi_get_primitive_capsule_base", "primitive_capsule", "I}:2", "F}:3",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto primitive_capsule = pop_wo_handle(sp);
+        push_xmfloat3(sp, wbnd::get_primitive_capsule_base(primitive_capsule));
+});
+
+anfr("wi_set_primitive_capsule_tip", "primitive_capsule,v", "I}:2F}:3", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT3 v;
+        pop_xmfloat3(sp, v);
+        auto primitive_capsule = pop_wo_handle(sp);
+        wbnd::set_primitive_capsule_tip(primitive_capsule, v);
+});
+
+anfr("wi_get_primitive_capsule_tip", "primitive_capsule", "I}:2", "F}:3",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto primitive_capsule = pop_wo_handle(sp);
+        push_xmfloat3(sp, wbnd::get_primitive_capsule_tip(primitive_capsule));
+});
+
+anfr("wi_set_primitive_capsule_radius", "primitive_capsule,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).fltval();
+        auto primitive_capsule = pop_wo_handle(sp);
+        wbnd::set_primitive_capsule_radius(primitive_capsule, v);
+});
+
+anfr("wi_get_primitive_capsule_radius", "primitive_capsule", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto primitive_capsule = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_primitive_capsule_radius(primitive_capsule)));
+});
+
+anfr("wi_capsule_capsule_intersects", "cap0,cap1", "I}:2I}:2", "BF}:3F}:3F",
+     "Capsule to capsule intersection test, returns true/false, position, normal, penetration_depth",
+    [](StackPtr &sp, VM &vm) {
+        auto     cap1    = pop_wo_handle(sp);
+        auto     cap0    = pop_wo_handle(sp);
+        XMFLOAT3 retval2;
+        XMFLOAT3 retval3;
+        float    retval4;
+        Push(sp, Value(wbnd::capsule_capsule_intersects(cap0, cap1, retval2, retval3, retval4)));
+        push_xmfloat3(sp, retval2);
+        push_xmfloat3(sp, retval3);
+        Push(sp, Value(retval4));
+});
+
+anfr("wi_capsule_sphere_intersects", "cap,sphere", "I}:2I}:2", "BFF}:3",
+     "Capsule to sphere intersection test, returns bool, dist, direction",
+    [](StackPtr &sp, VM &vm) {
+        auto     sphere  = pop_wo_handle(sp);
+        auto     cap     = pop_wo_handle(sp);
+        float    retval2;
+        XMFLOAT3 retval3;
+        Push(sp, Value(wbnd::capsule_sphere_intersects(cap, sphere, retval2, retval3)));
+        Push(sp, Value(retval2));
+        push_xmfloat3(sp, retval3);
+});
+
+anfr("wi_sphere_capsule_intersects", "sphere,cap", "I}:2I}:2", "BFF}:3",
+     "Sphere to capsule intersection test, returns bool, dist, direction",
+    [](StackPtr &sp, VM &vm) {
+        auto     cap     = pop_wo_handle(sp);
+        auto     sphere  = pop_wo_handle(sp);
+        float    retval2;
+        XMFLOAT3 retval3;
+        Push(sp, Value(wbnd::sphere_capsule_intersects(sphere, cap, retval2, retval3)));
+        Push(sp, Value(retval2));
+        push_xmfloat3(sp, retval3);
+});
+
+anfr("wi_scene_capsule_intersects", "scene,cap,filter_mask,layer_mask,lod", "I}:2I}:2III", "I}:2",
+     "Tests whether a capsule intersects anything in the scene, returning a SphereIntersectionResult (not a typo)",
+    [](StackPtr &sp, VM &vm) {
+        auto lod         = (int32_t)Pop(sp).ival();
+        auto layer_mask  = (int32_t)Pop(sp).ival();
+        auto filter_mask = (int32_t)Pop(sp).ival();
+        auto cap         = pop_wo_handle(sp);
+        auto scene       = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::scene_capsule_intersects(scene, cap, filter_mask, layer_mask, lod));
+});
+
+anfr("wi_set_rigidbody_physics_shape", "rigidbody_physics,v", "I}:2I", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = (int32_t)Pop(sp).ival();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_shape(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_shape", "rigidbody_physics", "I}:2", "I",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_shape(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_mass", "rigidbody_physics,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).fltval();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_mass(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_mass", "rigidbody_physics", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_mass(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_friction", "rigidbody_physics,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).fltval();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_friction(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_friction", "rigidbody_physics", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_friction(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_restitution", "rigidbody_physics,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).fltval();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_restitution(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_restitution", "rigidbody_physics", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_restitution(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_damping_linear", "rigidbody_physics,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).fltval();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_damping_linear(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_damping_linear", "rigidbody_physics", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_damping_linear(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_damping_angular", "rigidbody_physics,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).fltval();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_damping_angular(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_damping_angular", "rigidbody_physics", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_damping_angular(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_box_halfextents", "rigidbody_physics,v", "I}:2F}:3", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT3 v;
+        pop_xmfloat3(sp, v);
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_box_halfextents(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_box_halfextents", "rigidbody_physics", "I}:2", "F}:3",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        push_xmfloat3(sp, wbnd::get_rigidbody_physics_box_halfextents(rigidbody_physics));
+});
+
+anfr("wi_set_rigidbody_physics_sphere_radius", "rigidbody_physics,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).fltval();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_sphere_radius(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_sphere_radius", "rigidbody_physics", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_sphere_radius(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_capsule_radius", "rigidbody_physics,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).fltval();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_capsule_radius(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_capsule_radius", "rigidbody_physics", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_capsule_radius(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_capsule_height", "rigidbody_physics,v", "I}:2F", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).fltval();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_capsule_height(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_capsule_height", "rigidbody_physics", "I}:2", "F",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_capsule_height(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_mesh_lod", "rigidbody_physics,v", "I}:2I", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = (int32_t)Pop(sp).ival();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_mesh_lod(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_mesh_lod", "rigidbody_physics", "I}:2", "I",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_mesh_lod(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_disable_deactivation", "rigidbody_physics,v", "I}:2B", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).True();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_disable_deactivation(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_disable_deactivation", "rigidbody_physics", "I}:2", "B",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_disable_deactivation(rigidbody_physics)));
+});
+
+anfr("wi_set_rigidbody_physics_kinematic", "rigidbody_physics,v", "I}:2B", "",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto v                 = Pop(sp).True();
+        auto rigidbody_physics = pop_wo_handle(sp);
+        wbnd::set_rigidbody_physics_kinematic(rigidbody_physics, v);
+});
+
+anfr("wi_get_rigidbody_physics_kinematic", "rigidbody_physics", "I}:2", "B",
+     "",
+    [](StackPtr &sp, VM &vm) {
+        auto rigidbody_physics = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_rigidbody_physics_kinematic(rigidbody_physics)));
+});
+
+anfr("wi_create_rigidbody_component", "scene,entity", "I}:2I}:2", "I}:2",
+     "Creates a rigidbody component for the given entity and returns a handle",
+    [](StackPtr &sp, VM &vm) {
+        auto entity = pop_wo_handle(sp);
+        auto scene  = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::create_rigidbody_component(scene, entity));
+});
+
+anfr("wi_get_rigidbody_component", "scene,entity", "I}:2I}:2", "I}:2",
+     "Gets the rigidbody component for the given entity.",
+    [](StackPtr &sp, VM &vm) {
+        auto entity = pop_wo_handle(sp);
+        auto scene  = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::get_rigidbody_component(scene, entity));
+});
+
+anfr("wi_entity_rigidbody_count", "scene", "I}:2", "I",
+     "Returns the number of entities that have a rigidbody component",
+    [](StackPtr &sp, VM &vm) {
+        auto scene = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::entity_rigidbody_count(scene)));
+});
+
+anfr("wi_entity_rigidbody_get", "scene,n", "I}:2I", "I}:2",
+     "Returns the nth entity that has a rigidbody component",
+    [](StackPtr &sp, VM &vm) {
+        auto n     = (int32_t)Pop(sp).ival();
+        auto scene = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::entity_rigidbody_get(scene, n));
 }); 
 
 
