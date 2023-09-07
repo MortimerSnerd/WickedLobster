@@ -166,6 +166,11 @@ struct wi_primitive_capsule:
    def intersects(other: wi_primitive_capsule) -> bool, float3, float3, float:
       return wi_capsule_capsule_intersects(handle, other.handle)
 
+   // Updates the capsule position by d_t.
+   def translate(d_p: float3):
+      set_base(base() + d_p)
+      set_tip(tip() + d_p)
+
 
 def create_primitive_capsule() -> wi_primitive_capsule:
    return wi_primitive_capsule{wi_create_primitive_capsule()}
@@ -878,7 +883,7 @@ def get_rigidbody_capsule(rb_tr: wi_transform_component, rb: wi_rigidbody_compon
    let epos, _rot, escale = rb_tr.decompose()
    let cheight = rb.capsule_height()
    let cradius = rb.capsule_radius()
-   let vextent = float3_y*(cheight*0.5 + cradius)*escale.y
+   let vextent = float3_y*cheight*0.5*escale.y
    let rv = create_primitive_capsule()
    rv.set_base(epos - vextent)
    rv.set_tip(epos + vextent)

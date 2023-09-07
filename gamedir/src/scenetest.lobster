@@ -4,12 +4,15 @@ import wisupport
 let player_layer = 1 << 0
 let static_layer = 1 << 1
 let dynobjs_layer = 1 << 2
+let g_accel = 39.0
 
 let gscene = global_scene()
 var charent = INVALID_ENTITY
 var cament = INVALID_ENTITY
 var char_yaw = 0.0
 var char_pitch = 0.0
+var char_vel = float3_0
+var char_on_floor = false
 var pinned_mouse_pos = float2_0
 let debug_msg = wi_sprite_font()
 var first_frame = true
@@ -43,6 +46,16 @@ def place_at_spawnpoint(spawnent, ent):
    ent_tr.translate(sp_pos)
    ent_tr.scale(ent_s)
    ent_tr.update()
+
+def y_is_major_axis(norm):
+   let na = abs(norm)
+   return na.y >= na.x and na.y >= na.z
+
+def looks_like_floor(norm):
+   return norm.y > 0.0 and y_is_major_axis(norm)
+
+def looks_like_ceiling(norm):
+   return norm.y < 0.0 and y_is_major_axis(norm)
 
 def load_initial_scene():
    set_print_decimals(3)
@@ -105,6 +118,7 @@ wi_set_app_variable_frame_fn():
       pinned_mouse_pos = center
       input_set_pointer(pinned_mouse_pos)
       first_frame = false
+      return
    else:
       mpos = input_get_pointer()
       mdiff = mpos - pinned_mouse_pos
@@ -119,42 +133,73 @@ wi_set_app_variable_frame_fn():
    let right = float3{fwd.z, 0.0, -fwd.x}
    var mv = float3_0
 
-   if input_down('W'):
-      mv += fwd
-   if input_down('S'):
-      mv -= fwd
-   if input_down('A'):
-      mv -= right
-   if input_down('D'):
-      mv += right
+   if char_on_floor:
+      if input_down('W'):
+         mv += fwd
+      if input_down('S'):
+         mv -= fwd
+      if input_down('A'):
+         mv -= right
+      if input_down('D'):
+         mv += right
 
-   // Debug controls to move up and down to vary collisions.
-   if input_down('Q'):
-      mv += float3_y*0.3
-   if input_down('E'):
-      mv -= float3_y*0.3
+      if input_down(KEYBOARD_BUTTON_SPACE):
+         let jump_speed = 10.0
+         char_vel = float3{char_vel.x, jump_speed, char_vel.z}
+         char_on_floor = false
 
-   mv *= spd * dt
+   var yvel = char_vel.y
+   if not char_on_floor:
+      yvel -= g_accel*dt
+
+   mv *= spd
+   if magnitude_squared(mv) > 0.0:
+      char_vel = float3{mv.x, yvel, mv.z}
+   else:
+      char_vel = float3{char_vel.x, yvel, char_vel.z}
+      if char_on_floor:
+         char_vel *= float3{0.9, 0.0, 0.9}
 
    // Testing scene intersection binding
    let char_rb = gscene.get_rigidbody_component(charent)
-   let cap = get_rigidbody_capsule(char_tr, char_rb)
-   with_temp_object(gscene.capsule_intersects(cap, FILTER_OPAQUE, ~player_layer)) sin:
-      var ename = "?"
-      let en = gscene.get_name_component(sin.entity())
-      if en.is_valid():
-         ename = en.get_name()
-      debug_msg.set_text("INTERSECT ent={ename}/{sin.entity()} p={sin.position()} n={sin.normal()} v={sin.velocity()} depth={sin.depth()}")
+   var act_dp = char_vel*dt
+
+   print("ctest v={char_vel} dp={act_dp} on_floor={char_on_floor}")
+   char_on_floor = false
+   with_temp_object(get_rigidbody_capsule(char_tr, char_rb)) cap:
+      let start_pos = cap.base()
+      cap.translate(act_dp)
+      var touching_something = true
+      var max_iters = 4
+      while touching_something and max_iters > 0:
+         max_iters--
+         with_temp_object(gscene.capsule_intersects(cap, FILTER_OPAQUE, static_layer)) sin:
+            let cent = sin.entity()
+            let n = sin.normal()
+            guard cent.is_valid():
+               touching_something = false
+            print("\ttouch {cent} {gscene.get_name_component(cent).get_name()} n={n} depth={sin.depth()}")
+            cap.translate(n*sin.depth()*1.001)
+            if n.looks_like_floor:
+               char_on_floor = true
+            elif n.looks_like_ceiling:
+               char_vel = float3{char_vel.x, 0.0, char_vel.z}
+
+      act_dp = cap.base() - start_pos
+      if char_on_floor:
+         // Keep contact with the floor, rather than bouncing by a minute amount
+         // every frame.
+         act_dp -= float3_y*0.01
 
    // Apply changes to character.
    let cam_tr = gscene.get_transform_component(cament)
    cam_tr.clear()
    cam_tr.rotate_roll_pitch_yaw(float3{radians(char_pitch), 0.0, 0.0})
    cam_tr.update()
-   let newpos = char_tr.position() + mv
 
    // Oddball case, since our "test" character model actually has scaling.
    // Probably should not be true for real models.
+   let newpos = char_tr.position() + act_dp
    let orig_s = char_tr.scaling()
    char_tr.clear()
    char_tr.rotate_roll_pitch_yaw(float3{0.0, radians(char_yaw), 0.0})
