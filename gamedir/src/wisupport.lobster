@@ -887,8 +887,8 @@ def get_rigidbody_capsule(rb_tr: wi_transform_component, rb: wi_rigidbody_compon
    let rv = create_primitive_capsule()
    rv.set_base(epos - vextent)
    rv.set_tip(epos + vextent)
-   rv.set_radius(cradius)
-   //print("RBC scale={escale} pos={rb_tr.position()} base={rv.base()} tip={rv.tip()}")
+   rv.set_radius(cradius*min(escale.x, escale.z)) 
+
    return rv
    
 
