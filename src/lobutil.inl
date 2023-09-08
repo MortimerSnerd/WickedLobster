@@ -496,7 +496,7 @@ anfr("wi_get_camera_entity", "scene,n", "I}:2I", "I}:2",
 });
 
 anfr("wi_set_camera_eye", "camera,v", "I}:2F}:3", "",
-     "",
+     "Sets camera.eye",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -505,14 +505,14 @@ anfr("wi_set_camera_eye", "camera,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_camera_eye", "camera", "I}:2", "F}:3",
-     "",
+     "Gets camera.eye",
     [](StackPtr &sp, VM &vm) {
         auto camera = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_camera_eye(camera));
 });
 
 anfr("wi_set_camera_at", "camera,v", "I}:2F}:3", "",
-     "",
+     "Sets camera.at",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -521,14 +521,14 @@ anfr("wi_set_camera_at", "camera,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_camera_at", "camera", "I}:2", "F}:3",
-     "",
+     "Gets camera.at",
     [](StackPtr &sp, VM &vm) {
         auto camera = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_camera_at(camera));
 });
 
 anfr("wi_set_camera_up", "camera,v", "I}:2F}:3", "",
-     "",
+     "Sets camera.up",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -537,7 +537,7 @@ anfr("wi_set_camera_up", "camera,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_camera_up", "camera", "I}:2", "F}:3",
-     "",
+     "Gets camera.up",
     [](StackPtr &sp, VM &vm) {
         auto camera = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_camera_up(camera));
@@ -659,7 +659,7 @@ anfr("wi_delete_font_params", "font_params", "I}:2", "",
 });
 
 anfr("wi_set_font_params_position", "font_params,v", "I}:2F}:3", "",
-     "",
+     "Sets font_params.position",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -668,14 +668,14 @@ anfr("wi_set_font_params_position", "font_params,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_font_params_position", "font_params", "I}:2", "F}:3",
-     "",
+     "Gets font_params.position",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_font_params_position(font_params));
 });
 
 anfr("wi_set_font_params_size", "font_params,v", "I}:2I", "",
-     "",
+     "Sets font_params.size",
     [](StackPtr &sp, VM &vm) {
         auto v           = (int32_t)Pop(sp).ival();
         auto font_params = pop_wo_handle(sp);
@@ -683,14 +683,14 @@ anfr("wi_set_font_params_size", "font_params,v", "I}:2I", "",
 });
 
 anfr("wi_get_font_params_size", "font_params", "I}:2", "I",
-     "",
+     "Gets font_params.size",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_size(font_params)));
 });
 
 anfr("wi_set_font_params_scaling", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.scaling",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -698,14 +698,14 @@ anfr("wi_set_font_params_scaling", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_scaling", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.scaling",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_scaling(font_params)));
 });
 
 anfr("wi_set_font_params_rotation", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.rotation",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -713,14 +713,14 @@ anfr("wi_set_font_params_rotation", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_rotation", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.rotation",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_rotation(font_params)));
 });
 
 anfr("wi_set_font_params_spacing_x", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.spacing_x",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -728,14 +728,14 @@ anfr("wi_set_font_params_spacing_x", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_spacing_x", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.spacing_x",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_spacing_x(font_params)));
 });
 
 anfr("wi_set_font_params_spacing_y", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.spacing_y",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -743,14 +743,14 @@ anfr("wi_set_font_params_spacing_y", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_spacing_y", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.spacing_y",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_spacing_y(font_params)));
 });
 
 anfr("wi_set_font_params_h_align", "font_params,v", "I}:2I", "",
-     "",
+     "Sets font_params.h_align",
     [](StackPtr &sp, VM &vm) {
         auto v           = (int32_t)Pop(sp).ival();
         auto font_params = pop_wo_handle(sp);
@@ -758,14 +758,14 @@ anfr("wi_set_font_params_h_align", "font_params,v", "I}:2I", "",
 });
 
 anfr("wi_get_font_params_h_align", "font_params", "I}:2", "I",
-     "",
+     "Gets font_params.h_align",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_h_align(font_params)));
 });
 
 anfr("wi_set_font_params_v_align", "font_params,v", "I}:2I", "",
-     "",
+     "Sets font_params.v_align",
     [](StackPtr &sp, VM &vm) {
         auto v           = (int32_t)Pop(sp).ival();
         auto font_params = pop_wo_handle(sp);
@@ -773,14 +773,14 @@ anfr("wi_set_font_params_v_align", "font_params,v", "I}:2I", "",
 });
 
 anfr("wi_get_font_params_v_align", "font_params", "I}:2", "I",
-     "",
+     "Gets font_params.v_align",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_v_align(font_params)));
 });
 
 anfr("wi_set_font_params_color", "font_params,v", "I}:2F}:4", "",
-     "",
+     "Sets font_params.color",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT4 v;
         pop_xmfloat4(sp, v);
@@ -789,14 +789,14 @@ anfr("wi_set_font_params_color", "font_params,v", "I}:2F}:4", "",
 });
 
 anfr("wi_get_font_params_color", "font_params", "I}:2", "F}:4",
-     "",
+     "Gets font_params.color",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         push_xmfloat4(sp, wbnd::get_font_params_color(font_params));
 });
 
 anfr("wi_set_font_params_shadow_color", "font_params,v", "I}:2F}:4", "",
-     "",
+     "Sets font_params.shadow_color",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT4 v;
         pop_xmfloat4(sp, v);
@@ -805,14 +805,14 @@ anfr("wi_set_font_params_shadow_color", "font_params,v", "I}:2F}:4", "",
 });
 
 anfr("wi_get_font_params_shadow_color", "font_params", "I}:2", "F}:4",
-     "",
+     "Gets font_params.shadow_color",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         push_xmfloat4(sp, wbnd::get_font_params_shadow_color(font_params));
 });
 
 anfr("wi_set_font_params_h_wrap", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.h_wrap",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -820,14 +820,14 @@ anfr("wi_set_font_params_h_wrap", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_h_wrap", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.h_wrap",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_h_wrap(font_params)));
 });
 
 anfr("wi_set_font_params_style", "font_params,v", "I}:2I", "",
-     "",
+     "Sets font_params.style",
     [](StackPtr &sp, VM &vm) {
         auto v           = (int32_t)Pop(sp).ival();
         auto font_params = pop_wo_handle(sp);
@@ -835,14 +835,14 @@ anfr("wi_set_font_params_style", "font_params,v", "I}:2I", "",
 });
 
 anfr("wi_get_font_params_style", "font_params", "I}:2", "I",
-     "",
+     "Gets font_params.style",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_style(font_params)));
 });
 
 anfr("wi_set_font_params_softness", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.softness",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -850,14 +850,14 @@ anfr("wi_set_font_params_softness", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_softness", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.softness",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_softness(font_params)));
 });
 
 anfr("wi_set_font_params_bolden", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.bolden",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -865,14 +865,14 @@ anfr("wi_set_font_params_bolden", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_bolden", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.bolden",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_bolden(font_params)));
 });
 
 anfr("wi_set_font_params_shadow_softness", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.shadow_softness",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -880,14 +880,14 @@ anfr("wi_set_font_params_shadow_softness", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_shadow_softness", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.shadow_softness",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_shadow_softness(font_params)));
 });
 
 anfr("wi_set_font_params_shadow_bolden", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.shadow_bolden",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -895,14 +895,14 @@ anfr("wi_set_font_params_shadow_bolden", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_shadow_bolden", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.shadow_bolden",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_shadow_bolden(font_params)));
 });
 
 anfr("wi_set_font_params_shadow_offset_x", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.shadow_offset_x",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -910,14 +910,14 @@ anfr("wi_set_font_params_shadow_offset_x", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_shadow_offset_x", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.shadow_offset_x",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_shadow_offset_x(font_params)));
 });
 
 anfr("wi_set_font_params_shadow_offset_y", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.shadow_offset_y",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -925,14 +925,14 @@ anfr("wi_set_font_params_shadow_offset_y", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_shadow_offset_y", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.shadow_offset_y",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_shadow_offset_y(font_params)));
 });
 
 anfr("wi_set_font_params_cursor", "font_params,v", "I}:2F}:4", "",
-     "",
+     "Sets font_params.cursor",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT4 v;
         pop_xmfloat4(sp, v);
@@ -941,14 +941,14 @@ anfr("wi_set_font_params_cursor", "font_params,v", "I}:2F}:4", "",
 });
 
 anfr("wi_get_font_params_cursor", "font_params", "I}:2", "F}:4",
-     "",
+     "Gets font_params.cursor",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         push_xmfloat4(sp, wbnd::get_font_params_cursor(font_params));
 });
 
 anfr("wi_set_font_params_hdr_scaling", "font_params,v", "I}:2F", "",
-     "",
+     "Sets font_params.hdr_scaling",
     [](StackPtr &sp, VM &vm) {
         auto v           = Pop(sp).fltval();
         auto font_params = pop_wo_handle(sp);
@@ -956,7 +956,7 @@ anfr("wi_set_font_params_hdr_scaling", "font_params,v", "I}:2F", "",
 });
 
 anfr("wi_get_font_params_hdr_scaling", "font_params", "I}:2", "F",
-     "",
+     "Gets font_params.hdr_scaling",
     [](StackPtr &sp, VM &vm) {
         auto font_params = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_font_params_hdr_scaling(font_params)));
@@ -1014,7 +1014,7 @@ anfr("wi_sprite_font_get_text", "font", "I}:2", "S",
 });
 
 anfr("wi_set_humanoid_default_look_direction", "humanoid,v", "I}:2F}:3", "",
-     "",
+     "Sets humanoid.default_look_direction",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -1023,14 +1023,14 @@ anfr("wi_set_humanoid_default_look_direction", "humanoid,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_humanoid_default_look_direction", "humanoid", "I}:2", "F}:3",
-     "",
+     "Gets humanoid.default_look_direction",
     [](StackPtr &sp, VM &vm) {
         auto humanoid = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_humanoid_default_look_direction(humanoid));
 });
 
 anfr("wi_set_humanoid_head_rotation_max", "humanoid,v", "I}:2F}:2", "",
-     "",
+     "Sets humanoid.head_rotation_max",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT2 v;
         pop_xmfloat2(sp, v);
@@ -1039,14 +1039,14 @@ anfr("wi_set_humanoid_head_rotation_max", "humanoid,v", "I}:2F}:2", "",
 });
 
 anfr("wi_get_humanoid_head_rotation_max", "humanoid", "I}:2", "F}:2",
-     "",
+     "Gets humanoid.head_rotation_max",
     [](StackPtr &sp, VM &vm) {
         auto humanoid = pop_wo_handle(sp);
         push_xmfloat2(sp, wbnd::get_humanoid_head_rotation_max(humanoid));
 });
 
 anfr("wi_set_humanoid_head_rotation_speed", "humanoid,v", "I}:2F", "",
-     "",
+     "Sets humanoid.head_rotation_speed",
     [](StackPtr &sp, VM &vm) {
         auto v        = Pop(sp).fltval();
         auto humanoid = pop_wo_handle(sp);
@@ -1054,14 +1054,14 @@ anfr("wi_set_humanoid_head_rotation_speed", "humanoid,v", "I}:2F", "",
 });
 
 anfr("wi_get_humanoid_head_rotation_speed", "humanoid", "I}:2", "F",
-     "",
+     "Gets humanoid.head_rotation_speed",
     [](StackPtr &sp, VM &vm) {
         auto humanoid = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_humanoid_head_rotation_speed(humanoid)));
 });
 
 anfr("wi_set_humanoid_eye_rotation_max", "humanoid,v", "I}:2F}:2", "",
-     "",
+     "Sets humanoid.eye_rotation_max",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT2 v;
         pop_xmfloat2(sp, v);
@@ -1070,14 +1070,14 @@ anfr("wi_set_humanoid_eye_rotation_max", "humanoid,v", "I}:2F}:2", "",
 });
 
 anfr("wi_get_humanoid_eye_rotation_max", "humanoid", "I}:2", "F}:2",
-     "",
+     "Gets humanoid.eye_rotation_max",
     [](StackPtr &sp, VM &vm) {
         auto humanoid = pop_wo_handle(sp);
         push_xmfloat2(sp, wbnd::get_humanoid_eye_rotation_max(humanoid));
 });
 
 anfr("wi_set_humanoid_eye_rotation_speed", "humanoid,v", "I}:2F", "",
-     "",
+     "Sets humanoid.eye_rotation_speed",
     [](StackPtr &sp, VM &vm) {
         auto v        = Pop(sp).fltval();
         auto humanoid = pop_wo_handle(sp);
@@ -1085,14 +1085,14 @@ anfr("wi_set_humanoid_eye_rotation_speed", "humanoid,v", "I}:2F", "",
 });
 
 anfr("wi_get_humanoid_eye_rotation_speed", "humanoid", "I}:2", "F",
-     "",
+     "Gets humanoid.eye_rotation_speed",
     [](StackPtr &sp, VM &vm) {
         auto humanoid = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_humanoid_eye_rotation_speed(humanoid)));
 });
 
 anfr("wi_set_humanoid_look_at", "humanoid,v", "I}:2F}:3", "",
-     "",
+     "Sets humanoid.look_at",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -1101,7 +1101,7 @@ anfr("wi_set_humanoid_look_at", "humanoid,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_humanoid_look_at", "humanoid", "I}:2", "F}:3",
-     "",
+     "Gets humanoid.look_at",
     [](StackPtr &sp, VM &vm) {
         auto humanoid = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_humanoid_look_at(humanoid));
@@ -1138,7 +1138,7 @@ anfr("wi_humanoid_set_lookat_enabled", "hum,v", "I}:2B", "",
 });
 
 anfr("wi_set_layer_mask", "layer,v", "I}:2I", "",
-     "",
+     "Sets layer.mask",
     [](StackPtr &sp, VM &vm) {
         auto v     = (int32_t)Pop(sp).ival();
         auto layer = pop_wo_handle(sp);
@@ -1146,14 +1146,14 @@ anfr("wi_set_layer_mask", "layer,v", "I}:2I", "",
 });
 
 anfr("wi_get_layer_mask", "layer", "I}:2", "I",
-     "",
+     "Gets layer.mask",
     [](StackPtr &sp, VM &vm) {
         auto layer = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_layer_mask(layer)));
 });
 
 anfr("wi_set_layer_propagation_mask", "layer,v", "I}:2I", "",
-     "",
+     "Sets layer.propagation_mask",
     [](StackPtr &sp, VM &vm) {
         auto v     = (int32_t)Pop(sp).ival();
         auto layer = pop_wo_handle(sp);
@@ -1161,7 +1161,7 @@ anfr("wi_set_layer_propagation_mask", "layer,v", "I}:2I", "",
 });
 
 anfr("wi_get_layer_propagation_mask", "layer", "I}:2", "I",
-     "",
+     "Gets layer.propagation_mask",
     [](StackPtr &sp, VM &vm) {
         auto layer = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_layer_propagation_mask(layer)));
@@ -1229,7 +1229,7 @@ anfr("wi_get_renderpath_logical_dims", "path", "I}:2", "F}:2",
 });
 
 anfr("wi_set_renderpath3d_exposure", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.exposure",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1237,14 +1237,14 @@ anfr("wi_set_renderpath3d_exposure", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_exposure", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.exposure",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_exposure(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_brightness", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.brightness",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1252,14 +1252,14 @@ anfr("wi_set_renderpath3d_brightness", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_brightness", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.brightness",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_brightness(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_contrast", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.contrast",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1267,14 +1267,14 @@ anfr("wi_set_renderpath3d_contrast", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_contrast", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.contrast",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_contrast(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_saturation", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.saturation",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1282,14 +1282,14 @@ anfr("wi_set_renderpath3d_saturation", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_saturation", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.saturation",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_saturation(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_bloom_threshold", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.bloom_threshold",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1297,14 +1297,14 @@ anfr("wi_set_renderpath3d_bloom_threshold", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_bloom_threshold", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.bloom_threshold",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_bloom_threshold(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_motion_blur_strength", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.motion_blur_strength",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1312,14 +1312,14 @@ anfr("wi_set_renderpath3d_motion_blur_strength", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_motion_blur_strength", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.motion_blur_strength",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_motion_blur_strength(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_depth_of_field_strength", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.depth_of_field_strength",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1327,14 +1327,14 @@ anfr("wi_set_renderpath3d_depth_of_field_strength", "renderpath3d,v", "I}:2F", "
 });
 
 anfr("wi_get_renderpath3d_depth_of_field_strength", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.depth_of_field_strength",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_depth_of_field_strength(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_sharpen_filter_amount", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.sharpen_filter_amount",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1342,14 +1342,14 @@ anfr("wi_set_renderpath3d_sharpen_filter_amount", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_sharpen_filter_amount", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.sharpen_filter_amount",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_sharpen_filter_amount(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_outline_threshold", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.outline_threshold",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1357,14 +1357,14 @@ anfr("wi_set_renderpath3d_outline_threshold", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_outline_threshold", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.outline_threshold",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_outline_threshold(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_outline_thickness", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.outline_thickness",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1372,14 +1372,14 @@ anfr("wi_set_renderpath3d_outline_thickness", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_outline_thickness", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.outline_thickness",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_outline_thickness(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_outline_color", "renderpath3d,v", "I}:2F}:4", "",
-     "",
+     "Sets renderpath3d.outline_color",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT4 v;
         pop_xmfloat4(sp, v);
@@ -1388,14 +1388,14 @@ anfr("wi_set_renderpath3d_outline_color", "renderpath3d,v", "I}:2F}:4", "",
 });
 
 anfr("wi_get_renderpath3d_outline_color", "renderpath3d", "I}:2", "F}:4",
-     "",
+     "Gets renderpath3d.outline_color",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         push_xmfloat4(sp, wbnd::get_renderpath3d_outline_color(renderpath3d));
 });
 
 anfr("wi_set_renderpath3d_ao_range", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.ao_range",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1403,14 +1403,14 @@ anfr("wi_set_renderpath3d_ao_range", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_ao_range", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.ao_range",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_ao_range(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_ao_sample_count", "renderpath3d,v", "I}:2I", "",
-     "",
+     "Sets renderpath3d.ao_sample_count",
     [](StackPtr &sp, VM &vm) {
         auto v            = (int32_t)Pop(sp).ival();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1418,14 +1418,14 @@ anfr("wi_set_renderpath3d_ao_sample_count", "renderpath3d,v", "I}:2I", "",
 });
 
 anfr("wi_get_renderpath3d_ao_sample_count", "renderpath3d", "I}:2", "I",
-     "",
+     "Gets renderpath3d.ao_sample_count",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_ao_sample_count(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_ao_power", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.ao_power",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1433,14 +1433,14 @@ anfr("wi_set_renderpath3d_ao_power", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_ao_power", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.ao_power",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_ao_power(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_chromatic_aberration_amount", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.chromatic_aberration_amount",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1448,14 +1448,14 @@ anfr("wi_set_renderpath3d_chromatic_aberration_amount", "renderpath3d,v", "I}:2F
 });
 
 anfr("wi_get_renderpath3d_chromatic_aberration_amount", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.chromatic_aberration_amount",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_chromatic_aberration_amount(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_screen_space_shadow_sample_count", "renderpath3d,v", "I}:2I", "",
-     "",
+     "Sets renderpath3d.screen_space_shadow_sample_count",
     [](StackPtr &sp, VM &vm) {
         auto v            = (int32_t)Pop(sp).ival();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1463,14 +1463,14 @@ anfr("wi_set_renderpath3d_screen_space_shadow_sample_count", "renderpath3d,v", "
 });
 
 anfr("wi_get_renderpath3d_screen_space_shadow_sample_count", "renderpath3d", "I}:2", "I",
-     "",
+     "Gets renderpath3d.screen_space_shadow_sample_count",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_screen_space_shadow_sample_count(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_screen_space_shadow_range", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.screen_space_shadow_range",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1478,14 +1478,14 @@ anfr("wi_set_renderpath3d_screen_space_shadow_range", "renderpath3d,v", "I}:2F",
 });
 
 anfr("wi_get_renderpath3d_screen_space_shadow_range", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.screen_space_shadow_range",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_screen_space_shadow_range(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_eye_adaption_key", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.eye_adaption_key",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1493,14 +1493,14 @@ anfr("wi_set_renderpath3d_eye_adaption_key", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_eye_adaption_key", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.eye_adaption_key",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_eye_adaption_key(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_eye_adaption_rate", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.eye_adaption_rate",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1508,14 +1508,14 @@ anfr("wi_set_renderpath3d_eye_adaption_rate", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_eye_adaption_rate", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.eye_adaption_rate",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_eye_adaption_rate(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_fsr_sharpness", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.fsr_sharpness",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1523,14 +1523,14 @@ anfr("wi_set_renderpath3d_fsr_sharpness", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_fsr_sharpness", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.fsr_sharpness",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_fsr_sharpness(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_fsr2_sharpness", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.fsr2_sharpness",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1538,14 +1538,14 @@ anfr("wi_set_renderpath3d_fsr2_sharpness", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_fsr2_sharpness", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.fsr2_sharpness",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_fsr2_sharpness(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_light_shafts_strength", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.light_shafts_strength",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1553,14 +1553,14 @@ anfr("wi_set_renderpath3d_light_shafts_strength", "renderpath3d,v", "I}:2F", "",
 });
 
 anfr("wi_get_renderpath3d_light_shafts_strength", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.light_shafts_strength",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_light_shafts_strength(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_raytraced_diffuse_range", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.raytraced_diffuse_range",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1568,14 +1568,14 @@ anfr("wi_set_renderpath3d_raytraced_diffuse_range", "renderpath3d,v", "I}:2F", "
 });
 
 anfr("wi_get_renderpath3d_raytraced_diffuse_range", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.raytraced_diffuse_range",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_raytraced_diffuse_range(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_raytraced_reflections_range", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.raytraced_reflections_range",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1583,14 +1583,14 @@ anfr("wi_set_renderpath3d_raytraced_reflections_range", "renderpath3d,v", "I}:2F
 });
 
 anfr("wi_get_renderpath3d_raytraced_reflections_range", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.raytraced_reflections_range",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_raytraced_reflections_range(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_reflection_roughness_cutoff", "renderpath3d,v", "I}:2F", "",
-     "",
+     "Sets renderpath3d.reflection_roughness_cutoff",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).fltval();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1598,14 +1598,14 @@ anfr("wi_set_renderpath3d_reflection_roughness_cutoff", "renderpath3d,v", "I}:2F
 });
 
 anfr("wi_get_renderpath3d_reflection_roughness_cutoff", "renderpath3d", "I}:2", "F",
-     "",
+     "Gets renderpath3d.reflection_roughness_cutoff",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_reflection_roughness_cutoff(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_ssr_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.ssr_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1613,14 +1613,14 @@ anfr("wi_set_renderpath3d_ssr_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_ssr_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.ssr_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_ssr_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_raytraced_diffuse_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.raytraced_diffuse_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1628,14 +1628,14 @@ anfr("wi_set_renderpath3d_raytraced_diffuse_enabled", "renderpath3d,v", "I}:2B",
 });
 
 anfr("wi_get_renderpath3d_raytraced_diffuse_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.raytraced_diffuse_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_raytraced_diffuse_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_raytraced_reflection_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.raytraced_reflection_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1643,14 +1643,14 @@ anfr("wi_set_renderpath3d_raytraced_reflection_enabled", "renderpath3d,v", "I}:2
 });
 
 anfr("wi_get_renderpath3d_raytraced_reflection_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.raytraced_reflection_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_raytraced_reflection_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_shadows_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.shadows_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1658,14 +1658,14 @@ anfr("wi_set_renderpath3d_shadows_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_shadows_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.shadows_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_shadows_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_reflections_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.reflections_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1673,14 +1673,14 @@ anfr("wi_set_renderpath3d_reflections_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_reflections_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.reflections_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_reflections_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_fxaa_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.fxaa_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1688,14 +1688,14 @@ anfr("wi_set_renderpath3d_fxaa_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_fxaa_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.fxaa_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_fxaa_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_bloom_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.bloom_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1703,14 +1703,14 @@ anfr("wi_set_renderpath3d_bloom_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_bloom_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.bloom_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_bloom_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_color_grading_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.color_grading_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1718,14 +1718,14 @@ anfr("wi_set_renderpath3d_color_grading_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_color_grading_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.color_grading_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_color_grading_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_volume_lights_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.volume_lights_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1733,14 +1733,14 @@ anfr("wi_set_renderpath3d_volume_lights_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_volume_lights_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.volume_lights_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_volume_lights_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_light_shafts_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.light_shafts_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1748,14 +1748,14 @@ anfr("wi_set_renderpath3d_light_shafts_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_light_shafts_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.light_shafts_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_light_shafts_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_lens_flare_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.lens_flare_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1763,14 +1763,14 @@ anfr("wi_set_renderpath3d_lens_flare_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_lens_flare_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.lens_flare_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_lens_flare_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_motion_blur_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.motion_blur_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1778,14 +1778,14 @@ anfr("wi_set_renderpath3d_motion_blur_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_motion_blur_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.motion_blur_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_motion_blur_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_depth_of_field_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.depth_of_field_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1793,14 +1793,14 @@ anfr("wi_set_renderpath3d_depth_of_field_enabled", "renderpath3d,v", "I}:2B", ""
 });
 
 anfr("wi_get_renderpath3d_depth_of_field_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.depth_of_field_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_depth_of_field_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_eye_adaptation_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.eye_adaptation_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1808,14 +1808,14 @@ anfr("wi_set_renderpath3d_eye_adaptation_enabled", "renderpath3d,v", "I}:2B", ""
 });
 
 anfr("wi_get_renderpath3d_eye_adaptation_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.eye_adaptation_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_eye_adaptation_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_sharpen_filter_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.sharpen_filter_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1823,14 +1823,14 @@ anfr("wi_set_renderpath3d_sharpen_filter_enabled", "renderpath3d,v", "I}:2B", ""
 });
 
 anfr("wi_get_renderpath3d_sharpen_filter_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.sharpen_filter_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_sharpen_filter_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_outline_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.outline_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1838,14 +1838,14 @@ anfr("wi_set_renderpath3d_outline_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_outline_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.outline_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_outline_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_chromatic_aberration_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.chromatic_aberration_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1853,14 +1853,14 @@ anfr("wi_set_renderpath3d_chromatic_aberration_enabled", "renderpath3d,v", "I}:2
 });
 
 anfr("wi_get_renderpath3d_chromatic_aberration_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.chromatic_aberration_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_chromatic_aberration_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_dither_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.dither_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1868,14 +1868,14 @@ anfr("wi_set_renderpath3d_dither_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_dither_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.dither_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_dither_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_occlusion_culling_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.occlusion_culling_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1883,14 +1883,14 @@ anfr("wi_set_renderpath3d_occlusion_culling_enabled", "renderpath3d,v", "I}:2B",
 });
 
 anfr("wi_get_renderpath3d_occlusion_culling_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.occlusion_culling_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_occlusion_culling_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_scene_update_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.scene_update_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1898,14 +1898,14 @@ anfr("wi_set_renderpath3d_scene_update_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_scene_update_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.scene_update_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_scene_update_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_fsr_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.fsr_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1913,14 +1913,14 @@ anfr("wi_set_renderpath3d_fsr_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_fsr_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.fsr_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_fsr_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_fsr2_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.fsr2_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1928,14 +1928,14 @@ anfr("wi_set_renderpath3d_fsr2_enabled", "renderpath3d,v", "I}:2B", "",
 });
 
 anfr("wi_get_renderpath3d_fsr2_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.fsr2_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_fsr2_enabled(renderpath3d)));
 });
 
 anfr("wi_set_renderpath3d_vxgi_resolve_full_resolution_enabled", "renderpath3d,v", "I}:2B", "",
-     "",
+     "Sets renderpath3d.vxgi_resolve_full_resolution_enabled",
     [](StackPtr &sp, VM &vm) {
         auto v            = Pop(sp).True();
         auto renderpath3d = pop_wo_handle(sp);
@@ -1943,7 +1943,7 @@ anfr("wi_set_renderpath3d_vxgi_resolve_full_resolution_enabled", "renderpath3d,v
 });
 
 anfr("wi_get_renderpath3d_vxgi_resolve_full_resolution_enabled", "renderpath3d", "I}:2", "B",
-     "",
+     "Gets renderpath3d.vxgi_resolve_full_resolution_enabled",
     [](StackPtr &sp, VM &vm) {
         auto renderpath3d = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_renderpath3d_vxgi_resolve_full_resolution_enabled(renderpath3d)));
@@ -1965,7 +1965,7 @@ anfr("wi_set_renderpath3d_ao", "renderpath3d,v", "I}:2I", "",
 });
 
 anfr("wi_set_collider_shape", "collider,v", "I}:2I", "",
-     "",
+     "Sets collider.shape",
     [](StackPtr &sp, VM &vm) {
         auto v        = (int32_t)Pop(sp).ival();
         auto collider = pop_wo_handle(sp);
@@ -1973,14 +1973,14 @@ anfr("wi_set_collider_shape", "collider,v", "I}:2I", "",
 });
 
 anfr("wi_get_collider_shape", "collider", "I}:2", "I",
-     "",
+     "Gets collider.shape",
     [](StackPtr &sp, VM &vm) {
         auto collider = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_collider_shape(collider)));
 });
 
 anfr("wi_set_collider_radius", "collider,v", "I}:2F", "",
-     "",
+     "Sets collider.radius",
     [](StackPtr &sp, VM &vm) {
         auto v        = Pop(sp).fltval();
         auto collider = pop_wo_handle(sp);
@@ -1988,14 +1988,14 @@ anfr("wi_set_collider_radius", "collider,v", "I}:2F", "",
 });
 
 anfr("wi_get_collider_radius", "collider", "I}:2", "F",
-     "",
+     "Gets collider.radius",
     [](StackPtr &sp, VM &vm) {
         auto collider = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_collider_radius(collider)));
 });
 
 anfr("wi_set_collider_offset", "collider,v", "I}:2F}:3", "",
-     "",
+     "Sets collider.offset",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -2004,14 +2004,14 @@ anfr("wi_set_collider_offset", "collider,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_collider_offset", "collider", "I}:2", "F}:3",
-     "",
+     "Gets collider.offset",
     [](StackPtr &sp, VM &vm) {
         auto collider = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_collider_offset(collider));
 });
 
 anfr("wi_set_collider_tail", "collider,v", "I}:2F}:3", "",
-     "",
+     "Sets collider.tail",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -2020,7 +2020,7 @@ anfr("wi_set_collider_tail", "collider,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_collider_tail", "collider", "I}:2", "F}:3",
-     "",
+     "Gets collider.tail",
     [](StackPtr &sp, VM &vm) {
         auto collider = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_collider_tail(collider));
@@ -2268,7 +2268,7 @@ anfr("wi_invert_matrix", "m,result", "I}:2I}:2", "",
 });
 
 anfr("wi_set_animation_start", "animation,v", "I}:2F", "",
-     "",
+     "Sets animation.start",
     [](StackPtr &sp, VM &vm) {
         auto v         = Pop(sp).fltval();
         auto animation = pop_wo_handle(sp);
@@ -2276,14 +2276,14 @@ anfr("wi_set_animation_start", "animation,v", "I}:2F", "",
 });
 
 anfr("wi_get_animation_start", "animation", "I}:2", "F",
-     "",
+     "Gets animation.start",
     [](StackPtr &sp, VM &vm) {
         auto animation = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_animation_start(animation)));
 });
 
 anfr("wi_set_animation_end", "animation,v", "I}:2F", "",
-     "",
+     "Sets animation.end",
     [](StackPtr &sp, VM &vm) {
         auto v         = Pop(sp).fltval();
         auto animation = pop_wo_handle(sp);
@@ -2291,14 +2291,14 @@ anfr("wi_set_animation_end", "animation,v", "I}:2F", "",
 });
 
 anfr("wi_get_animation_end", "animation", "I}:2", "F",
-     "",
+     "Gets animation.end",
     [](StackPtr &sp, VM &vm) {
         auto animation = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_animation_end(animation)));
 });
 
 anfr("wi_set_animation_timer", "animation,v", "I}:2F", "",
-     "",
+     "Sets animation.timer",
     [](StackPtr &sp, VM &vm) {
         auto v         = Pop(sp).fltval();
         auto animation = pop_wo_handle(sp);
@@ -2306,14 +2306,14 @@ anfr("wi_set_animation_timer", "animation,v", "I}:2F", "",
 });
 
 anfr("wi_get_animation_timer", "animation", "I}:2", "F",
-     "",
+     "Gets animation.timer",
     [](StackPtr &sp, VM &vm) {
         auto animation = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_animation_timer(animation)));
 });
 
 anfr("wi_set_animation_amount", "animation,v", "I}:2F", "",
-     "",
+     "Sets animation.amount",
     [](StackPtr &sp, VM &vm) {
         auto v         = Pop(sp).fltval();
         auto animation = pop_wo_handle(sp);
@@ -2321,14 +2321,14 @@ anfr("wi_set_animation_amount", "animation,v", "I}:2F", "",
 });
 
 anfr("wi_get_animation_amount", "animation", "I}:2", "F",
-     "",
+     "Gets animation.amount",
     [](StackPtr &sp, VM &vm) {
         auto animation = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_animation_amount(animation)));
 });
 
 anfr("wi_set_animation_speed", "animation,v", "I}:2F", "",
-     "",
+     "Sets animation.speed",
     [](StackPtr &sp, VM &vm) {
         auto v         = Pop(sp).fltval();
         auto animation = pop_wo_handle(sp);
@@ -2336,7 +2336,7 @@ anfr("wi_set_animation_speed", "animation,v", "I}:2F", "",
 });
 
 anfr("wi_get_animation_speed", "animation", "I}:2", "F",
-     "",
+     "Gets animation.speed",
     [](StackPtr &sp, VM &vm) {
         auto animation = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_animation_speed(animation)));
@@ -2457,7 +2457,7 @@ anfr("wi_delete_primitive_sphere", "primitive_sphere", "I}:2", "",
 });
 
 anfr("wi_set_primitive_sphere_center", "primitive_sphere,v", "I}:2F}:3", "",
-     "",
+     "Sets primitive_sphere.center",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -2466,14 +2466,14 @@ anfr("wi_set_primitive_sphere_center", "primitive_sphere,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_primitive_sphere_center", "primitive_sphere", "I}:2", "F}:3",
-     "",
+     "Gets primitive_sphere.center",
     [](StackPtr &sp, VM &vm) {
         auto primitive_sphere = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_primitive_sphere_center(primitive_sphere));
 });
 
 anfr("wi_set_primitive_sphere_radius", "primitive_sphere,v", "I}:2F", "",
-     "",
+     "Sets primitive_sphere.radius",
     [](StackPtr &sp, VM &vm) {
         auto v                = Pop(sp).fltval();
         auto primitive_sphere = pop_wo_handle(sp);
@@ -2481,7 +2481,7 @@ anfr("wi_set_primitive_sphere_radius", "primitive_sphere,v", "I}:2F", "",
 });
 
 anfr("wi_get_primitive_sphere_radius", "primitive_sphere", "I}:2", "F",
-     "",
+     "Gets primitive_sphere.radius",
     [](StackPtr &sp, VM &vm) {
         auto primitive_sphere = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_primitive_sphere_radius(primitive_sphere)));
@@ -2513,7 +2513,7 @@ anfr("wi_delete_sphere_intersection_result", "sphere_intersection_result", "I}:2
 });
 
 anfr("wi_set_sphere_intersection_result_entity", "sphere_intersection_result,v", "I}:2I}:2", "",
-     "",
+     "Sets sphere_intersection_result.entity",
     [](StackPtr &sp, VM &vm) {
         auto v                          = pop_wo_handle(sp);
         auto sphere_intersection_result = pop_wo_handle(sp);
@@ -2521,14 +2521,14 @@ anfr("wi_set_sphere_intersection_result_entity", "sphere_intersection_result,v",
 });
 
 anfr("wi_get_sphere_intersection_result_entity", "sphere_intersection_result", "I}:2", "I}:2",
-     "",
+     "Gets sphere_intersection_result.entity",
     [](StackPtr &sp, VM &vm) {
         auto sphere_intersection_result = pop_wo_handle(sp);
         push_wo_handle(sp, wbnd::get_sphere_intersection_result_entity(sphere_intersection_result));
 });
 
 anfr("wi_set_sphere_intersection_result_position", "sphere_intersection_result,v", "I}:2F}:3", "",
-     "",
+     "Sets sphere_intersection_result.position",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -2537,14 +2537,14 @@ anfr("wi_set_sphere_intersection_result_position", "sphere_intersection_result,v
 });
 
 anfr("wi_get_sphere_intersection_result_position", "sphere_intersection_result", "I}:2", "F}:3",
-     "",
+     "Gets sphere_intersection_result.position",
     [](StackPtr &sp, VM &vm) {
         auto sphere_intersection_result = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_sphere_intersection_result_position(sphere_intersection_result));
 });
 
 anfr("wi_set_sphere_intersection_result_normal", "sphere_intersection_result,v", "I}:2F}:3", "",
-     "",
+     "Sets sphere_intersection_result.normal",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -2553,14 +2553,14 @@ anfr("wi_set_sphere_intersection_result_normal", "sphere_intersection_result,v",
 });
 
 anfr("wi_get_sphere_intersection_result_normal", "sphere_intersection_result", "I}:2", "F}:3",
-     "",
+     "Gets sphere_intersection_result.normal",
     [](StackPtr &sp, VM &vm) {
         auto sphere_intersection_result = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_sphere_intersection_result_normal(sphere_intersection_result));
 });
 
 anfr("wi_set_sphere_intersection_result_velocity", "sphere_intersection_result,v", "I}:2F}:3", "",
-     "",
+     "Sets sphere_intersection_result.velocity",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -2569,14 +2569,14 @@ anfr("wi_set_sphere_intersection_result_velocity", "sphere_intersection_result,v
 });
 
 anfr("wi_get_sphere_intersection_result_velocity", "sphere_intersection_result", "I}:2", "F}:3",
-     "",
+     "Gets sphere_intersection_result.velocity",
     [](StackPtr &sp, VM &vm) {
         auto sphere_intersection_result = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_sphere_intersection_result_velocity(sphere_intersection_result));
 });
 
 anfr("wi_set_sphere_intersection_result_depth", "sphere_intersection_result,v", "I}:2F", "",
-     "",
+     "Sets sphere_intersection_result.depth",
     [](StackPtr &sp, VM &vm) {
         auto v                          = Pop(sp).fltval();
         auto sphere_intersection_result = pop_wo_handle(sp);
@@ -2584,7 +2584,7 @@ anfr("wi_set_sphere_intersection_result_depth", "sphere_intersection_result,v", 
 });
 
 anfr("wi_get_sphere_intersection_result_depth", "sphere_intersection_result", "I}:2", "F",
-     "",
+     "Gets sphere_intersection_result.depth",
     [](StackPtr &sp, VM &vm) {
         auto sphere_intersection_result = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_sphere_intersection_result_depth(sphere_intersection_result)));
@@ -2615,7 +2615,7 @@ anfr("wi_delete_primitive_capsule", "primitive_capsule", "I}:2", "",
 });
 
 anfr("wi_set_primitive_capsule_base", "primitive_capsule,v", "I}:2F}:3", "",
-     "",
+     "Sets primitive_capsule.base",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -2624,14 +2624,14 @@ anfr("wi_set_primitive_capsule_base", "primitive_capsule,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_primitive_capsule_base", "primitive_capsule", "I}:2", "F}:3",
-     "",
+     "Gets primitive_capsule.base",
     [](StackPtr &sp, VM &vm) {
         auto primitive_capsule = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_primitive_capsule_base(primitive_capsule));
 });
 
 anfr("wi_set_primitive_capsule_tip", "primitive_capsule,v", "I}:2F}:3", "",
-     "",
+     "Sets primitive_capsule.tip",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -2640,14 +2640,14 @@ anfr("wi_set_primitive_capsule_tip", "primitive_capsule,v", "I}:2F}:3", "",
 });
 
 anfr("wi_get_primitive_capsule_tip", "primitive_capsule", "I}:2", "F}:3",
-     "",
+     "Gets primitive_capsule.tip",
     [](StackPtr &sp, VM &vm) {
         auto primitive_capsule = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_primitive_capsule_tip(primitive_capsule));
 });
 
 anfr("wi_set_primitive_capsule_radius", "primitive_capsule,v", "I}:2F", "",
-     "",
+     "Sets primitive_capsule.radius",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).fltval();
         auto primitive_capsule = pop_wo_handle(sp);
@@ -2655,7 +2655,7 @@ anfr("wi_set_primitive_capsule_radius", "primitive_capsule,v", "I}:2F", "",
 });
 
 anfr("wi_get_primitive_capsule_radius", "primitive_capsule", "I}:2", "F",
-     "",
+     "Gets primitive_capsule.radius",
     [](StackPtr &sp, VM &vm) {
         auto primitive_capsule = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_primitive_capsule_radius(primitive_capsule)));
@@ -2711,7 +2711,7 @@ anfr("wi_scene_capsule_intersects", "scene,cap,filter_mask,layer_mask,lod", "I}:
 });
 
 anfr("wi_set_rigidbody_physics_shape", "rigidbody_physics,v", "I}:2I", "",
-     "",
+     "Sets rigidbody_physics.shape",
     [](StackPtr &sp, VM &vm) {
         auto v                 = (int32_t)Pop(sp).ival();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2719,14 +2719,14 @@ anfr("wi_set_rigidbody_physics_shape", "rigidbody_physics,v", "I}:2I", "",
 });
 
 anfr("wi_get_rigidbody_physics_shape", "rigidbody_physics", "I}:2", "I",
-     "",
+     "Gets rigidbody_physics.shape",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_shape(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_mass", "rigidbody_physics,v", "I}:2F", "",
-     "",
+     "Sets rigidbody_physics.mass",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).fltval();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2734,14 +2734,14 @@ anfr("wi_set_rigidbody_physics_mass", "rigidbody_physics,v", "I}:2F", "",
 });
 
 anfr("wi_get_rigidbody_physics_mass", "rigidbody_physics", "I}:2", "F",
-     "",
+     "Gets rigidbody_physics.mass",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_mass(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_friction", "rigidbody_physics,v", "I}:2F", "",
-     "",
+     "Sets rigidbody_physics.friction",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).fltval();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2749,14 +2749,14 @@ anfr("wi_set_rigidbody_physics_friction", "rigidbody_physics,v", "I}:2F", "",
 });
 
 anfr("wi_get_rigidbody_physics_friction", "rigidbody_physics", "I}:2", "F",
-     "",
+     "Gets rigidbody_physics.friction",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_friction(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_restitution", "rigidbody_physics,v", "I}:2F", "",
-     "",
+     "Sets rigidbody_physics.restitution",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).fltval();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2764,14 +2764,14 @@ anfr("wi_set_rigidbody_physics_restitution", "rigidbody_physics,v", "I}:2F", "",
 });
 
 anfr("wi_get_rigidbody_physics_restitution", "rigidbody_physics", "I}:2", "F",
-     "",
+     "Gets rigidbody_physics.restitution",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_restitution(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_damping_linear", "rigidbody_physics,v", "I}:2F", "",
-     "",
+     "Sets rigidbody_physics.damping_linear",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).fltval();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2779,14 +2779,14 @@ anfr("wi_set_rigidbody_physics_damping_linear", "rigidbody_physics,v", "I}:2F", 
 });
 
 anfr("wi_get_rigidbody_physics_damping_linear", "rigidbody_physics", "I}:2", "F",
-     "",
+     "Gets rigidbody_physics.damping_linear",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_damping_linear(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_damping_angular", "rigidbody_physics,v", "I}:2F", "",
-     "",
+     "Sets rigidbody_physics.damping_angular",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).fltval();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2794,14 +2794,14 @@ anfr("wi_set_rigidbody_physics_damping_angular", "rigidbody_physics,v", "I}:2F",
 });
 
 anfr("wi_get_rigidbody_physics_damping_angular", "rigidbody_physics", "I}:2", "F",
-     "",
+     "Gets rigidbody_physics.damping_angular",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_damping_angular(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_box_halfextents", "rigidbody_physics,v", "I}:2F}:3", "",
-     "",
+     "Sets rigidbody_physics.box_halfextents",
     [](StackPtr &sp, VM &vm) {
         XMFLOAT3 v;
         pop_xmfloat3(sp, v);
@@ -2810,14 +2810,14 @@ anfr("wi_set_rigidbody_physics_box_halfextents", "rigidbody_physics,v", "I}:2F}:
 });
 
 anfr("wi_get_rigidbody_physics_box_halfextents", "rigidbody_physics", "I}:2", "F}:3",
-     "",
+     "Gets rigidbody_physics.box_halfextents",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         push_xmfloat3(sp, wbnd::get_rigidbody_physics_box_halfextents(rigidbody_physics));
 });
 
 anfr("wi_set_rigidbody_physics_sphere_radius", "rigidbody_physics,v", "I}:2F", "",
-     "",
+     "Sets rigidbody_physics.sphere_radius",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).fltval();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2825,14 +2825,14 @@ anfr("wi_set_rigidbody_physics_sphere_radius", "rigidbody_physics,v", "I}:2F", "
 });
 
 anfr("wi_get_rigidbody_physics_sphere_radius", "rigidbody_physics", "I}:2", "F",
-     "",
+     "Gets rigidbody_physics.sphere_radius",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_sphere_radius(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_capsule_radius", "rigidbody_physics,v", "I}:2F", "",
-     "",
+     "Sets rigidbody_physics.capsule_radius",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).fltval();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2840,14 +2840,14 @@ anfr("wi_set_rigidbody_physics_capsule_radius", "rigidbody_physics,v", "I}:2F", 
 });
 
 anfr("wi_get_rigidbody_physics_capsule_radius", "rigidbody_physics", "I}:2", "F",
-     "",
+     "Gets rigidbody_physics.capsule_radius",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_capsule_radius(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_capsule_height", "rigidbody_physics,v", "I}:2F", "",
-     "",
+     "Sets rigidbody_physics.capsule_height",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).fltval();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2855,14 +2855,14 @@ anfr("wi_set_rigidbody_physics_capsule_height", "rigidbody_physics,v", "I}:2F", 
 });
 
 anfr("wi_get_rigidbody_physics_capsule_height", "rigidbody_physics", "I}:2", "F",
-     "",
+     "Gets rigidbody_physics.capsule_height",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_capsule_height(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_mesh_lod", "rigidbody_physics,v", "I}:2I", "",
-     "",
+     "Sets rigidbody_physics.mesh_lod",
     [](StackPtr &sp, VM &vm) {
         auto v                 = (int32_t)Pop(sp).ival();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2870,14 +2870,14 @@ anfr("wi_set_rigidbody_physics_mesh_lod", "rigidbody_physics,v", "I}:2I", "",
 });
 
 anfr("wi_get_rigidbody_physics_mesh_lod", "rigidbody_physics", "I}:2", "I",
-     "",
+     "Gets rigidbody_physics.mesh_lod",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_mesh_lod(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_disable_deactivation", "rigidbody_physics,v", "I}:2B", "",
-     "",
+     "Sets rigidbody_physics.disable_deactivation",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).True();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2885,14 +2885,14 @@ anfr("wi_set_rigidbody_physics_disable_deactivation", "rigidbody_physics,v", "I}
 });
 
 anfr("wi_get_rigidbody_physics_disable_deactivation", "rigidbody_physics", "I}:2", "B",
-     "",
+     "Gets rigidbody_physics.disable_deactivation",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_disable_deactivation(rigidbody_physics)));
 });
 
 anfr("wi_set_rigidbody_physics_kinematic", "rigidbody_physics,v", "I}:2B", "",
-     "",
+     "Sets rigidbody_physics.kinematic",
     [](StackPtr &sp, VM &vm) {
         auto v                 = Pop(sp).True();
         auto rigidbody_physics = pop_wo_handle(sp);
@@ -2900,7 +2900,7 @@ anfr("wi_set_rigidbody_physics_kinematic", "rigidbody_physics,v", "I}:2B", "",
 });
 
 anfr("wi_get_rigidbody_physics_kinematic", "rigidbody_physics", "I}:2", "B",
-     "",
+     "Gets rigidbody_physics.kinematic",
     [](StackPtr &sp, VM &vm) {
         auto rigidbody_physics = pop_wo_handle(sp);
         Push(sp, Value(wbnd::get_rigidbody_physics_kinematic(rigidbody_physics)));

@@ -219,6 +219,7 @@ def parse_bindings(fname: string) -> string?, [fundef]:
       for(members) m:
          push(funs, fundef{
             name: "set_{sname}_{m.name}", 
+            doc: "Sets {sname}.{m.name}",
             params: [
                param{
                   name: sname, 
@@ -230,6 +231,7 @@ def parse_bindings(fname: string) -> string?, [fundef]:
             returns: []})
          push(funs, fundef{
             name: "get_{sname}_{m.name}", 
+            doc: "Gets {sname}.{m.name}",
             params: [
                param{
                   name: sname, 
