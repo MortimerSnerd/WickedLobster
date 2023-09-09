@@ -80,16 +80,12 @@ def load_initial_scene():
    char_yaw = atan2(float2{fwd.z, fwd.x})
 
    let cc = gscene.create_camera_component(cament)
-   cc.transform(gscene.get_transform_component(cament))
-   cc.update()
 
    let rpath = wi_renderpath3d()
    rpath.set_camera(cc)
    rpath.add_font(debug_msg)
    rpath.set_ao(AO_SSAO)
    rpath.set_ao_power(0.25)
-   //rpath.set_raytraced_diffuse_enabled(true)
-   //wi_renderer_set_vxgi_enabled(true)
 
    let fp = wi_font_params()
    let sdim = rpath.physical_dims()
@@ -182,6 +178,7 @@ wi_set_app_variable_frame_fn():
             cap.translate(n*sin.depth()*1.001)
             if n.looks_like_floor:
                char_on_floor = true
+               char_vel = float3{char_vel.x, 0.0, char_vel.z}
             elif n.looks_like_ceiling:
                char_vel = float3{char_vel.x, 0.0, char_vel.z}
 
@@ -191,21 +188,16 @@ wi_set_app_variable_frame_fn():
          // every frame.
          act_dp -= float3_y*0.01
 
-   // Apply changes to character.
+   // Set head pitch
    let cam_tr = gscene.get_transform_component(cament)
-   cam_tr.clear()
-   cam_tr.rotate_roll_pitch_yaw(float3{radians(char_pitch), 0.0, 0.0})
-   cam_tr.update()
+   cam_tr.set_rotation_local(mk_quat(float3_x, char_pitch))
+   cam_tr.set_dirty(true)
 
-   // Oddball case, since our "test" character model actually has scaling.
-   // Probably should not be true for real models.
-   let newpos = char_tr.position() + act_dp
-   let orig_s = char_tr.scaling()
-   char_tr.clear()
-   char_tr.rotate_roll_pitch_yaw(float3{0.0, radians(char_yaw), 0.0})
-   char_tr.translate(newpos)
-   char_tr.scale(orig_s)
-   char_tr.update()
+   // Move and rotate the character.
+   char_tr.set_translation_local(char_tr.translation_local() + act_dp)
+   char_tr.set_rotation_local(mk_quat(float3_y, char_yaw))
+   char_tr.set_dirty(true)
+
 
 load_initial_scene()
 wi_start_game()

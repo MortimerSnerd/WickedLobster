@@ -417,6 +417,12 @@ class wi_transform_component: wi_component
    def clear():
       wi_transform_clear(handle)
 
+   def dirty():
+      return wi_get_transform_dirty(handle)
+
+   def set_dirty(v):
+      wi_set_transform_dirty(handle, v)
+
    // Decomposes transform into translation, rotation, scale
    def decompose() -> float3, quat, float3:
       let t, r, s = wi_decompose_transform(handle)
@@ -445,6 +451,25 @@ class wi_transform_component: wi_component
 
    def lerp(a: wi_transform_component, b: wi_transform_component, t: float):
       wi_transform_lerp(handle, a.handle, b.handle, t)
+
+   def scale_local():
+      return wi_get_transform_scale_local(handle)
+
+   def set_scale_local(v):
+      wi_set_transform_scale_local(handle, v)
+
+   def rotation_local():
+      return mk_quat(wi_get_transform_rotation_local(handle))
+
+   def set_rotation_local(v: quat):
+      wi_set_transform_rotation_local(handle, v.as_float4)
+
+   def translation_local():
+      return wi_get_transform_translation_local(handle)
+
+   def set_translation_local(v):
+      wi_set_transform_translation_local(handle, v)
+
 
 
 constructor wi_transform_component(h: int2):
@@ -879,15 +904,16 @@ def with_temp_object(obj, obj2, body):
 // Helper that calculates a capsule from the rididbody component data.  Capsule must be deleted
 // when you're done with it.  Assuming position is center of entity.
 def get_rigidbody_capsule(rb_tr: wi_transform_component, rb: wi_rigidbody_component) -> wi_primitive_capsule:
-   // The btCapsule is y axis aligned, so we assume that.
+   //TODO: there's no reason the capsule couldn't be rotated by the entity transform, 
+   //  this is only correct for capsules running along the y axis.
    let epos, _rot, escale = rb_tr.decompose()
    let cheight = rb.capsule_height()
-   let cradius = rb.capsule_radius()
-   let vextent = float3_y*cheight*0.5*escale.y
+   let cradius = rb.capsule_radius()*min(escale.x, escale.z)
+   let vextent = float3_y*(cheight*0.5*escale.y + cradius)
    let rv = create_primitive_capsule()
    rv.set_base(epos - vextent)
    rv.set_tip(epos + vextent)
-   rv.set_radius(cradius*min(escale.x, escale.z)) 
+   rv.set_radius(cradius) 
 
    return rv
    

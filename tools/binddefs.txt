@@ -85,6 +85,14 @@ def is_backlog_active() -> bool
 "Creates a camera component on an entity."
 def create_camera_component(scene: H, entity: H) -> H
 
+"wi::scene::TransformComponent"
+struct transform!
+	scale_local: float3
+	rotation_local: float4
+	translation_local: float3
+	dirty: bool
+endstruct
+
 "Creates a transform component on an entity"
 def create_transform_component(scene: H, entity: H) -> H
 

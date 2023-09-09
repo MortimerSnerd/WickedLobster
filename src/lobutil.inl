@@ -224,6 +224,69 @@ anfr("wi_create_camera_component", "scene,entity", "I}:2I}:2", "I}:2",
         push_wo_handle(sp, wbnd::create_camera_component(scene, entity));
 });
 
+anfr("wi_set_transform_scale_local", "transform,v", "I}:2F}:3", "",
+     "Sets transform.scale_local",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT3 v;
+        pop_xmfloat3(sp, v);
+        auto transform = pop_wo_handle(sp);
+        wbnd::set_transform_scale_local(transform, v);
+});
+
+anfr("wi_get_transform_scale_local", "transform", "I}:2", "F}:3",
+     "Gets transform.scale_local",
+    [](StackPtr &sp, VM &vm) {
+        auto transform = pop_wo_handle(sp);
+        push_xmfloat3(sp, wbnd::get_transform_scale_local(transform));
+});
+
+anfr("wi_set_transform_rotation_local", "transform,v", "I}:2F}:4", "",
+     "Sets transform.rotation_local",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT4 v;
+        pop_xmfloat4(sp, v);
+        auto transform = pop_wo_handle(sp);
+        wbnd::set_transform_rotation_local(transform, v);
+});
+
+anfr("wi_get_transform_rotation_local", "transform", "I}:2", "F}:4",
+     "Gets transform.rotation_local",
+    [](StackPtr &sp, VM &vm) {
+        auto transform = pop_wo_handle(sp);
+        push_xmfloat4(sp, wbnd::get_transform_rotation_local(transform));
+});
+
+anfr("wi_set_transform_translation_local", "transform,v", "I}:2F}:3", "",
+     "Sets transform.translation_local",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT3 v;
+        pop_xmfloat3(sp, v);
+        auto transform = pop_wo_handle(sp);
+        wbnd::set_transform_translation_local(transform, v);
+});
+
+anfr("wi_get_transform_translation_local", "transform", "I}:2", "F}:3",
+     "Gets transform.translation_local",
+    [](StackPtr &sp, VM &vm) {
+        auto transform = pop_wo_handle(sp);
+        push_xmfloat3(sp, wbnd::get_transform_translation_local(transform));
+});
+
+anfr("wi_set_transform_dirty", "transform,v", "I}:2B", "",
+     "Sets transform.dirty",
+    [](StackPtr &sp, VM &vm) {
+        auto v         = Pop(sp).True();
+        auto transform = pop_wo_handle(sp);
+        wbnd::set_transform_dirty(transform, v);
+});
+
+anfr("wi_get_transform_dirty", "transform", "I}:2", "B",
+     "Gets transform.dirty",
+    [](StackPtr &sp, VM &vm) {
+        auto transform = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_transform_dirty(transform)));
+});
+
 anfr("wi_create_transform_component", "scene,entity", "I}:2I}:2", "I}:2",
      "Creates a transform component on an entity",
     [](StackPtr &sp, VM &vm) {

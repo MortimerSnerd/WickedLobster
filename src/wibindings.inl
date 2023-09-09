@@ -28,6 +28,14 @@ wo_handle find_entity_by_name(wo_handle const& scene, std::string_view const& na
 void backlog(int32_t level, std::string_view const& msg);
 bool is_backlog_active();
 wo_handle create_camera_component(wo_handle const& scene, wo_handle const& entity);
+void set_transform_scale_local(wo_handle const& transform, XMFLOAT3 const& v);
+XMFLOAT3 get_transform_scale_local(wo_handle const& transform);
+void set_transform_rotation_local(wo_handle const& transform, XMFLOAT4 const& v);
+XMFLOAT4 get_transform_rotation_local(wo_handle const& transform);
+void set_transform_translation_local(wo_handle const& transform, XMFLOAT3 const& v);
+XMFLOAT3 get_transform_translation_local(wo_handle const& transform);
+void set_transform_dirty(wo_handle const& transform, bool v);
+bool get_transform_dirty(wo_handle const& transform);
 wo_handle create_transform_component(wo_handle const& scene, wo_handle const& entity);
 wo_handle create_transform();
 void delete_transform(wo_handle const& trans);

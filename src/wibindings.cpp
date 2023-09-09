@@ -286,6 +286,46 @@ namespace wbnd
         return rv;
     }
 
+    void set_transform_scale_local(wo_handle const &transform, XMFLOAT3 const &v)
+    {
+        tc_ptr(transform)->scale_local = v;
+    }
+
+    XMFLOAT3 get_transform_scale_local(wo_handle const &transform)
+    {
+        return tc_ptr(transform)->scale_local;
+    }
+
+    void set_transform_rotation_local(wo_handle const &transform, XMFLOAT4 const &v)
+    {
+        tc_ptr(transform)->rotation_local = v;
+    }
+
+    XMFLOAT4 get_transform_rotation_local(wo_handle const &transform)
+    {
+        return tc_ptr(transform)->rotation_local;
+    }
+
+    void set_transform_translation_local(wo_handle const &transform, XMFLOAT3 const &v)
+    {
+        tc_ptr(transform)->translation_local = v;
+    }
+
+    XMFLOAT3 get_transform_translation_local(wo_handle const &transform)
+    {
+        return tc_ptr(transform)->translation_local;
+    }
+
+    void set_transform_dirty(wo_handle const &transform, bool v)
+    {
+        tc_ptr(transform)->SetDirty(v);
+    }
+
+    bool get_transform_dirty(wo_handle const &transform)
+    {
+        return tc_ptr(transform)->IsDirty();
+    }
+
     XMFLOAT3 transform_scaling(wo_handle const &tcomp)
     {
         return tc_ptr(tcomp)->GetScale();
