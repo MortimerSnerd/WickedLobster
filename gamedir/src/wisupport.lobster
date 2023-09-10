@@ -210,7 +210,7 @@ struct wi_sphere_intersection:
    handle: int2
 
    def set_entity(v):
-      wi_set_sphere_intersection_result_entity(handle, v)
+      wi_set_sphere_intersection_result_entity(handle, v.handle)
 
    def position():
       return wi_get_sphere_intersection_result_position(handle)
@@ -238,6 +238,7 @@ struct wi_sphere_intersection:
 
    def delete():
       wi_delete_sphere_intersection_result(handle)
+
 
 
 // Note: for components, when you get one, do what you need to do with it
@@ -906,10 +907,13 @@ def with_temp_object(obj, obj2, body):
 def get_rigidbody_capsule(rb_tr: wi_transform_component, rb: wi_rigidbody_component) -> wi_primitive_capsule:
    //TODO: there's no reason the capsule couldn't be rotated by the entity transform, 
    //  this is only correct for capsules running along the y axis.
+   // For rigidbody capsule, height is the distance between the two sphere endpoints, 
+   // does not include radius. This is also true for wi::primitive::Capsule
+   // And the position we get for the transform will be the center of the capsule.
    let epos, _rot, escale = rb_tr.decompose()
    let cheight = rb.capsule_height()
    let cradius = rb.capsule_radius()*min(escale.x, escale.z)
-   let vextent = float3_y*(cheight*0.5*escale.y + cradius)
+   let vextent = float3_y*(cheight*0.5*escale.y)
    let rv = create_primitive_capsule()
    rv.set_base(epos - vextent)
    rv.set_tip(epos + vextent)
@@ -1529,4 +1533,11 @@ def copy_from(me:: wi_transform_component, other: wi_transform_component):
 def entity(me:: wi_sphere_intersection):
    return wi_entity{wi_get_sphere_intersection_result_entity(handle)}
 
+def debug_string(me:: wi_sphere_intersection, indlev = 0):
+   let ind0 = repeat_string("\t", indlev)
+   let ind1 = repeat_string("\t", indlev+1)
+   return "{ind0}wi_sphere_intersection{{\n{ind1}entity: {entity()},\n" + 
+          "{ind1}position: {position()},\n{ind1}n={normal()}\n" +
+          "{ind1}velocity: {velocity()}\n{ind1}depth: {depth()}\n{ind0}}}"
+      
 

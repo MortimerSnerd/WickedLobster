@@ -108,6 +108,8 @@ wi_set_app_variable_frame_fn():
    var mpos = float2_0
    var mdiff = float2_0
 
+   //info("FRAME dt={dt}")
+
    if first_frame:
       // pin the mouse to the center of the screen, so it won't go out of the window
       let center = float(wi_renderpath3d().physical_dims()) * 0.5
@@ -140,7 +142,7 @@ wi_set_app_variable_frame_fn():
          mv += right
 
       if input_down(KEYBOARD_BUTTON_SPACE):
-         let jump_speed = 10.0
+         let jump_speed = 15.0
          char_vel = float3{char_vel.x, jump_speed, char_vel.z}
          char_on_floor = false
 
@@ -160,21 +162,22 @@ wi_set_app_variable_frame_fn():
    let char_rb = gscene.get_rigidbody_component(charent)
    var act_dp = char_vel*dt
 
-   print("ctest v={char_vel} dp={act_dp} on_floor={char_on_floor}")
    char_on_floor = false
    with_temp_object(get_rigidbody_capsule(char_tr, char_rb)) cap:
+      //info("\tctest capbase = {cap.base()}, tip={cap.tip()}, rad={cap.radius()}, v={char_vel} dp={act_dp} on_floor={char_on_floor}")
       let start_pos = cap.base()
       cap.translate(act_dp)
       var touching_something = true
       var max_iters = 4
       while touching_something and max_iters > 0:
          max_iters--
-         with_temp_object(gscene.capsule_intersects(cap, FILTER_OPAQUE, static_layer)) sin:
+         with_temp_object(gscene.capsule_intersects(cap, FILTER_COLLIDER|FILTER_NAVIGATION_MESH|FILTER_OPAQUE, static_layer)) sin:
             let cent = sin.entity()
             let n = sin.normal()
             guard cent.is_valid():
                touching_something = false
-            print("\ttouch {cent} {gscene.get_name_component(cent).get_name()} n={n} depth={sin.depth()}")
+            //info("\t\ttouch")
+            //info(sin.debug_string(3))
             cap.translate(n*sin.depth()*1.001)
             if n.looks_like_floor:
                char_on_floor = true
