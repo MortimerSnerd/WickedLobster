@@ -133,7 +133,7 @@ enum wokind:
    wk_scene, wk_entity, wk_name_comp, wk_camera_comp, wk_transform_comp, wk_renderpath3,
    wk_timer, wk_sprite_font, wk_font_params, wk_humanoid, wk_layer, wk_collider,
    wk_matrix, wk_animation_comp, wk_sphere, wk_sphereintersection, wk_capsule, 
-   wk_rigidbody
+   wk_rigidbody, wk_object_comp
 
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
@@ -730,6 +730,77 @@ constructor wi_collider_component(h: int2):
    assert h[0] == wk_collider
    return wi_collider_component{h}
 
+class wi_object_component: wi_component
+   def mesh_id():
+      return wi_entity{wi_get_object_mesh_id(handle)}
+
+   def set_mesh_id(v: wi_entity):
+      wi_set_object_mesh_id(handle, v.handle)
+
+   def cascade_mask():
+      return wi_get_object_cascade_mask(handle)
+
+   def set_cascade_mask(v):
+      wi_set_object_cascade_mask(handle, v)
+
+   def filter_mask():
+      return wi_get_object_filter_mask(handle)
+
+   def set_filter_mask(v):
+      wi_set_object_filter_mask(handle, v)
+
+   def color():
+      return wi_get_object_color(handle)
+
+   def set_color(v):
+      wi_set_object_color(handle, v)
+
+   def emissive_color():
+      return wi_get_object_emissive_color(handle)
+
+   def set_emissive_color(v):
+      wi_set_object_emissive_color(handle, v)
+
+   def user_stencil_ref():
+      return wi_get_object_user_stencil_ref(handle)
+
+   def set_user_stencil_ref(v):
+      wi_set_object_user_stencil_ref(handle, v)
+
+   def lod_distance_multiplier():
+      return wi_get_object_lod_distance_multiplier(handle)
+
+   def set_lod_distance_multiplier(v):
+      wi_set_object_lod_distance_multiplier(handle, v)
+
+   def draw_distance():
+      return wi_get_object_draw_distance(handle)
+
+   def set_draw_distance(v):
+      wi_set_object_draw_distance(handle, v)
+
+   def lightmap_width():
+      return wi_get_object_lightmap_width(handle)
+
+   def set_lightmap_width(v):
+      wi_set_object_lightmap_width(handle, v)
+
+   def lightmap_height():
+      return wi_get_object_lightmap_height(handle)
+
+   def set_lightmap_height(v):
+      wi_set_object_lightmap_height(handle, v)
+
+   def sort_priority():
+      return wi_get_object_sort_priority(handle)
+
+   def set_sort_priority(v):
+      wi_set_object_sort_priority(handle, v)
+
+constructor wi_object_component(h: int2):
+   assert h[0] == wk_object_comp
+   return wi_object_component{h}
+
 enum wi_filter:
 		FILTER_NONE = 0,
 		FILTER_OPAQUE = 1 << 0,
@@ -745,6 +816,18 @@ enum wi_filter:
 // it is only invalidated when the scene is deleted.
 class wi_scene:
    handle: int2   
+
+   def create_object_component(ent: wi_entity):
+      return wi_object_component(wi_create_object_component(handle, ent.handle))
+
+   def get_object_component(ent: wi_entity):
+      return wi_object_component(wi_get_object_component(handle, ent.handle))
+
+   def get_object_count():
+      return wi_entity_object_count(handle)
+
+   def get_object_entity(n: int):
+      return wi_entity{wi_entity_object_get(handle, n)}
 
    def create_rigidbody_component(ent: wi_entity):
       return wi_rigidbody_component(wi_create_rigidbody_component(handle, ent.handle))

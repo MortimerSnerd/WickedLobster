@@ -627,3 +627,30 @@ def entity_rigidbody_count(scene: H) -> int
 "Returns the nth entity that has a rigidbody component"
 def entity_rigidbody_get(scene: H, n: int) -> H
 
+"wi::scene::ObjectComponent"
+struct object!
+	mesh_id: H
+	cascade_mask: int
+	filter_mask: int
+	color: float4
+	emissive_color: float4
+	user_stencil_ref: int
+	lod_distance_multiplier: float
+	draw_distance: float
+	lightmap_width: int
+	lightmap_height: int
+	sort_priority: int
+endstruct
+
+"Creates a object component for the given entity and returns a handle"
+def create_object_component(scene: H, entity: H) -> H
+
+"Gets the object component for the given entity."
+def get_object_component(scene: H, entity: H) -> H
+
+"Returns the number of entities that have a object component"
+def entity_object_count(scene: H) -> int
+
+"Returns the nth entity that has a object component"
+def entity_object_get(scene: H, n: int) -> H
+

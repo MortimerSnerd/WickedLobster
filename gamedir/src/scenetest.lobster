@@ -95,6 +95,13 @@ def load_initial_scene():
    pinned_mouse_pos = input_get_pointer()
    input_hide_pointer(true)
 
+   // debug for imported wings3d object
+   let bing = gscene.find_entity_by_name("bingus")
+   if bing.is_valid():
+      let oc = gscene.get_object_component(bing)
+      guard oc
+      print("bing mesh={oc.mesh_id()}, color={oc.color()}, filter_mask={oc.filter_mask()}, cascade_mask={oc.cascade_mask()}")
+
 wi_set_app_variable_frame_fn():
    if input_press(KEYBOARD_BUTTON_ESCAPE):
       wi_quit_game()
@@ -164,20 +171,20 @@ wi_set_app_variable_frame_fn():
 
    char_on_floor = false
    with_temp_object(get_rigidbody_capsule(char_tr, char_rb)) cap:
-      //info("\tctest capbase = {cap.base()}, tip={cap.tip()}, rad={cap.radius()}, v={char_vel} dp={act_dp} on_floor={char_on_floor}")
+      info("\tctest capbase = {cap.base()}, tip={cap.tip()}, rad={cap.radius()}, v={char_vel} dp={act_dp} on_floor={char_on_floor}")
       let start_pos = cap.base()
       cap.translate(act_dp)
       var touching_something = true
       var max_iters = 4
       while touching_something and max_iters > 0:
          max_iters--
-         with_temp_object(gscene.capsule_intersects(cap, FILTER_COLLIDER|FILTER_NAVIGATION_MESH|FILTER_OPAQUE, static_layer)) sin:
+         with_temp_object(gscene.capsule_intersects(cap, FILTER_COLLIDER|FILTER_NAVIGATION_MESH|FILTER_OPAQUE, static_layer|dynobjs_layer)) sin:
             let cent = sin.entity()
             let n = sin.normal()
             guard cent.is_valid():
                touching_something = false
-            //info("\t\ttouch")
-            //info(sin.debug_string(3))
+            info("\t\ttouch")
+            info(sin.debug_string(3))
             cap.translate(n*sin.depth()*1.001)
             if n.looks_like_floor:
                char_on_floor = true

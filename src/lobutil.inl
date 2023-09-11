@@ -2998,6 +2998,204 @@ anfr("wi_entity_rigidbody_get", "scene,n", "I}:2I", "I}:2",
         auto n     = (int32_t)Pop(sp).ival();
         auto scene = pop_wo_handle(sp);
         push_wo_handle(sp, wbnd::entity_rigidbody_get(scene, n));
+});
+
+anfr("wi_set_object_mesh_id", "object,v", "I}:2I}:2", "",
+     "Sets object.mesh_id",
+    [](StackPtr &sp, VM &vm) {
+        auto v      = pop_wo_handle(sp);
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_mesh_id(object, v);
+});
+
+anfr("wi_get_object_mesh_id", "object", "I}:2", "I}:2",
+     "Gets object.mesh_id",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::get_object_mesh_id(object));
+});
+
+anfr("wi_set_object_cascade_mask", "object,v", "I}:2I", "",
+     "Sets object.cascade_mask",
+    [](StackPtr &sp, VM &vm) {
+        auto v      = (int32_t)Pop(sp).ival();
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_cascade_mask(object, v);
+});
+
+anfr("wi_get_object_cascade_mask", "object", "I}:2", "I",
+     "Gets object.cascade_mask",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_object_cascade_mask(object)));
+});
+
+anfr("wi_set_object_filter_mask", "object,v", "I}:2I", "",
+     "Sets object.filter_mask",
+    [](StackPtr &sp, VM &vm) {
+        auto v      = (int32_t)Pop(sp).ival();
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_filter_mask(object, v);
+});
+
+anfr("wi_get_object_filter_mask", "object", "I}:2", "I",
+     "Gets object.filter_mask",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_object_filter_mask(object)));
+});
+
+anfr("wi_set_object_color", "object,v", "I}:2F}:4", "",
+     "Sets object.color",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT4 v;
+        pop_xmfloat4(sp, v);
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_color(object, v);
+});
+
+anfr("wi_get_object_color", "object", "I}:2", "F}:4",
+     "Gets object.color",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        push_xmfloat4(sp, wbnd::get_object_color(object));
+});
+
+anfr("wi_set_object_emissive_color", "object,v", "I}:2F}:4", "",
+     "Sets object.emissive_color",
+    [](StackPtr &sp, VM &vm) {
+        XMFLOAT4 v;
+        pop_xmfloat4(sp, v);
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_emissive_color(object, v);
+});
+
+anfr("wi_get_object_emissive_color", "object", "I}:2", "F}:4",
+     "Gets object.emissive_color",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        push_xmfloat4(sp, wbnd::get_object_emissive_color(object));
+});
+
+anfr("wi_set_object_user_stencil_ref", "object,v", "I}:2I", "",
+     "Sets object.user_stencil_ref",
+    [](StackPtr &sp, VM &vm) {
+        auto v      = (int32_t)Pop(sp).ival();
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_user_stencil_ref(object, v);
+});
+
+anfr("wi_get_object_user_stencil_ref", "object", "I}:2", "I",
+     "Gets object.user_stencil_ref",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_object_user_stencil_ref(object)));
+});
+
+anfr("wi_set_object_lod_distance_multiplier", "object,v", "I}:2F", "",
+     "Sets object.lod_distance_multiplier",
+    [](StackPtr &sp, VM &vm) {
+        auto v      = Pop(sp).fltval();
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_lod_distance_multiplier(object, v);
+});
+
+anfr("wi_get_object_lod_distance_multiplier", "object", "I}:2", "F",
+     "Gets object.lod_distance_multiplier",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_object_lod_distance_multiplier(object)));
+});
+
+anfr("wi_set_object_draw_distance", "object,v", "I}:2F", "",
+     "Sets object.draw_distance",
+    [](StackPtr &sp, VM &vm) {
+        auto v      = Pop(sp).fltval();
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_draw_distance(object, v);
+});
+
+anfr("wi_get_object_draw_distance", "object", "I}:2", "F",
+     "Gets object.draw_distance",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_object_draw_distance(object)));
+});
+
+anfr("wi_set_object_lightmap_width", "object,v", "I}:2I", "",
+     "Sets object.lightmap_width",
+    [](StackPtr &sp, VM &vm) {
+        auto v      = (int32_t)Pop(sp).ival();
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_lightmap_width(object, v);
+});
+
+anfr("wi_get_object_lightmap_width", "object", "I}:2", "I",
+     "Gets object.lightmap_width",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_object_lightmap_width(object)));
+});
+
+anfr("wi_set_object_lightmap_height", "object,v", "I}:2I", "",
+     "Sets object.lightmap_height",
+    [](StackPtr &sp, VM &vm) {
+        auto v      = (int32_t)Pop(sp).ival();
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_lightmap_height(object, v);
+});
+
+anfr("wi_get_object_lightmap_height", "object", "I}:2", "I",
+     "Gets object.lightmap_height",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_object_lightmap_height(object)));
+});
+
+anfr("wi_set_object_sort_priority", "object,v", "I}:2I", "",
+     "Sets object.sort_priority",
+    [](StackPtr &sp, VM &vm) {
+        auto v      = (int32_t)Pop(sp).ival();
+        auto object = pop_wo_handle(sp);
+        wbnd::set_object_sort_priority(object, v);
+});
+
+anfr("wi_get_object_sort_priority", "object", "I}:2", "I",
+     "Gets object.sort_priority",
+    [](StackPtr &sp, VM &vm) {
+        auto object = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::get_object_sort_priority(object)));
+});
+
+anfr("wi_create_object_component", "scene,entity", "I}:2I}:2", "I}:2",
+     "Creates a object component for the given entity and returns a handle",
+    [](StackPtr &sp, VM &vm) {
+        auto entity = pop_wo_handle(sp);
+        auto scene  = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::create_object_component(scene, entity));
+});
+
+anfr("wi_get_object_component", "scene,entity", "I}:2I}:2", "I}:2",
+     "Gets the object component for the given entity.",
+    [](StackPtr &sp, VM &vm) {
+        auto entity = pop_wo_handle(sp);
+        auto scene  = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::get_object_component(scene, entity));
+});
+
+anfr("wi_entity_object_count", "scene", "I}:2", "I",
+     "Returns the number of entities that have a object component",
+    [](StackPtr &sp, VM &vm) {
+        auto scene = pop_wo_handle(sp);
+        Push(sp, Value(wbnd::entity_object_count(scene)));
+});
+
+anfr("wi_entity_object_get", "scene,n", "I}:2I", "I}:2",
+     "Returns the nth entity that has a object component",
+    [](StackPtr &sp, VM &vm) {
+        auto n     = (int32_t)Pop(sp).ival();
+        auto scene = pop_wo_handle(sp);
+        push_wo_handle(sp, wbnd::entity_object_get(scene, n));
 }); 
 
 

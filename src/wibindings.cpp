@@ -2279,4 +2279,145 @@ namespace wbnd
     {
         return {WK_ENTITY, scene_ptr(scene)->rigidbodies.GetEntity(n)};
     }
+
+    wi::scene::ObjectComponent* obj_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_OBJECT_COMP);
+        return reinterpret_cast<wi::scene::ObjectComponent *>(h.name);
+    }
+
+    void set_object_mesh_id(wo_handle const &object, wo_handle const &v)
+    {
+        handle_check(v, WK_ENTITY);
+        obj_ptr(object)->meshID = v.name;
+    }
+
+    wo_handle get_object_mesh_id(wo_handle const &object)
+    {
+        return {WK_ENTITY, obj_ptr(object)->meshID};
+    }
+
+    void set_object_cascade_mask(wo_handle const &object, int32_t v)
+    {
+        obj_ptr(object)->cascadeMask = v;
+    }
+
+    int32_t get_object_cascade_mask(wo_handle const &object)
+    {
+        return obj_ptr(object)->cascadeMask;
+    }
+
+    void set_object_filter_mask(wo_handle const &object, int32_t v)
+    {
+        obj_ptr(object)->filterMask = v;
+    }
+
+    int32_t get_object_filter_mask(wo_handle const &object)
+    {
+        return obj_ptr(object)->filterMask;
+    }
+
+    void set_object_color(wo_handle const &object, XMFLOAT4 const &v)
+    {
+        obj_ptr(object)->color = v;
+    }
+
+    XMFLOAT4 get_object_color(wo_handle const &object)
+    {
+        return obj_ptr(object)->color;
+    }
+
+    void set_object_emissive_color(wo_handle const &object, XMFLOAT4 const &v)
+    {
+        obj_ptr(object)->emissiveColor = v;
+    }
+
+    XMFLOAT4 get_object_emissive_color(wo_handle const &object)
+    {
+        return obj_ptr(object)->emissiveColor;
+    }
+
+    void set_object_user_stencil_ref(wo_handle const &object, int32_t v)
+    {
+        obj_ptr(object)->userStencilRef = (uint8_t)v;
+    }
+
+    int32_t get_object_user_stencil_ref(wo_handle const &object)
+    {
+        return obj_ptr(object)->userStencilRef;
+    }
+
+    void set_object_lod_distance_multiplier(wo_handle const &object, float v)
+    {
+        obj_ptr(object)->lod_distance_multiplier = v;
+    }
+
+    float get_object_lod_distance_multiplier(wo_handle const &object)
+    {
+        return obj_ptr(object)->lod_distance_multiplier;
+    }
+
+    void set_object_draw_distance(wo_handle const &object, float v)
+    {
+        obj_ptr(object)->draw_distance = v;
+    }
+
+    float get_object_draw_distance(wo_handle const &object)
+    {
+        return obj_ptr(object)->draw_distance;
+    }
+
+    void set_object_lightmap_width(wo_handle const &object, int32_t v)
+    {
+        obj_ptr(object)->lightmapWidth = v;
+    }
+
+    int32_t get_object_lightmap_width(wo_handle const &object)
+    {
+        return obj_ptr(object)->lightmapWidth;
+    }
+
+    void set_object_lightmap_height(wo_handle const &object, int32_t v)
+    {
+        obj_ptr(object)->lightmapHeight = v;
+    }
+
+    int32_t get_object_lightmap_height(wo_handle const &object)
+    {
+        return obj_ptr(object)->lightmapHeight;
+    }
+
+    void set_object_sort_priority(wo_handle const &object, int32_t v)
+    {
+        obj_ptr(object)->sort_priority = v;
+    }
+
+    int32_t get_object_sort_priority(wo_handle const &object)
+    {
+        return obj_ptr(object)->sort_priority;
+    }
+
+    wo_handle create_object_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_OBJECT_COMP,
+            reinterpret_cast<int64_t>(&scene_ptr(scene)->objects.Create(entity.name))};
+    }
+
+    wo_handle get_object_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_OBJECT_COMP,
+            reinterpret_cast<int64_t>(scene_ptr(scene)->objects.GetComponent(entity.name))};
+    }
+
+    int32_t entity_object_count(wo_handle const &scene)
+    {
+        return (int32_t)scene_ptr(scene)->objects.GetCount();
+    }
+
+    wo_handle entity_object_get(wo_handle const &scene, int32_t n)
+    {
+        return {WK_ENTITY, scene_ptr(scene)->objects.GetEntity(n)};
+    }
 }
