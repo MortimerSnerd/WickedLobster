@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <LOBSTER_ROOT_DIR>c:\src\changelob\lobster</LOBSTER_ROOT_DIR>
-    <WICKED_ENGINE_ROOT_DIR>c:\src\WickedEngine</WICKED_ENGINE_ROOT_DIR>
+    <WICKED_ENGINE_ROOT_DIR>c:\src\changelob\WickedEngine</WICKED_ENGINE_ROOT_DIR>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
