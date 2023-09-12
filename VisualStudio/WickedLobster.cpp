@@ -81,9 +81,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                     TranslateMessage(&msg);
                     DispatchMessage(&msg);
                 } else {
-                    //TODO move to Application::FixedUpdate
-                    lobster_fixed_update();
                     application.Run(); // run the update - render loop (mandatory)
+                    app_is_active(application.is_window_active);
                 }
                 if (app_wants_to_quit()) {
                     break;
@@ -192,6 +191,36 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+    case WM_SIZE:
+    case WM_DPICHANGED:
+		if (application.is_window_active)
+			application.SetWindow(hWnd);
+        break;
+	case WM_CHAR:
+		switch (wParam)
+		{
+		case VK_BACK:
+			wi::gui::TextInputField::DeleteFromInput();
+			break;
+		case VK_RETURN:
+			break;
+		default:
+		{
+			const wchar_t c = (const wchar_t)wParam;
+			wi::gui::TextInputField::AddInput(c);
+		}
+		break;
+		}
+		break;
+	case WM_INPUT:
+		wi::input::rawinput::ParseMessage((void*)lParam);
+		break;
+	case WM_KILLFOCUS:
+		application.is_window_active = false;
+		break;
+	case WM_SETFOCUS:
+		application.is_window_active = true;
+		break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;

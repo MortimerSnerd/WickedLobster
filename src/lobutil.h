@@ -44,4 +44,8 @@ void lobster_variable_update(float dt);
 
 bool app_wants_to_quit();
 
+// Should be called from the main loop to set whether the application is
+// active and has focus.
+void app_is_active(bool v);
+
 #endif
