@@ -95,17 +95,17 @@ def load_initial_scene():
    pinned_mouse_pos = input_get_pointer()
    input_hide_pointer(true)
 
-   // debug for imported wings3d object
-   let bing = gscene.find_entity_by_name("bingus")
-   if bing.is_valid():
-      let oc = gscene.get_object_component(bing)
-      guard oc
-      print("bing mesh={oc.mesh_id()}, color={oc.color()}, filter_mask={oc.filter_mask()}, cascade_mask={oc.cascade_mask()}")
-
 wi_set_app_variable_frame_fn():
    if input_press(KEYBOARD_BUTTON_ESCAPE):
       wi_quit_game()
       return
+   
+   if app_is_active():
+      input_hide_pointer(true)
+   else:
+      input_hide_pointer(false)
+      first_frame = true
+      
 
    //TODO should it be better to check the input in the variable step, and only 
    // apply it in fixed step?
@@ -115,7 +115,7 @@ wi_set_app_variable_frame_fn():
    var mpos = float2_0
    var mdiff = float2_0
 
-   //info("FRAME dt={dt}")
+   logmsg("FRAME dt={dt}")
 
    if first_frame:
       // pin the mouse to the center of the screen, so it won't go out of the window
@@ -171,21 +171,21 @@ wi_set_app_variable_frame_fn():
 
    char_on_floor = false
    with_temp_object(get_rigidbody_capsule(char_tr, char_rb)) cap:
-      info("\tctest capbase = {cap.base()}, tip={cap.tip()}, rad={cap.radius()}, v={char_vel} dp={act_dp} on_floor={char_on_floor}")
+      logmsg("\tctest capbase = {cap.base()}, tip={cap.tip()}, rad={cap.radius()}, v={char_vel} dp={act_dp} on_floor={char_on_floor}")
       let start_pos = cap.base()
       cap.translate(act_dp)
-      var touching_something = true
+      var touching_possible = true
       var max_iters = 4
-      while touching_something and max_iters > 0:
+      while touching_possible and max_iters > 0:
          max_iters--
          with_temp_object(gscene.capsule_intersects(cap, FILTER_COLLIDER|FILTER_NAVIGATION_MESH|FILTER_OPAQUE, static_layer|dynobjs_layer)) sin:
             let cent = sin.entity()
             let n = sin.normal()
             guard cent.is_valid():
-               touching_something = false
-            info("\t\ttouch")
-            info(sin.debug_string(3))
-            cap.translate(n*sin.depth()*1.001)
+               touching_possible = false
+            logmsg("\t\ttouch base={cap.base()}")
+            logmsg(sin.debug_string(3))
+            cap.translate(n*sin.depth())
             if n.looks_like_floor:
                char_on_floor = true
                char_vel = float3{char_vel.x, 0.0, char_vel.z}

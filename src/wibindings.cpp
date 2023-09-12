@@ -1303,6 +1303,36 @@ namespace wbnd
         return cam_ptr(camera)->Up;
     }
 
+    wo_handle get_camera_projection(wo_handle const &tcomp)
+    {
+        return {WK_MATRIX, reinterpret_cast<int64_t>(&cam_ptr(tcomp)->Projection)};
+    }
+
+    wo_handle get_camera_view(wo_handle const &tcomp)
+    {
+        return {WK_MATRIX, reinterpret_cast<int64_t>(&cam_ptr(tcomp)->View)};
+    }
+
+    wo_handle get_camera_VP(wo_handle const &tcomp)
+    {
+        return {WK_MATRIX, reinterpret_cast<int64_t>(&cam_ptr(tcomp)->VP)};
+    }
+
+    wo_handle get_camera_inverse_projection(wo_handle const &tcomp)
+    {
+        return {WK_MATRIX, reinterpret_cast<int64_t>(&cam_ptr(tcomp)->InvProjection)};
+    }
+
+    wo_handle get_camera_inverse_view(wo_handle const &tcomp)
+    {
+        return {WK_MATRIX, reinterpret_cast<int64_t>(&cam_ptr(tcomp)->InvView)};
+    }
+
+    wo_handle get_camera_inverse_VP(wo_handle const &tcomp)
+    {
+        return {WK_MATRIX, reinterpret_cast<int64_t>(&cam_ptr(tcomp)->InvVP)};
+    }
+
     wi::scene::AnimationComponent* anim_ptr(wo_handle const &h)
     {
         handle_check(h, WK_ANIMATION_COMP);

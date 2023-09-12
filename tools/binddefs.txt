@@ -205,6 +205,24 @@ struct camera!
 	up: float3
 endstruct
 
+"Gets the camera projection matrix.  Matrix valid as long as camera component exists."
+def get_camera_projection(tcomp: H) -> H
+
+"Gets the camera view matrix.  Matrix valid as long as camera component exists."
+def get_camera_view(tcomp: H) -> H
+
+"Gets the camera VP matrix.  Matrix valid as long as camera component exists."
+def get_camera_VP(tcomp: H) -> H
+
+"Gets the camera inverse projection matrix.  Matrix valid as long as camera component exists."
+def get_camera_inverse_projection(tcomp: H) -> H
+
+"Gets the camera inverse view matrix.  Matrix valid as long as camera component exists."
+def get_camera_inverse_view(tcomp: H) -> H
+
+"Gets the camera inverse VP matrix.  Matrix valid as long as camera component exists."
+def get_camera_inverse_VP(tcomp: H) -> H
+
 
 
 "Check if a button is down"

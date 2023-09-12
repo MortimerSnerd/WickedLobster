@@ -138,6 +138,95 @@ enum wokind:
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
 
+struct wi_matrix:
+   handle: int2
+
+   def transform(v: float4) -> float4:
+      return wi_transform_vector(handle, v)
+
+   def transform_pos(v: float3):
+      let r = transform(float4{v.x, v.y, v.z, 1.0})
+      return float3{r.x, r.y, r.z}
+
+   def transform_vector(v: float3):
+      let r = transform(float4{v.x, v.y, v.z, 0.0})
+      return float3{r.x, r.y, r.z}
+
+   def delete():
+      wi_delete_matrix(handle)
+
+   def assign(rhs: wi_matrix):
+      wi_assign_matrix(handle, rhs.handle)
+
+   def assign_rows(r1 = float4_x, r2 = float4_y, r3 = float4_z, r4 = float4_w):
+      wi_assign_rows(handle, r1, r2, r3, r4)
+
+   def row(r: int):
+      return wi_return_matrix_row(handle, r)
+
+   def debug_string(ind=0):
+      let ind0 = repeat_string("\t", ind)
+      let ind1 = repeat_string("\t", ind+1)
+      var rv = "{ind0}wi_matrix{{\n"
+      for(4) r:
+         let v = row(r)
+         rv += "{ind1}{v.x} {v.y} {v.z} {v.w}"
+         if r == 3:
+            rv += "}}\n"
+         else:
+            rv += "\n"
+      return rv
+
+   def identity():
+      wi_identity_matrix(handle)
+
+   def translation(v: float3):
+      wi_translation_matrix(handle, v)
+
+   def get_translation() -> float3:
+      return wi_get_matrix_translation(handle)
+
+   def rotation_euler(angles: float3):
+      wi_rotation_euler_matrix(handle, angles)
+
+   def rotation_x(a: float):
+      wi_rotation_x_matrix(handle, a)
+
+   def rotation_y(a: float):
+      wi_rotation_y_matrix(handle, a)
+   
+   def rotation_z(a: float):
+      wi_rotation_z_matrix(handle, a)
+
+   def rotation_quat(q: quat):
+      wi_rotation_quat_matrix(handle, q.as_float4())
+
+   def scaling(scale: float3):
+      wi_scaling_matrix(handle, scale)
+
+   def look_to(eyepos: float3, dir: float3, up = float3_y):
+      wi_look_to_matrix(handle, eyepos, dir, up)
+
+   def look_at(eyepos: float3, focuspos: float3, up = float3_y):
+      wi_look_at_matrix(handle, eyepos, focuspos, up)
+
+   def multiply(rhs: wi_matrix, result: wi_matrix):
+      wi_multiply_matrix(handle, rhs.handle, result.handle)
+
+   def add(rhs: wi_matrix, result: wi_matrix):
+      wi_add_matrix(handle, rhs.handle, result.handle)
+
+   def transposed(result: wi_matrix):
+      wi_transpose_matrix(handle, result.handle)
+
+   def inverted(result: wi_matrix):
+      wi_invert_matrix(handle, result.handle)
+
+// Creates a new uninitialized matrix.
+def wi_matrix():
+   return wi_matrix{wi_create_matrix4x4()}
+
+
 struct wi_primitive_capsule:
    handle: int2
 
@@ -404,8 +493,23 @@ class wi_camera_component: wi_component
    def set_up(v):
       wi_set_camera_up(handle, v)
 
+   def projection() -> wi_matrix:
+      return wi_matrix{wi_get_camera_projection(handle)}
 
+   def view() -> wi_matrix:
+      return wi_matrix{wi_get_camera_view(handle)}
 
+   def VP() -> wi_matrix:
+      return wi_matrix{wi_get_camera_VP(handle)}
+
+   def inverse_projection() -> wi_matrix:
+      return wi_matrix{wi_get_camera_inverse_projection(handle)}
+
+   def inverse_view() -> wi_matrix:
+      return wi_matrix{wi_get_camera_inverse_view(handle)}
+
+   def inverse_VP() -> wi_matrix:
+      return wi_matrix{wi_get_camera_inverse_VP(handle)}
 
 constructor wi_camera_component(h: int2):
    assert h[0] == wk_camera_comp
@@ -1517,80 +1621,6 @@ constructor wi_renderpath3d():
    assert(h[0] == wk_renderpath3)
    return wi_renderpath3d{h}
 
-struct wi_matrix:
-   handle: int2
-
-   def transform(v: float4) -> float4:
-      return wi_transform_vector(handle, v)
-
-   def transform_pos(v: float3):
-      let r = transform(float4{v.x, v.y, v.z, 1.0})
-      return float3{r.x, r.y, r.z}
-
-   def transform_vector(v: float3):
-      let r = transform(float4{v.x, v.y, v.z, 0.0})
-      return float3{r.x, r.y, r.z}
-
-   def delete():
-      wi_delete_matrix(handle)
-
-   def assign(rhs: wi_matrix):
-      wi_assign_matrix(handle, rhs.handle)
-
-   def assign_rows(r1 = float4_x, r2 = float4_y, r3 = float4_z, r4 = float4_w):
-      wi_assign_rows(handle, r1, r2, r3, r4)
-
-   def row(r: int):
-      return wi_return_matrix_row(handle, r)
-
-   def identity():
-      wi_identity_matrix(handle)
-
-   def translation(v: float3):
-      wi_translation_matrix(handle, v)
-
-   def get_translation() -> float3:
-      return wi_get_matrix_translation(handle)
-
-   def rotation_euler(angles: float3):
-      wi_rotation_euler_matrix(handle, angles)
-
-   def rotation_x(a: float):
-      wi_rotation_x_matrix(handle, a)
-
-   def rotation_y(a: float):
-      wi_rotation_y_matrix(handle, a)
-   
-   def rotation_z(a: float):
-      wi_rotation_z_matrix(handle, a)
-
-   def rotation_quat(q: quat):
-      wi_rotation_quat_matrix(handle, q.as_float4())
-
-   def scaling(scale: float3):
-      wi_scaling_matrix(handle, scale)
-
-   def look_to(eyepos: float3, dir: float3, up = float3_y):
-      wi_look_to_matrix(handle, eyepos, dir, up)
-
-   def look_at(eyepos: float3, focuspos: float3, up = float3_y):
-      wi_look_at_matrix(handle, eyepos, focuspos, up)
-
-   def multiply(rhs: wi_matrix, result: wi_matrix):
-      wi_multiply_matrix(handle, rhs.handle, result.handle)
-
-   def add(rhs: wi_matrix, result: wi_matrix):
-      wi_add_matrix(handle, rhs.handle, result.handle)
-
-   def transposed(result: wi_matrix):
-      wi_transpose_matrix(handle, result.handle)
-
-   def inverted(result: wi_matrix):
-      wi_invert_matrix(handle, result.handle)
-
-// Creates a new uninitialized matrix.
-def wi_matrix():
-   return wi_matrix{wi_create_matrix4x4()}
 
 def local_matrix(me:: wi_transform_component) -> wi_matrix:
    return wi_matrix{wi_get_transform_local_matrix(handle)}
