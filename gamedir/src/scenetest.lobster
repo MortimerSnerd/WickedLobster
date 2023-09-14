@@ -95,6 +95,7 @@ def load_initial_scene():
    pinned_mouse_pos = input_get_pointer()
    input_hide_pointer(true)
 
+
 wi_set_app_variable_frame_fn():
    if input_press(KEYBOARD_BUTTON_ESCAPE):
       wi_quit_game()

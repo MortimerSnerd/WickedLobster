@@ -133,7 +133,7 @@ enum wokind:
    wk_scene, wk_entity, wk_name_comp, wk_camera_comp, wk_transform_comp, wk_renderpath3,
    wk_timer, wk_sprite_font, wk_font_params, wk_humanoid, wk_layer, wk_collider,
    wk_matrix, wk_animation_comp, wk_sphere, wk_sphereintersection, wk_capsule, 
-   wk_rigidbody, wk_object_comp
+   wk_rigidbody, wk_object_comp, wk_hier_comp, wk_light_comp
 
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
@@ -343,6 +343,109 @@ class wi_component:
 
    def is_valid() -> bool:
       return not is_empty()
+
+class wi_light_component: wi_component
+   def type():
+      return wi_get_light_type(handle)
+
+   def set_type(v):
+      wi_set_light_type(handle, v)
+
+   def color() -> color:
+      let c =  wi_get_light_color(handle)
+      return color{c.x, c.y, c.z, 1.0}
+
+   def set_color(v: color):
+      wi_set_light_color(handle, float3{v.x, v.y, v.z})
+
+   def intensity():
+      return wi_get_light_intensity(handle)
+
+   def set_intensity(v):
+      wi_set_light_intensity(handle, v)
+
+   def range():
+      return wi_get_light_range(handle)
+
+   def set_range(v):
+      wi_set_light_range(handle, v)
+
+   def outer_cone_angle():
+      return wi_get_light_outer_cone_angle(handle)
+
+   def set_outer_cone_angle(v):
+      wi_set_light_outer_cone_angle(handle, v)
+
+   def inner_cone_angle():
+      return wi_get_light_inner_cone_angle(handle)
+
+   def set_inner_cone_angle(v):
+      wi_set_light_inner_cone_angle(handle, v)
+
+   def radius():
+      return wi_get_light_radius(handle)
+
+   def set_radius(v):
+      wi_set_light_radius(handle, v)
+
+   //NB renamed because can't override length()
+   def get_length():
+      return wi_get_light_length(handle)
+
+   def set_length(v):
+      wi_set_light_length(handle, v)
+
+   def casts_shadow():
+      return wi_get_light_casts_shadow(handle)
+
+   def set_casts_shadow(v):
+      wi_set_light_casts_shadow(handle, v)
+
+   def volumetrics_enabled():
+      return wi_get_light_volumetrics_enabled(handle)
+
+   def set_volumetrics_enabled(v):
+      wi_set_light_volumetrics_enabled(handle, v)
+
+   def visualizer_enabled():
+      return wi_get_light_visualizer_enabled(handle)
+
+   def set_visualizer_enabled(v):
+      wi_set_light_visualizer_enabled(handle, v)
+
+   def is_static():
+      return wi_get_light_is_static(handle)
+
+   def set_is_static(v):
+      wi_set_light_is_static(handle, v)
+
+   def volumetric_clouds_enabled():
+      return wi_get_light_volumetric_clouds_enabled(handle)
+
+   def set_volumetric_clouds_enabled(v):
+      wi_set_light_volumetric_clouds_enabled(handle, v)
+
+constructor wi_light_component(h: int2):
+   assert h[0] == wk_light_comp
+   return wi_light_component{h}
+
+// Hierarchy component.
+class wi_hierarchy_component: wi_component
+   def parent_id():
+      return wi_get_hierarchy_parent_id(handle)
+
+   def set_parent_id(v):
+      wi_set_hierarchy_parent_id(handle, v)
+
+   def layermask_bind():
+      return wi_get_hierarchy_layermask_bind(handle)
+
+   def set_layermask_bind(v):
+      wi_set_hierarchy_layermask_bind(handle, v)
+
+constructor wi_hierarchy_component(h: int2):
+   assert h[0] == wk_hier_comp
+   return wi_hierarchy_component{h}
 
 // Name component.  This is only valid up up to the point that
 // components are added/removed. 
@@ -920,6 +1023,44 @@ enum wi_filter:
 // it is only invalidated when the scene is deleted.
 class wi_scene:
    handle: int2   
+
+   // Creates a new light component on the given entity and returns it.
+   def create_light_component(ent: wi_entity):
+      return wi_light_component(wi_create_light_component(handle, ent.handle))
+
+   // Returns the light component associated with "ent", or
+   // a null handle if there is none.
+   def get_light_component(ent: wi_entity):
+      return wi_light_component(wi_get_light_component(handle, ent.handle))
+
+   // Returns the number of entities in the scene that have the
+   // light component attached.
+   def get_light_count():
+      return wi_entity_light_count(handle)
+
+   // Gets the nth entity that has a light component, 
+   // where n can range from 0 .. wi_entity_light_count()-1
+   def get_light_entity(n: int):
+      return wi_entity{wi_entity_light_get(handle, n)}
+
+   // Creates a new hierarchy component on the given entity and returns it.
+   def create_hierarchy_component(ent: wi_entity):
+      return wi_hierarchy_component(wi_create_hierarchy_component(handle, ent.handle))
+
+   // Returns the hierarchy component associated with "ent", or
+   // a null handle if there is none.
+   def get_hierarchy_component(ent: wi_entity):
+      return wi_hierarchy_component(wi_get_hierarchy_component(handle, ent.handle))
+
+   // Returns the number of entities in the scene that have the
+   // hierarchy component attached.
+   def get_hierarchy_count():
+      return wi_entity_hierarchy_count(handle)
+
+   // Gets the nth entity that has a hierarchy component, 
+   // where n can range from 0 .. wi_entity_hierarchy_count()-1
+   def get_hierarchy_entity(n: int):
+      return wi_entity{wi_entity_hierarchy_get(handle, n)}
 
    def create_object_component(ent: wi_entity):
       return wi_object_component(wi_create_object_component(handle, ent.handle))

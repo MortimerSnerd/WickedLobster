@@ -31,6 +31,7 @@ namespace wbnd
             abort();
         }
         switch (h.kind) {
+        case WK_LIGHT_COMP:
         case WK_SCENE:
         case WK_NAME_COMP:
         case WK_CAMERA_COMP:
@@ -44,6 +45,7 @@ namespace wbnd
         case WK_ANIMATION_COMP:
         case WK_SPHERE:
         case WK_RIGIDBODY:
+        case WK_HIER_COMP:
             if (h.name == 0) {
                 printf("Null handle pointer, kind=%d\n", (int)h.kind);
                 dump_lobster_stack();
@@ -2450,4 +2452,213 @@ namespace wbnd
     {
         return {WK_ENTITY, scene_ptr(scene)->objects.GetEntity(n)};
     }
+
+    wi::scene::HierarchyComponent* hier_ptr(wo_handle const &h) 
+    {
+        handle_check(h, WK_HIER_COMP);
+        return reinterpret_cast<wi::scene::HierarchyComponent *>(h.name);
+    }
+
+    void set_hierarchy_parent_id(wo_handle const &hierarchy, wo_handle const &v)
+    {
+        handle_check(v, WK_ENTITY);
+        hier_ptr(hierarchy)->parentID = v.name;
+    }
+
+    wo_handle get_hierarchy_parent_id(wo_handle const &hierarchy)
+    {
+        return {WK_ENTITY, hier_ptr(hierarchy)->parentID};
+    }
+
+    void set_hierarchy_layermask_bind(wo_handle const &hierarchy, int32_t v)
+    {
+        hier_ptr(hierarchy)->layerMask_bind = v;
+    }
+
+    int32_t get_hierarchy_layermask_bind(wo_handle const &hierarchy)
+    {
+        return hier_ptr(hierarchy)->layerMask_bind;
+    }
+
+    wo_handle create_hierarchy_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_HIER_COMP, reinterpret_cast<int64_t>(&scene_ptr(scene)->hierarchy.Create(entity.name))};
+    }
+
+    wo_handle get_hierarchy_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_HIER_COMP, reinterpret_cast<int64_t>(scene_ptr(scene)->hierarchy.GetComponent(entity.name))};
+    }
+
+    int32_t entity_hierarchy_count(wo_handle const &scene)
+    {
+        return (int32_t)scene_ptr(scene)->hierarchy.GetCount();
+    }
+
+    wo_handle entity_hierarchy_get(wo_handle const &scene, int32_t n)
+    {
+        return {WK_ENTITY, scene_ptr(scene)->hierarchy.GetEntity(n)};
+    }
+
+    wi::scene::LightComponent* light_ptr(wo_handle const &h)
+    {
+        handle_check(h, WK_LIGHT_COMP);
+        return reinterpret_cast<wi::scene::LightComponent *>(h.name);
+    }
+
+    void set_light_type(wo_handle const &light, int32_t v)
+    {
+        light_ptr(light)->type = (wi::scene::LightComponent::LightType)v;
+    }
+
+    int32_t get_light_type(wo_handle const &light)
+    {
+        return light_ptr(light)->type;
+    }
+
+    void set_light_color(wo_handle const &light, XMFLOAT3 const &v)
+    {
+        light_ptr(light)->color = v;
+    }
+
+    XMFLOAT3 get_light_color(wo_handle const &light)
+    {
+        return light_ptr(light)->color;
+    }
+
+    void set_light_intensity(wo_handle const &light, float v)
+    {
+        light_ptr(light)->intensity = v;
+    }
+
+    float get_light_intensity(wo_handle const &light)
+    {
+        return light_ptr(light)->intensity;
+    }
+
+    void set_light_range(wo_handle const &light, float v)
+    {
+        light_ptr(light)->range = v;
+    }
+
+    float get_light_range(wo_handle const &light)
+    {
+        return light_ptr(light)->range;
+    }
+
+    void set_light_outer_cone_angle(wo_handle const &light, float v)
+    {
+        light_ptr(light)->outerConeAngle = v;
+    }
+
+    float get_light_outer_cone_angle(wo_handle const &light)
+    {
+        return light_ptr(light)->outerConeAngle;
+    }
+
+    void set_light_inner_cone_angle(wo_handle const &light, float v)
+    {
+        light_ptr(light)->innerConeAngle = v;
+    }
+
+    float get_light_inner_cone_angle(wo_handle const &light)
+    {
+        return light_ptr(light)->innerConeAngle;
+    }
+
+    void set_light_radius(wo_handle const &light, float v)
+    {
+        light_ptr(light)->radius = v;
+    }
+
+    float get_light_radius(wo_handle const &light)
+    {
+        return light_ptr(light)->radius;
+    }
+
+    void set_light_length(wo_handle const &light, float v)
+    {
+        light_ptr(light)->length = v;
+    }
+
+    float get_light_length(wo_handle const &light)
+    {
+        return light_ptr(light)->length;
+    }
+
+    void set_light_casts_shadow(wo_handle const &light, bool v)
+    {
+        light_ptr(light)->SetCastShadow(v);
+    }
+
+    bool get_light_casts_shadow(wo_handle const &light)
+    {
+        return light_ptr(light)->IsCastingShadow();
+    }
+
+    void set_light_volumetrics_enabled(wo_handle const &light, bool v)
+    {
+        light_ptr(light)->SetVolumetricsEnabled(v);
+    }
+
+    bool get_light_volumetrics_enabled(wo_handle const &light)
+    {
+        return light_ptr(light)->IsVolumetricsEnabled();
+    }
+
+    void set_light_visualizer_enabled(wo_handle const &light, bool v)
+    {
+        light_ptr(light)->SetVisualizerEnabled(v);
+    }
+
+    bool get_light_visualizer_enabled(wo_handle const &light)
+    {
+        return light_ptr(light)->IsVisualizerEnabled();
+    }
+
+    void set_light_is_static(wo_handle const &light, bool v)
+    {
+        light_ptr(light)->SetStatic(v);
+    }
+
+    bool get_light_is_static(wo_handle const &light)
+    {
+        return light_ptr(light)->IsStatic();
+    }
+
+    void set_light_volumetric_clouds_enabled(wo_handle const &light, bool v)
+    {
+        light_ptr(light)->SetVolumetricCloudsEnabled(v);
+    }
+
+    bool get_light_volumetric_clouds_enabled(wo_handle const &light)
+    {
+        return light_ptr(light)->IsVolumetricCloudsEnabled();
+    }
+
+    wo_handle create_light_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_LIGHT_COMP,
+            reinterpret_cast<int64_t>(&scene_ptr(scene)->lights.Create(entity.name))};
+    }
+
+    wo_handle get_light_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return {WK_LIGHT_COMP, reinterpret_cast<int64_t>(scene_ptr(scene)->lights.GetComponent(entity.name))};
+    }
+
+    int32_t entity_light_count(wo_handle const &scene)
+    {
+        return (int32_t)scene_ptr(scene)->lights.GetCount();
+    }
+
+    wo_handle entity_light_get(wo_handle const &scene, int32_t n)
+    {
+        return {WK_ENTITY, scene_ptr(scene)->lights.GetEntity(n)};
+    }
+
 }

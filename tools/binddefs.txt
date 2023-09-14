@@ -672,3 +672,52 @@ def entity_object_count(scene: H) -> int
 "Returns the nth entity that has a object component"
 def entity_object_get(scene: H, n: int) -> H
 
+
+"wi::scene::HierarchyComponent"
+struct hierarchy!
+    parent_id: H
+    layermask_bind: int
+endstruct
+
+"Creates a hierarchy component for the given entity and returns a handle"
+def create_hierarchy_component(scene: H, entity: H) -> H
+
+"Gets the hierarchy component for the given entity."
+def get_hierarchy_component(scene: H, entity: H) -> H
+
+"Returns the number of entities that have a hierarchy component"
+def entity_hierarchy_count(scene: H) -> int
+
+"Returns the nth entity that has a hierarchy component"
+def entity_hierarchy_get(scene: H, n: int) -> H
+
+
+"wi::scene::LightComponent"
+struct light!
+    type: int
+    color: float3
+    intensity: float
+    range: float
+    outer_cone_angle: float
+    inner_cone_angle: float
+    radius: float
+    length: float
+    casts_shadow: bool
+    volumetrics_enabled: bool
+    visualizer_enabled: bool
+    is_static: bool
+    volumetric_clouds_enabled: bool
+endstruct
+
+"Creates a light component for the given entity and returns a handle"
+def create_light_component(scene: H, entity: H) -> H
+
+"Gets the light component for the given entity."
+def get_light_component(scene: H, entity: H) -> H
+
+"Returns the number of entities that have a light component"
+def entity_light_count(scene: H) -> int
+
+"Returns the nth entity that has a light component"
+def entity_light_get(scene: H, n: int) -> H
+
