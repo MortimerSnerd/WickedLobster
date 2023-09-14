@@ -40,8 +40,13 @@ with the Wicked Engine library.
   VM, and the headers for the functions that implement the functionality.
 
 ## oof - bad things and reminders
-- had to change wicked engine lib to use multithreaded runtime (not mt dll), and
-  add a preprocessor to set ITERATOR_DEBUG_LEVEL to the same level set in Lobster.
+- ~~had to change wicked engine lib to use multithreaded runtime (not mt dll), and
+  add a preprocessor to set ITERATOR_DEBUG_LEVEL to the same level set in Lobster.~~
+  Reverted that back, and now change lobster project to use multithreaded debug
+  dlls, and removed the \_ITERATOR_DEBUG_LEVEL setting from the language.vcxproj.
+  Doing it the reverse way caused initialization problems when running the project
+  from the debugger, where it would periodcially crash before main() was even called, 
+  when it was allocating TLS slots. 
 
 - Most Wicked Engine objects are long lived, and the lobster code can ignore
   lifetime issues.  The minority does require remembering to delete temporaries, 

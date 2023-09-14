@@ -269,7 +269,13 @@ string run_lobster(lobster_options &args, function<void()> main)
         AddDataDir(".");
         AddDataDir("src");
         lobster::Compile(nfr, args.root_src, src, bytecode_buffer, nullptr, nullptr,
-                         false, checks, nullptr, 10, true);
+                         false, checks, nullptr, 1, true);
+
+        // Force flushing, to make it more likely we'll see any message if
+        // we crash after.
+        fflush(stdout);
+        fflush(stderr);
+
         lobster::RunTCC(nfr,
                         bytecode_buffer,
                         args.root_src,
@@ -283,7 +289,7 @@ string run_lobster(lobster_options &args, function<void()> main)
         if (!error_msg.empty()) {
             return error_msg;
         }
-    } catch (string const& err) {
+    } catch (string& err) {
         return err;
     }
     return "";
