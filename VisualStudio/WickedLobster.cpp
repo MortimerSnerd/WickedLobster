@@ -54,7 +54,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     // Set up the application
     application.Initialize();
     application.ActivatePath(&game);
-    wi::initializer::InitializeComponentsImmediate();
 
     // just show some basic info:
     application.infoDisplay.active = true;
@@ -97,7 +96,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     });
     if (!errmsg.empty()) {
-        auto rc = MessageBoxA(MainWindow, errmsg.data(), "Badness", MB_OK);
+        fprintf(stdout, "\n%s\n", errmsg.data());
+        fflush(stdout);
+        wi::jobsystem::ShutDown();
         rval = 0;
     }
 
