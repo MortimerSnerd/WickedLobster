@@ -154,6 +154,13 @@ wi_set_app_variable_frame_fn():
          char_vel = float3{char_vel.x, jump_speed, char_vel.z}
          char_on_floor = false
 
+      if input_press('F'):
+         // Just for testing, not a great idea to litter the place with one shot sound entities.
+         let snd = gscene.create_sound_entity("efct", "spudge/testsound.wav", char_tr.position())
+         let sc = gscene.get_sound_component(snd)
+         sc.set_is_looped(false)
+         sc.set_is_playing(true)
+
    var yvel = char_vel.y
    if not char_on_floor:
       yvel -= g_accel*dt

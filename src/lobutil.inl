@@ -3526,6 +3526,220 @@ anfr("wi_entity_light_get", "scene,n", "I}:2I", "I}:2",
          auto n     = (int32_t)Pop(sp).ival();
          auto scene = pop_wo_handle(sp);
          push_wo_handle(sp, wbnd::entity_light_get(scene, n));
+     });
+
+anfr("wi_set_resource_sound", "resource,sound", "I}:2I}:2", "",
+     "Populates the Resource with sound data",
+     [](StackPtr &sp, VM &vm) {
+         auto sound    = pop_wo_handle(sp);
+         auto resource = pop_wo_handle(sp);
+         wbnd::set_resource_sound(resource, sound);
+     });
+
+anfr("wi_set_resource_outdated", "resource", "I}:2", "",
+     "Resource marked for recreate on resourcemanager::Load()",
+     [](StackPtr &sp, VM &vm) {
+         auto resource = pop_wo_handle(sp);
+         wbnd::set_resource_outdated(resource);
+     });
+
+anfr("wi_set_sound_instance_loop_begin", "sound_instance,v", "I}:2F", "",
+     "Sets sound_instance.loop_begin",
+     [](StackPtr &sp, VM &vm) {
+         auto v              = Pop(sp).fltval();
+         auto sound_instance = pop_wo_handle(sp);
+         wbnd::set_sound_instance_loop_begin(sound_instance, v);
+     });
+
+anfr("wi_get_sound_instance_loop_begin", "sound_instance", "I}:2", "F",
+     "Gets sound_instance.loop_begin",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_instance = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_sound_instance_loop_begin(sound_instance)));
+     });
+
+anfr("wi_set_sound_instance_loop_length", "sound_instance,v", "I}:2F", "",
+     "Sets sound_instance.loop_length",
+     [](StackPtr &sp, VM &vm) {
+         auto v              = Pop(sp).fltval();
+         auto sound_instance = pop_wo_handle(sp);
+         wbnd::set_sound_instance_loop_length(sound_instance, v);
+     });
+
+anfr("wi_get_sound_instance_loop_length", "sound_instance", "I}:2", "F",
+     "Gets sound_instance.loop_length",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_instance = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_sound_instance_loop_length(sound_instance)));
+     });
+
+anfr("wi_set_sound_instance_reverb_enabled", "sound_instance,v", "I}:2B", "",
+     "Sets sound_instance.reverb_enabled",
+     [](StackPtr &sp, VM &vm) {
+         auto v              = Pop(sp).True();
+         auto sound_instance = pop_wo_handle(sp);
+         wbnd::set_sound_instance_reverb_enabled(sound_instance, v);
+     });
+
+anfr("wi_get_sound_instance_reverb_enabled", "sound_instance", "I}:2", "B",
+     "Gets sound_instance.reverb_enabled",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_instance = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_sound_instance_reverb_enabled(sound_instance)));
+     });
+
+anfr("wi_sound_instance_is_valid", "sound_instance", "I}:2", "B",
+     "Returns true if the sound instance is valid.",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_instance = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::sound_instance_is_valid(sound_instance)));
+     });
+
+anfr("wi_set_sound_component_filename", "sound_component,v", "I}:2S", "",
+     "Sets sound_component.filename",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = Pop(sp).sval()->strv();
+         auto sound_component = pop_wo_handle(sp);
+         wbnd::set_sound_component_filename(sound_component, v);
+     });
+
+anfr("wi_get_sound_component_filename", "sound_component", "I}:2", "S",
+     "Gets sound_component.filename",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_component = pop_wo_handle(sp);
+         Push(sp, Value(vm.NewString(wbnd::get_sound_component_filename(sound_component))));
+     });
+
+anfr("wi_set_sound_component_resource", "sound_component,v", "I}:2I}:2", "",
+     "Sets sound_component.resource",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = pop_wo_handle(sp);
+         auto sound_component = pop_wo_handle(sp);
+         wbnd::set_sound_component_resource(sound_component, v);
+     });
+
+anfr("wi_get_sound_component_resource", "sound_component", "I}:2", "I}:2",
+     "Gets sound_component.resource",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_component = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::get_sound_component_resource(sound_component));
+     });
+
+anfr("wi_set_sound_component_instance", "sound_component,v", "I}:2I}:2", "",
+     "Sets sound_component.instance",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = pop_wo_handle(sp);
+         auto sound_component = pop_wo_handle(sp);
+         wbnd::set_sound_component_instance(sound_component, v);
+     });
+
+anfr("wi_get_sound_component_instance", "sound_component", "I}:2", "I}:2",
+     "Gets sound_component.instance",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_component = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::get_sound_component_instance(sound_component));
+     });
+
+anfr("wi_set_sound_component_volume", "sound_component,v", "I}:2F", "",
+     "Sets sound_component.volume",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = Pop(sp).fltval();
+         auto sound_component = pop_wo_handle(sp);
+         wbnd::set_sound_component_volume(sound_component, v);
+     });
+
+anfr("wi_get_sound_component_volume", "sound_component", "I}:2", "F",
+     "Gets sound_component.volume",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_component = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_sound_component_volume(sound_component)));
+     });
+
+anfr("wi_set_sound_component_is_playing", "sound_component,v", "I}:2B", "",
+     "Sets sound_component.is_playing",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = Pop(sp).True();
+         auto sound_component = pop_wo_handle(sp);
+         wbnd::set_sound_component_is_playing(sound_component, v);
+     });
+
+anfr("wi_get_sound_component_is_playing", "sound_component", "I}:2", "B",
+     "Gets sound_component.is_playing",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_component = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_sound_component_is_playing(sound_component)));
+     });
+
+anfr("wi_set_sound_component_is_looped", "sound_component,v", "I}:2B", "",
+     "Sets sound_component.is_looped",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = Pop(sp).True();
+         auto sound_component = pop_wo_handle(sp);
+         wbnd::set_sound_component_is_looped(sound_component, v);
+     });
+
+anfr("wi_get_sound_component_is_looped", "sound_component", "I}:2", "B",
+     "Gets sound_component.is_looped",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_component = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_sound_component_is_looped(sound_component)));
+     });
+
+anfr("wi_set_sound_component_is_disable_3d", "sound_component,v", "I}:2B", "",
+     "Sets sound_component.is_disable_3d",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = Pop(sp).True();
+         auto sound_component = pop_wo_handle(sp);
+         wbnd::set_sound_component_is_disable_3d(sound_component, v);
+     });
+
+anfr("wi_get_sound_component_is_disable_3d", "sound_component", "I}:2", "B",
+     "Gets sound_component.is_disable_3d",
+     [](StackPtr &sp, VM &vm) {
+         auto sound_component = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_sound_component_is_disable_3d(sound_component)));
+     });
+
+anfr("wi_create_sound_component", "scene,entity", "I}:2I}:2", "I}:2",
+     "Creates a sound component for the given entity and returns a handle",
+     [](StackPtr &sp, VM &vm) {
+         auto entity = pop_wo_handle(sp);
+         auto scene  = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_sound_component(scene, entity));
+     });
+
+anfr("wi_get_sound_component", "scene,entity", "I}:2I}:2", "I}:2",
+     "Gets the sound component for the given entity.",
+     [](StackPtr &sp, VM &vm) {
+         auto entity = pop_wo_handle(sp);
+         auto scene  = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::get_sound_component(scene, entity));
+     });
+
+anfr("wi_entity_sound_count", "scene", "I}:2", "I",
+     "Returns the number of entities that have a sound component",
+     [](StackPtr &sp, VM &vm) {
+         auto scene = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::entity_sound_count(scene)));
+     });
+
+anfr("wi_entity_sound_get", "scene,n", "I}:2I", "I}:2",
+     "Returns the nth entity that has a sound component",
+     [](StackPtr &sp, VM &vm) {
+         auto n     = (int32_t)Pop(sp).ival();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::entity_sound_get(scene, n));
+     });
+
+anfr("wi_scene_create_sound_entity", "scene,name,filename,pos", "I}:2SSF}:3", "I}:2",
+     "Creates a entity with a sound component in the given scene, and returns it",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT3 pos;
+         pop_xmfloat3(sp, pos);
+         auto filename = Pop(sp).sval()->strv();
+         auto name     = Pop(sp).sval()->strv();
+         auto scene    = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::scene_create_sound_entity(scene, name, filename, pos));
      }); 
 
 

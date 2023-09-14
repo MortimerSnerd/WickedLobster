@@ -721,3 +721,48 @@ def entity_light_count(scene: H) -> int
 "Returns the nth entity that has a light component"
 def entity_light_get(scene: H, n: int) -> H
 
+
+"Populates the Resource with sound data"
+def set_resource_sound(resource: H, sound: H)
+
+"Resource marked for recreate on resourcemanager::Load()"
+def set_resource_outdated(resource: H)
+
+
+"wi::audio::SoundInstance"
+struct sound_instance!
+    loop_begin: float
+    loop_length: float
+    reverb_enabled: bool
+endstruct
+
+"Returns true if the sound instance is valid."
+def sound_instance_is_valid(sound_instance: H) -> bool
+
+
+"wi::scene::SoundComponent"
+struct sound_component!
+    filename: string
+    resource: H
+    instance: H
+    volume: float
+    is_playing: bool
+    is_looped: bool
+    is_disable_3d: bool
+endstruct
+
+"Creates a sound component for the given entity and returns a handle"
+def create_sound_component(scene: H, entity: H) -> H
+
+"Gets the sound component for the given entity."
+def get_sound_component(scene: H, entity: H) -> H
+
+"Returns the number of entities that have a sound component"
+def entity_sound_count(scene: H) -> int
+
+"Returns the nth entity that has a sound component"
+def entity_sound_get(scene: H, n: int) -> H
+
+"Creates a entity with a sound component in the given scene, and returns it"
+def scene_create_sound_entity(scene: H, name: string, filename: string, pos: float3) -> H
+

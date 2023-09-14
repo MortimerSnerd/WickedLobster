@@ -75,6 +75,14 @@ enum GAMEPAD_ANALOG:
    GAMEPAD_ANALOG_TRIGGER_L,
    GAMEPAD_ANALOG_TRIGGER_R
 
+// Lots of things have handle members that are invalid if handle[1] == 0
+def is_empty(x) -> bool:
+   return x.handle[1] == 0
+
+def is_valid(x) -> bool:
+   return not is_empty(x)
+
+
 // Input support functions that just replicate the default parameters of the C++ 
 // version.
 def input_down(button: int, playerindex = 0):
@@ -133,7 +141,8 @@ enum wokind:
    wk_scene, wk_entity, wk_name_comp, wk_camera_comp, wk_transform_comp, wk_renderpath3,
    wk_timer, wk_sprite_font, wk_font_params, wk_humanoid, wk_layer, wk_collider,
    wk_matrix, wk_animation_comp, wk_sphere, wk_sphereintersection, wk_capsule, 
-   wk_rigidbody, wk_object_comp, wk_hier_comp, wk_light_comp
+   wk_rigidbody, wk_object_comp, wk_hier_comp, wk_light_comp, wk_resource, wk_sound_comp,
+   wk_sound, wk_sound_instance
 
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
@@ -337,12 +346,6 @@ struct wi_sphere_intersection:
 // Base class for convenience, this is not how the C++ code is structred.
 class wi_component:
    handle: int2
-
-   def is_empty() -> bool:
-      return handle[1] == 0
-
-   def is_valid() -> bool:
-      return not is_empty()
 
 class wi_light_component: wi_component
    def type():
@@ -1008,6 +1011,94 @@ constructor wi_object_component(h: int2):
    assert h[0] == wk_object_comp
    return wi_object_component{h}
 
+struct wi_resource: 
+   handle: int2
+
+   def set_outdated():
+      wi_set_resource_outdated(handle)
+   
+constructor wi_resource(h: int2):
+   assert h[0] == wk_resource
+   return wi_resource{h}
+
+struct wi_sound_instance:
+   handle: int2
+
+   def loop_begin():
+      return wi_get_sound_instance_loop_begin(handle)
+
+   def set_loop_begin(v):
+      wi_set_sound_instance_loop_begin(handle, v)
+
+   def loop_length():
+      return wi_get_sound_instance_loop_length(handle)
+
+   def set_loop_length(v):
+      wi_set_sound_instance_loop_length(handle, v)
+
+   def reverb_enabled():
+      return wi_get_sound_instance_reverb_enabled(handle)
+
+   def set_reverb_enabled(v):
+      wi_set_sound_instance_reverb_enabled(handle, v)
+
+   def instance_valid():
+      return wi_sound_instance_is_valid(handle)
+
+constructor wi_sound_instance(h: int2):
+   assert h[0] == wk_sound_instance
+   return wi_sound_instance{h}
+
+class wi_sound_component: wi_component
+   def filename():
+      return wi_get_sound_component_filename(handle)
+
+   def set_filename(v):
+      wi_set_sound_component_filename(handle, v)
+
+   // NB: rename from resource, since that is a type name.
+   def wresource():
+      return wi_resource(wi_get_sound_component_resource(handle))
+
+   def set_wresource(v: wi_resource):
+      wi_set_sound_component_resource(handle, v.handle)
+
+   def instance():
+      return wi_sound_instance(wi_get_sound_component_instance(handle))
+
+   def set_instance(v: wi_sound_instance):
+      wi_set_sound_component_instance(handle, v.handle)
+
+   // NB: renamed from volume to avoid clash with builtin.
+   def get_volume():
+      return wi_get_sound_component_volume(handle)
+
+   def set_volume(v):
+      wi_set_sound_component_volume(handle, v)
+
+   def is_playing():
+      return wi_get_sound_component_is_playing(handle)
+
+   def set_is_playing(v):
+      wi_set_sound_component_is_playing(handle, v)
+
+   def is_looped():
+      return wi_get_sound_component_is_looped(handle)
+
+   def set_is_looped(v):
+      wi_set_sound_component_is_looped(handle, v)
+
+   def is_disable_3d():
+      return wi_get_sound_component_is_disable_3d(handle)
+
+   def set_is_disable_3d(v):
+      wi_set_sound_component_is_disable_3d(handle, v)
+
+constructor wi_sound_component(h: int2):
+   assert h[0] == wk_sound_comp
+   return wi_sound_component{h}
+
+
 enum wi_filter:
 		FILTER_NONE = 0,
 		FILTER_OPAQUE = 1 << 0,
@@ -1023,6 +1114,29 @@ enum wi_filter:
 // it is only invalidated when the scene is deleted.
 class wi_scene:
    handle: int2   
+
+   // Creates a new sound component on the given entity and returns it.
+   def create_sound_component(ent: wi_entity):
+      return wi_sound_component(wi_create_sound_component(handle, ent.handle))
+
+   // Returns the sound component associated with "ent", or
+   // a null handle if there is none.
+   def get_sound_component(ent: wi_entity):
+      return wi_sound_component(wi_get_sound_component(handle, ent.handle))
+
+   // Returns the number of entities in the scene that have the
+   // sound component attached.
+   def get_sound_count():
+      return wi_entity_sound_count(handle)
+
+   // Gets the nth entity that has a sound component, 
+   // where n can range from 0 .. wi_entity_sound_count()-1
+   def get_sound_entity(n: int):
+      return wi_entity{wi_entity_sound_get(handle, n)}
+
+   // Creates a new entity with a sound component
+   def create_sound_entity(name: string, filename: string, pos: float3) -> wi_entity:
+      return wi_entity{wi_scene_create_sound_entity(handle, name, filename, pos)}
 
    // Creates a new light component on the given entity and returns it.
    def create_light_component(ent: wi_entity):
@@ -1794,4 +1908,5 @@ def debug_string(me:: wi_sphere_intersection, indlev = 0):
           "{ind1}position: {position()},\n{ind1}n={normal()}\n" +
           "{ind1}velocity: {velocity()}\n{ind1}depth: {depth()}\n{ind0}}}"
       
+
 
