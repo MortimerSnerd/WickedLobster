@@ -142,10 +142,20 @@ enum wokind:
    wk_timer, wk_sprite_font, wk_font_params, wk_humanoid, wk_layer, wk_collider,
    wk_matrix, wk_animation_comp, wk_sphere, wk_sphereintersection, wk_capsule, 
    wk_rigidbody, wk_object_comp, wk_hier_comp, wk_light_comp, wk_resource, wk_sound_comp,
-   wk_sound, wk_sound_instance
+   wk_sound, wk_sound_instance, wk_decal_comp
 
 // Invalid entity sentinel.
 let INVALID_ENTITY_HANDLE = int2{wk_entity, 0}
+
+struct wi_resource: 
+   handle: int2
+
+   def set_outdated():
+      wi_set_resource_outdated(handle)
+   
+constructor wi_resource(h: int2):
+   assert h[0] == wk_resource
+   return wi_resource{h}
 
 struct wi_matrix:
    handle: int2
@@ -235,6 +245,55 @@ struct wi_matrix:
 def wi_matrix():
    return wi_matrix{wi_create_matrix4x4()}
 
+struct wi_entity:
+   handle: int2
+
+   def is_valid() -> bool:
+      return handle != INVALID_ENTITY_HANDLE
+
+let INVALID_ENTITY = wi_entity{INVALID_ENTITY_HANDLE}
+
+struct wi_primitive_ray:
+   handle: int2
+
+   def origin():
+      return wi_get_primitive_ray_origin(handle)
+
+   def set_origin(v):
+      wi_set_primitive_ray_origin(handle, v)
+
+   def t_min():
+      return wi_get_primitive_ray_t_min(handle)
+
+   def set_t_min(v):
+      wi_set_primitive_ray_t_min(handle, v)
+
+   def direction():
+      return wi_get_primitive_ray_direction(handle)
+
+   def set_direction(v):
+      wi_set_primitive_ray_direction(handle, v)
+
+   def t_max():
+      return wi_get_primitive_ray_t_max(handle)
+
+   def set_t_max(v):
+      wi_set_primitive_ray_t_max(handle, v)
+
+   def direction_inverse():
+      return wi_get_primitive_ray_direction_inverse(handle)
+
+   def set_direction_inverse(v):
+      wi_set_primitive_ray_direction_inverse(handle, v)
+
+   def delete():
+      wi_delete_primitive_ray(handle)
+
+def create_primitive_ray():
+   return wi_primitive_ray{wi_create_primitive_ray()}
+
+def make_ray_from(origin: float3, direction: float3, tmin = 0.0, tmax = 1.0e6):
+   return wi_primitive_ray{wi_make_ray_from(origin, direction, tmin, tmax)}
 
 struct wi_primitive_capsule:
    handle: int2
@@ -270,6 +329,9 @@ struct wi_primitive_capsule:
       set_tip(tip() + d_p)
 
 
+def intersects(ray:: wi_primitive_ray, other: wi_primitive_capsule) -> bool, float, float3:
+   return wi_ray_capsule_intersects(handle, other.handle)
+
 def create_primitive_capsule() -> wi_primitive_capsule:
    return wi_primitive_capsule{wi_create_primitive_capsule()}
 
@@ -300,6 +362,9 @@ struct wi_primitive_sphere:
 
 def intersects(me:: wi_primitive_capsule, other: wi_primitive_sphere) -> bool, float, float3:
    return wi_capsule_sphere_intersects(handle, other.handle)
+
+def intersects(ray:: wi_primitive_ray, other: wi_primitive_sphere) -> bool, float, float3:
+   return wi_ray_capsule_intersects(handle, other.handle)
 
 def create_primitive_sphere() -> wi_primitive_sphere:
    return wi_primitive_sphere{wi_create_primitive_sphere()}
@@ -336,6 +401,80 @@ struct wi_sphere_intersection:
 
    def delete():
       wi_delete_sphere_intersection_result(handle)
+
+
+struct wi_ray_intersection:
+   handle: int2
+
+   def delete():
+      wi_delete_ray_intersection(handle)
+
+   def entity():
+      return wi_entity{wi_get_ray_intersection_entity(handle)}
+
+   def set_entity(v: wi_entity):
+      wi_set_ray_intersection_entity(handle, v.handle)
+
+   def position():
+      return wi_get_ray_intersection_position(handle)
+
+   def set_position(v):
+      wi_set_ray_intersection_position(handle, v)
+
+   def normal():
+      return wi_get_ray_intersection_normal(handle)
+
+   def set_normal(v):
+      wi_set_ray_intersection_normal(handle, v)
+
+   def velocity():
+      return wi_get_ray_intersection_velocity(handle)
+
+   def set_velocity(v):
+      wi_set_ray_intersection_velocity(handle, v)
+
+   def distance():
+      return wi_get_ray_intersection_distance(handle)
+
+   def set_distance(v):
+      wi_set_ray_intersection_distance(handle, v)
+
+   def subset_index():
+      return wi_get_ray_intersection_subset_index(handle)
+
+   def set_subset_index(v):
+      wi_set_ray_intersection_subset_index(handle, v)
+
+   def vertex_id0():
+      return wi_get_ray_intersection_vertex_id0(handle)
+
+   def set_vertex_id0(v):
+      wi_set_ray_intersection_vertex_id0(handle, v)
+
+   def vertex_id1():
+      return wi_get_ray_intersection_vertex_id1(handle)
+
+   def set_vertex_id1(v):
+      wi_set_ray_intersection_vertex_id1(handle, v)
+
+   def vertex_id2():
+      return wi_get_ray_intersection_vertex_id2(handle)
+
+   def set_vertex_id2(v):
+      wi_set_ray_intersection_vertex_id2(handle, v)
+
+   def bary():
+      return wi_get_ray_intersection_bary(handle)
+
+   def set_bary(v):
+      wi_set_ray_intersection_bary(handle, v)
+
+   def orientation():
+      return wi_matrix(wi_get_ray_intersection_orientation(handle))
+
+   def set_orientation(v: wi_matrix):
+      wi_set_ray_intersection_orientation(handle, v.handle)
+
 
 
 
@@ -621,6 +760,41 @@ constructor wi_camera_component(h: int2):
    assert h[0] == wk_camera_comp
    return wi_camera_component{h}
 
+class wi_decal_component: wi_component
+   def slope_blend_power():
+      return wi_get_decal_component_slope_blend_power(handle)
+
+   def set_slope_blend_power(v):
+      wi_set_decal_component_slope_blend_power(handle, v)
+
+   def texture():
+      return wi_resource(wi_get_decal_component_texture(handle))
+
+   def set_texture(v: wi_resource):
+      wi_set_decal_component_texture(handle, v.handle)
+
+   def normal():
+      return wi_resource(wi_get_decal_component_normal(handle))
+
+   def set_normal(v: wi_resource):
+      wi_set_decal_component_normal(handle, v.handle)
+
+   def surfacemap():
+      return wi_resource(wi_get_decal_component_surfacemap(handle))
+
+   def set_surfacemap(v: wi_resource):
+      wi_set_decal_component_surfacemap(handle, v.ent)
+
+   def is_base_color_only_alpha():
+      return wi_get_decal_component_is_base_color_only_alpha(handle)
+
+   def set_is_base_color_only_alpha(v):
+      wi_set_decal_component_is_base_color_only_alpha(handle, v)
+
+constructor wi_decal_component(h: int2):
+   assert h[0] == wk_decal_comp
+   return wi_decal_component{h}
+
 class wi_transform_component: wi_component
    def translate(v: float3):
       wi_transform_translate(handle, v)
@@ -755,14 +929,6 @@ class wi_animation_component: wi_component
 constructor wi_animation_component(h: int2):
    assert(h[0] == wk_animation_comp)
    return wi_animation_component{h}
-
-struct wi_entity:
-   handle: int2
-
-   def is_valid() -> bool:
-      return handle != INVALID_ENTITY_HANDLE
-
-let INVALID_ENTITY = wi_entity{INVALID_ENTITY_HANDLE}
 
 class wi_layer: wi_component
    def layer_mask():
@@ -1011,16 +1177,6 @@ constructor wi_object_component(h: int2):
    assert h[0] == wk_object_comp
    return wi_object_component{h}
 
-struct wi_resource: 
-   handle: int2
-
-   def set_outdated():
-      wi_set_resource_outdated(handle)
-   
-constructor wi_resource(h: int2):
-   assert h[0] == wk_resource
-   return wi_resource{h}
-
 struct wi_sound_instance:
    handle: int2
 
@@ -1109,11 +1265,67 @@ enum wi_filter:
 		FILTER_COLLIDER = 1 << 4,
 		FILTER_ALL = ~0
 
+enum wi_light_type:
+   LIGHT_DIRECTIONAL,
+   LIGHT_POINT, 
+   LIGHT_SPOT
+
+
 
 // Wrapper for scenes.  This can be saved long term, 
 // it is only invalidated when the scene is deleted.
 class wi_scene:
    handle: int2   
+
+   def create_transform_entity(name: string):
+      return wi_entity{wi_create_transform_entity(handle, name)}
+
+   def create_object_entity(name: string):
+      return wi_entity{wi_create_object_entity(handle, name)}
+
+   def create_mesh_entity(name: string):
+      return wi_entity{wi_create_mesh_entity(handle, name)}
+
+   def create_light_entity(name: string, position = float3_0, color = float3_1, intensity = 1.0, range = 10.0, type = LIGHT_POINT, outer_cone_angle = math_pi/4.0, inner_cone_angle = 0.0):
+      return wi_entity{wi_create_light_entity(handle, position, color, intensity, range, type, outer_cone_angle, inner_cone_angle)}
+
+   def create_force_entity(name: string, position: float3):
+      return wi_entity{wi_create_force_entity(handle, name, position)}
+
+   def create_environment_probe_entity(name: string, position: float3):
+      return wi_entity{wi_create_environment_probe_entity(handle, name, position)}
+
+   def create_emitter_entity(name: string, position: float3):
+      return wi_entity{wi_create_emitter_entity(handle, name, position)}
+
+   def create_cube_entity(name: string):
+      return wi_entity{wi_create_cube_entity(handle, name)}
+
+   def create_plane_entity(name: string):
+      return wi_entity{wi_create_plane_entity(handle, name)}
+
+   // Creates an entity with a decal in the given scene.
+   def create_decal_entity(name: string, texture: string, normal_map = ""):
+      return wi_entity{wi_create_decal_entity(handle, name, texture, normal_map)}
+
+   // Creates a new decal component on the given entity and returns it.
+   def create_decal_component(ent: wi_entity):
+      return wi_decal_component(wi_create_decal_component(handle, ent.handle))
+
+   // Returns the decal component associated with "ent", or
+   // a null handle if there is none.
+   def get_decal_component(ent: wi_entity):
+      return wi_decal_component(wi_get_decal_component(handle, ent.handle))
+
+   // Returns the number of entities in the scene that have the
+   // decal component attached.
+   def get_decal_count():
+      return wi_entity_decal_count(handle)
+
+   // Gets the nth entity that has a decal component, 
+   // where n can range from 0 .. wi_entity_decal_count()-1
+   def get_decal_entity(n: int):
+      return wi_entity{wi_entity_decal_get(handle, n)}
 
    // Creates a new sound component on the given entity and returns it.
    def create_sound_component(ent: wi_entity):
@@ -1205,6 +1417,9 @@ class wi_scene:
 
    def sphere_intersects(sphere: wi_primitive_sphere, filter_mask = FILTER_OPAQUE, layer_mask = ~0, lod = 0) -> wi_sphere_intersection:
       return wi_sphere_intersection{wi_scene_sphere_intersects(handle, sphere.handle, filter_mask, layer_mask, lod)}
+
+   def ray_intersects(capsule: wi_primitive_ray, filter_mask = FILTER_OPAQUE, layer_mask = ~0, lod = 0) -> wi_ray_intersection:
+      return wi_ray_intersection{wi_scene_ray_intersects(handle, capsule.handle, filter_mask, layer_mask, lod)}
 
    def retarget_animation(dest: wi_entity, src: wi_entity, bake_data: bool) -> wi_entity:
       return wi_entity{wi_retarget_animation(handle, dest.handle, src.handle, bake_data)}

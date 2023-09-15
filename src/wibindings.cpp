@@ -102,6 +102,9 @@ namespace wbnd
     AlienPtr<wi::audio::Sound, WK_SOUND> SOUND;
     AlienPtr<wi::scene::SoundComponent, WK_SOUND_COMP> SOUND_COMP;
     AlienPtr<wi::audio::SoundInstance, WK_SOUND_INSTANCE> SOUND_INSTANCE;
+    AlienPtr<wi::scene::DecalComponent, WK_DECAL_COMP> DECAL;
+    AlienPtr<wi::primitive::Ray, WK_RAY> RAY;
+    AlienPtr<wi::scene::Scene::RayIntersectionResult, WK_RAY_INTERSECTION> RAY_INTERSECT;
 
 
     void valid_entity(wo_handle const &h)
@@ -111,6 +114,11 @@ namespace wbnd
             dump_lobster_stack();
             abort();
         }
+    }
+
+    wo_handle mkentity(wi::ecs::Entity ent)
+    {
+        return {WK_ENTITY, ent};
     }
 
     wo_handle new_scene()
@@ -145,12 +153,12 @@ namespace wbnd
     {
         auto ent = wi::scene::LoadModel(*SCENE.ptr(dest_scene), std::string(filename),
                                         XMMatrixIdentity(), attach_to_entity);
-        return {WK_ENTITY, (int64_t)ent};
+        return mkentity((int64_t)ent);
     }
 
     wo_handle create_entity()
     {
-        return {WK_ENTITY, wi::ecs::CreateEntity()};
+        return mkentity(wi::ecs::CreateEntity());
     }
 
     wo_handle create_name_component(wo_handle const& scene, wo_handle const& entity)
@@ -169,8 +177,8 @@ namespace wbnd
     wo_handle find_entity_by_name(wo_handle const& scene, std::string_view const &name, wo_handle const& ancestor)
     {
         handle_check(ancestor, WK_ENTITY);
-        return {WK_ENTITY, SCENE.ptr(scene)->Entity_FindByName(std::string(name), 
-                                                               ancestor.name)};
+        return mkentity(SCENE.ptr(scene)->Entity_FindByName(std::string(name), 
+                                                               ancestor.name));
     }
 
     void backlog(int32_t level, std::string_view const &msg)
@@ -481,7 +489,7 @@ namespace wbnd
     wo_handle entity_names_get(wo_handle const &scene, int32_t n)
     {
         auto sp = SCENE.ptr(scene);
-        return {WK_ENTITY,  sp->names.GetEntity(n)};
+        return mkentity( sp->names.GetEntity(n));
     }
 
     std::string_view nc_get_name(wo_handle const &name_comp)
@@ -505,7 +513,7 @@ namespace wbnd
     wo_handle get_camera_entity(wo_handle const &scene, int32_t n)
     {
         auto sp = SCENE.ptr(scene);
-        return {WK_ENTITY, sp->cameras.GetEntity(n)};
+        return mkentity(sp->cameras.GetEntity(n));
     }
 
     void draw_debug_text(std::string_view const &text, XMFLOAT3 const &pos, int32_t flags, XMFLOAT4 const &color, float scaling)
@@ -850,7 +858,7 @@ namespace wbnd
 
     wo_handle entity_humanoid_get(wo_handle const &scene, int32_t n)
     {
-        return {WK_ENTITY, SCENE.ptr(scene)->humanoids.GetEntity((size_t)n)};
+        return mkentity(SCENE.ptr(scene)->humanoids.GetEntity((size_t)n));
     }
 
     void set_humanoid_default_look_direction(wo_handle const &humanoid, XMFLOAT3 const &v)
@@ -920,7 +928,7 @@ namespace wbnd
 
     wo_handle humanoid_bone(wo_handle const &hum, int32_t i)
     {
-        return {WK_ENTITY, HUMANOID.ptr(hum)->bones[i]};
+        return mkentity(HUMANOID.ptr(hum)->bones[i]);
     }
 
     bool humanoid_is_lookat_enabled(wo_handle const &hum)
@@ -950,7 +958,7 @@ namespace wbnd
 
     wo_handle entity_layer_get(wo_handle const &scene, int32_t n)
     {
-        return {WK_ENTITY, SCENE.ptr(scene)->layers.GetEntity(n)};
+        return mkentity(SCENE.ptr(scene)->layers.GetEntity(n));
     }
 
     void set_layer_mask(wo_handle const &layer, int32_t v)
@@ -989,7 +997,7 @@ namespace wbnd
     wo_handle duplicate_entity(wo_handle const &scene, wo_handle const &entity)
     {
         handle_check(entity, WK_ENTITY);
-        return {WK_ENTITY, SCENE.ptr(scene)->Entity_Duplicate(entity.name)};
+        return mkentity(SCENE.ptr(scene)->Entity_Duplicate(entity.name));
     }
 
     void set_collider_shape(wo_handle const &collider, int32_t v)
@@ -1059,7 +1067,7 @@ namespace wbnd
 
     wo_handle entity_collider_get(wo_handle const &scene, int32_t n)
     {
-        return {WK_ENTITY, SCENE.ptr(scene)->colliders.GetEntity(n)};
+        return mkentity(SCENE.ptr(scene)->colliders.GetEntity(n));
     }
 
     wo_handle create_matrix4x4()
@@ -1982,7 +1990,7 @@ namespace wbnd
 
     wo_handle get_sphere_intersection_result_entity(wo_handle const &sphere_intersection_result)
     {
-        return {WK_ENTITY, SPHERE_INTERSECTION.ptr(sphere_intersection_result)->entity};
+        return mkentity(SPHERE_INTERSECTION.ptr(sphere_intersection_result)->entity);
     }
 
     void set_sphere_intersection_result_position(wo_handle const &sphere_intersection_result, XMFLOAT3 const &v)
@@ -2091,6 +2099,13 @@ namespace wbnd
     {
         auto rv = create_sphere_intersection_result();
         *SPHERE_INTERSECTION.ptr(rv) = SCENE.ptr(scene)->Intersects(*CAPSULE.ptr(cap), filter_mask, layer_mask, lod);
+        return rv;
+    }
+
+    wo_handle scene_ray_intersects(wo_handle const &scene, wo_handle const &ray, int32_t filter_mask, int32_t layer_mask, int32_t lod)
+    {
+        auto rv = RAY_INTERSECT.handle(new wi::scene::Scene::RayIntersectionResult());
+        *RAY_INTERSECT.ptr(rv) = SCENE.ptr(scene)->Intersects(*RAY.ptr(ray), filter_mask, layer_mask, lod);
         return rv;
     }
 
@@ -2249,7 +2264,7 @@ namespace wbnd
 
     wo_handle entity_rigidbody_get(wo_handle const &scene, int32_t n)
     {
-        return {WK_ENTITY, SCENE.ptr(scene)->rigidbodies.GetEntity(n)};
+        return mkentity(SCENE.ptr(scene)->rigidbodies.GetEntity(n));
     }
 
     void set_object_mesh_id(wo_handle const &object, wo_handle const &v)
@@ -2260,7 +2275,7 @@ namespace wbnd
 
     wo_handle get_object_mesh_id(wo_handle const &object)
     {
-        return {WK_ENTITY, OBJECT.ptr(object)->meshID};
+        return mkentity(OBJECT.ptr(object)->meshID);
     }
 
     void set_object_cascade_mask(wo_handle const &object, int32_t v)
@@ -2382,7 +2397,7 @@ namespace wbnd
 
     wo_handle entity_object_get(wo_handle const &scene, int32_t n)
     {
-        return {WK_ENTITY, SCENE.ptr(scene)->objects.GetEntity(n)};
+        return mkentity(SCENE.ptr(scene)->objects.GetEntity(n));
     }
 
     void set_hierarchy_parent_id(wo_handle const &hierarchy, wo_handle const &v)
@@ -2393,7 +2408,7 @@ namespace wbnd
 
     wo_handle get_hierarchy_parent_id(wo_handle const &hierarchy)
     {
-        return {WK_ENTITY, HIERARCHY.ptr(hierarchy)->parentID};
+        return mkentity(HIERARCHY.ptr(hierarchy)->parentID);
     }
 
     void set_hierarchy_layermask_bind(wo_handle const &hierarchy, int32_t v)
@@ -2425,7 +2440,7 @@ namespace wbnd
 
     wo_handle entity_hierarchy_get(wo_handle const &scene, int32_t n)
     {
-        return {WK_ENTITY, SCENE.ptr(scene)->hierarchy.GetEntity(n)};
+        return mkentity(SCENE.ptr(scene)->hierarchy.GetEntity(n));
     }
 
     void set_light_type(wo_handle const &light, int32_t v)
@@ -2577,7 +2592,7 @@ namespace wbnd
 
     wo_handle entity_light_get(wo_handle const &scene, int32_t n)
     {
-        return {WK_ENTITY, SCENE.ptr(scene)->lights.GetEntity(n)};
+        return mkentity(SCENE.ptr(scene)->lights.GetEntity(n));
     }
 
     void set_resource_sound(wo_handle const &resource, wo_handle const &sound)
@@ -2718,11 +2733,334 @@ namespace wbnd
 
     wo_handle entity_sound_get(wo_handle const &scene, int32_t n)
     {
-        return {WK_ENTITY, SCENE.ptr(scene)->sounds.GetEntity(n)};
+        return mkentity(SCENE.ptr(scene)->sounds.GetEntity(n));
     }
 
     wo_handle scene_create_sound_entity(wo_handle const &scene, std::string_view const &name, std::string_view const &filename, XMFLOAT3 const &pos)
     {
-        return {WK_ENTITY, SCENE.ptr(scene)->Entity_CreateSound(string(name), string(filename), pos)};
+        return mkentity(SCENE.ptr(scene)->Entity_CreateSound(string(name), string(filename), pos));
+    }
+
+    void set_decal_component_slope_blend_power(wo_handle const &decal_component, float v)
+    {
+        DECAL.ptr(decal_component)->slopeBlendPower = v;
+    }
+
+    float get_decal_component_slope_blend_power(wo_handle const &decal_component)
+    {
+        return DECAL.ptr(decal_component)->slopeBlendPower;
+    }
+
+    void set_decal_component_texture(wo_handle const &decal_component, wo_handle const &v)
+    {
+        handle_check(v, WK_RESOURCE);
+        DECAL.ptr(decal_component)->texture = *RESOURCE.ptr(v);
+    }
+
+    wo_handle get_decal_component_texture(wo_handle const &decal_component)
+    {
+        return RESOURCE.handle(&DECAL.ptr(decal_component)->texture);
+    }
+
+    void set_decal_component_normal(wo_handle const &decal_component, wo_handle const &v)
+    {
+        handle_check(v, WK_RESOURCE);
+        DECAL.ptr(decal_component)->normal = *RESOURCE.ptr(v);
+    }
+
+    wo_handle get_decal_component_normal(wo_handle const &decal_component)
+    {
+        return RESOURCE.handle(&DECAL.ptr(decal_component)->normal);
+    }
+
+    void set_decal_component_surfacemap(wo_handle const &decal_component, wo_handle const &v)
+    {
+        handle_check(v, WK_RESOURCE);
+        DECAL.ptr(decal_component)->surfacemap = *RESOURCE.ptr(v);
+    }
+
+    wo_handle get_decal_component_surfacemap(wo_handle const &decal_component)
+    {
+        return RESOURCE.handle(&DECAL.ptr(decal_component)->surfacemap);
+    }
+
+    void set_decal_component_is_base_color_only_alpha(wo_handle const &decal_component, bool v)
+    {
+        DECAL.ptr(decal_component)->SetBaseColorOnlyAlpha(v);
+    }
+
+    bool get_decal_component_is_base_color_only_alpha(wo_handle const &decal_component)
+    {
+        return DECAL.ptr(decal_component)->IsBaseColorOnlyAlpha();
+    }
+
+    wo_handle create_decal_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return DECAL.handle(&SCENE.ptr(scene)->decals.Create(entity.name));
+    }
+
+    wo_handle get_decal_component(wo_handle const &scene, wo_handle const &entity)
+    {
+        handle_check(entity, WK_ENTITY);
+        return DECAL.handle(SCENE.ptr(scene)->decals.GetComponent(entity.name));
+    }
+
+    int32_t entity_decal_count(wo_handle const &scene)
+    {
+        return (int32_t)SCENE.ptr(scene)->decals.GetCount();
+    }
+
+    wo_handle entity_decal_get(wo_handle const &scene, int32_t n)
+    {
+        return mkentity(SCENE.ptr(scene)->decals.GetEntity(n));
+    }
+
+    wo_handle create_decal_entity(wo_handle const &scene, std::string_view const &name, std::string_view const &texture_name, std::string_view const &normal_map_name)
+    {
+        return mkentity(SCENE.ptr(scene)->Entity_CreateDecal(string(name), string(texture_name), string(normal_map_name)));
+    }
+
+    wo_handle create_transform_entity(wo_handle const &scene, std::string_view const &name)
+    {
+        return mkentity(SCENE.ptr(scene)->Entity_CreateTransform(string(name)));
+    }
+
+    wo_handle create_object_entity(wo_handle const &scene, std::string_view const &name)
+    {
+        return mkentity(SCENE.ptr(scene)->Entity_CreateObject(string(name)));
+    }
+
+    wo_handle create_mesh_entity(wo_handle const &scene, std::string_view const &name)
+    {
+        return mkentity(SCENE.ptr(scene)->Entity_CreateMesh(string(name)));
+    }
+
+    wo_handle create_light_entity(wo_handle const &scene, std::string_view const &name, XMFLOAT3 const &position, XMFLOAT3 const &color, float intensity, float range, int32_t type, float outer_cone_angle, float inner_cone_angle)
+    {
+        return mkentity(SCENE.ptr(scene)->Entity_CreateLight(string(name), position, color, intensity, range, 
+                                                             (wi::scene::LightComponent::LightType)type, outer_cone_angle, inner_cone_angle));
+    }
+
+    wo_handle create_force_entity(wo_handle const &scene, std::string_view const &name, XMFLOAT3 const &position)
+    {
+        return mkentity(SCENE.ptr(scene)->Entity_CreateForce(string(name), position));
+    }
+
+    wo_handle create_environment_probe_entity(wo_handle const &scene, std::string_view const &name, XMFLOAT3 const &position)
+    {
+        return mkentity(SCENE.ptr(scene)->Entity_CreateEnvironmentProbe(string(name), position));
+    }
+
+    wo_handle create_emitter_entity(wo_handle const &scene, std::string_view const &name, XMFLOAT3 const& position)
+    {
+        return mkentity(SCENE.ptr(scene)->Entity_CreateEmitter(string(name), position));
+    }
+
+    wo_handle create_cube_entity(wo_handle const &scene, std::string_view const &name)
+    {
+        return mkentity(SCENE.ptr(scene)->Entity_CreateCube(string(name)));
+    }
+
+    wo_handle create_plane_entity(wo_handle const &scene, std::string_view const &name)
+    {
+        return mkentity(SCENE.ptr(scene)->Entity_CreatePlane(string(name)));
+    }
+
+    wo_handle create_primitive_ray()
+    {
+        return RAY.handle(new wi::primitive::Ray());
+    }
+
+    void delete_primitive_ray(wo_handle const &primitive_ray)
+    {
+        delete RAY.ptr(primitive_ray);
+    }
+
+    void set_primitive_ray_origin(wo_handle const &primitive_ray, XMFLOAT3 const &v)
+    {
+        RAY.ptr(primitive_ray)->origin = v;
+    }
+
+    XMFLOAT3 get_primitive_ray_origin(wo_handle const &primitive_ray)
+    {
+        return RAY.ptr(primitive_ray)->origin;
+    }
+
+    void set_primitive_ray_t_min(wo_handle const &primitive_ray, float v)
+    {
+        RAY.ptr(primitive_ray)->TMin = v;
+    }
+
+    float get_primitive_ray_t_min(wo_handle const &primitive_ray)
+    {
+        return RAY.ptr(primitive_ray)->TMin;
+    }
+
+    void set_primitive_ray_direction(wo_handle const &primitive_ray, XMFLOAT3 const &v)
+    {
+        RAY.ptr(primitive_ray)->direction = v;
+    }
+
+    XMFLOAT3 get_primitive_ray_direction(wo_handle const &primitive_ray)
+    {
+        return RAY.ptr(primitive_ray)->direction;
+    }
+
+    void set_primitive_ray_t_max(wo_handle const &primitive_ray, float v)
+    {
+        RAY.ptr(primitive_ray)->TMax = v;
+    }
+
+    float get_primitive_ray_t_max(wo_handle const &primitive_ray)
+    {
+        return RAY.ptr(primitive_ray)->TMax;
+    }
+
+    void set_primitive_ray_direction_inverse(wo_handle const &primitive_ray, XMFLOAT3 const &v)
+    {
+        RAY.ptr(primitive_ray)->direction_inverse = v;
+    }
+
+    XMFLOAT3 get_primitive_ray_direction_inverse(wo_handle const &primitive_ray)
+    {
+        return RAY.ptr(primitive_ray)->direction_inverse;
+    }
+
+    wo_handle make_ray_from(XMFLOAT3 const &origin, XMFLOAT3 const &direction, float tmin, float tmax)
+    {
+        return RAY.handle(new wi::primitive::Ray(origin, direction, tmin, tmax));
+    }
+
+    bool ray_capsule_intersects(wo_handle const &ray, wo_handle const &capsule, 
+                                float &retval2, XMFLOAT3 &retval3)
+    {
+        return RAY.ptr(ray)->intersects(*CAPSULE.ptr(capsule), retval2, retval3);
+    }
+
+    bool ray_sphere_intersects(wo_handle const &ray, wo_handle const &sphere, float &retval2, XMFLOAT3 &retval3)
+    {
+        return RAY.ptr(ray)->intersects(*SPHERE.ptr(sphere), retval2, retval3);
+    }
+
+    wo_handle create_ray_intersection()
+    {
+        return RAY_INTERSECT.handle(new wi::scene::Scene::RayIntersectionResult());
+    }
+
+    void delete_ray_intersection(wo_handle const &ray_intersection)
+    {
+        delete RAY_INTERSECT.ptr(ray_intersection);
+    }
+
+    void set_ray_intersection_entity(wo_handle const &ray_intersection, wo_handle const &v)
+    {
+        handle_check(v, WK_ENTITY);
+        RAY_INTERSECT.ptr(ray_intersection)->entity = v.name;
+    }
+
+    wo_handle get_ray_intersection_entity(wo_handle const &ray_intersection)
+    {
+        return mkentity(RAY_INTERSECT.ptr(ray_intersection)->entity);
+    }
+
+    void set_ray_intersection_position(wo_handle const &ray_intersection, XMFLOAT3 const &v)
+    {
+        RAY_INTERSECT.ptr(ray_intersection)->position = v;
+    }
+
+    XMFLOAT3 get_ray_intersection_position(wo_handle const &ray_intersection)
+    {
+        return RAY_INTERSECT.ptr(ray_intersection)->position;
+    }
+
+    void set_ray_intersection_normal(wo_handle const &ray_intersection, XMFLOAT3 const &v)
+    {
+        RAY_INTERSECT.ptr(ray_intersection)->normal = v;
+    }
+
+    XMFLOAT3 get_ray_intersection_normal(wo_handle const &ray_intersection)
+    {
+        return RAY_INTERSECT.ptr(ray_intersection)->normal;
+    }
+
+    void set_ray_intersection_velocity(wo_handle const &ray_intersection, XMFLOAT3 const &v)
+    {
+        RAY_INTERSECT.ptr(ray_intersection)->velocity = v;
+    }
+
+    XMFLOAT3 get_ray_intersection_velocity(wo_handle const &ray_intersection)
+    {
+        return RAY_INTERSECT.ptr(ray_intersection)->velocity;
+    }
+
+    void set_ray_intersection_distance(wo_handle const &ray_intersection, float v)
+    {
+        RAY_INTERSECT.ptr(ray_intersection)->distance = v;
+    }
+
+    float get_ray_intersection_distance(wo_handle const &ray_intersection)
+    {
+        return RAY_INTERSECT.ptr(ray_intersection)->distance;
+    }
+
+    void set_ray_intersection_subset_index(wo_handle const &ray_intersection, int32_t v)
+    {
+        RAY_INTERSECT.ptr(ray_intersection)->subsetIndex = v;
+    }
+
+    int32_t get_ray_intersection_subset_index(wo_handle const &ray_intersection)
+    {
+        return RAY_INTERSECT.ptr(ray_intersection)->subsetIndex;
+    }
+
+    void set_ray_intersection_vertex_id0(wo_handle const &ray_intersection, int32_t v)
+    {
+        RAY_INTERSECT.ptr(ray_intersection)->vertexID0 = v;
+    }
+
+    int32_t get_ray_intersection_vertex_id0(wo_handle const &ray_intersection)
+    {
+        return RAY_INTERSECT.ptr(ray_intersection)->vertexID0;
+    }
+
+    void set_ray_intersection_vertex_id1(wo_handle const &ray_intersection, int32_t v)
+    {
+        RAY_INTERSECT.ptr(ray_intersection)->vertexID1 = v;
+    }
+
+    int32_t get_ray_intersection_vertex_id1(wo_handle const &ray_intersection)
+    {
+        return RAY_INTERSECT.ptr(ray_intersection)->vertexID1;
+    }
+
+    void set_ray_intersection_vertex_id2(wo_handle const &ray_intersection, int32_t v)
+    {
+        RAY_INTERSECT.ptr(ray_intersection)->vertexID2 = v;
+    }
+
+    int32_t get_ray_intersection_vertex_id2(wo_handle const &ray_intersection)
+    {
+        return RAY_INTERSECT.ptr(ray_intersection)->vertexID2;
+    }
+
+    void set_ray_intersection_bary(wo_handle const &ray_intersection, XMFLOAT2 const &v)
+    {
+        RAY_INTERSECT.ptr(ray_intersection)->bary = v;
+    }
+
+    XMFLOAT2 get_ray_intersection_bary(wo_handle const &ray_intersection)
+    {
+        return RAY_INTERSECT.ptr(ray_intersection)->bary;
+    }
+
+    void set_ray_intersection_orientation(wo_handle const &ray_intersection, wo_handle const &v)
+    {
+        RAY_INTERSECT.ptr(ray_intersection)->orientation = *MATRIX.ptr(v);
+    }
+
+    wo_handle get_ray_intersection_orientation(wo_handle const &ray_intersection)
+    {
+        return MATRIX.handle(&RAY_INTERSECT.ptr(ray_intersection)->orientation);
     }
 }

@@ -29,6 +29,22 @@ def get_fwd_vector(t: wi_transform_component) -> float3:
          rv = normalize(fc)
    return rv
 
+// Get the vector the transform is looking at. 
+def get_look_vector(t: wi_transform_component) -> float3:
+   var rv = float3_z
+   with_temp_object(t.world_matrix()) m:
+      let fc = m.transform_vector(float3_z)
+      if magnitude_squared(fc) >= 0.001:
+         rv = normalize(fc)
+   return rv
+
+// Returns a ray pointing from the camera to the direction being looked
+// at, with the given maxlen.  The ray must be deleted.
+def get_look_ray(maxlen = 1.0e6) -> wi_primitive_ray:
+   let cam_tr = gscene.get_transform_component(cament)
+   let dir = get_look_vector(cam_tr)
+   return make_ray_from(cam_tr.position(), dir, 0.0, maxlen)
+
 // Returns a forward vector for a given yaw, ignoring pitch.
 def fwd_vector_from_yaw(y: float):
    let q = mk_quat(float3_y, y)
@@ -94,6 +110,13 @@ def load_initial_scene():
 
    pinned_mouse_pos = input_get_pointer()
    input_hide_pointer(true)
+
+def create_spot_decal(pos):
+   let ent = gscene.create_decal_entity("spot", "spudge/spot.png")
+   let tr = gscene.get_transform_component(ent)
+   tr.clear()
+   tr.translate(pos + float3_y*0.01)
+   tr.rotate(mk_quat(float3_y, rnd_float()*360.0))
 
 
 wi_set_app_variable_frame_fn():
@@ -161,6 +184,18 @@ wi_set_app_variable_frame_fn():
          sc.set_is_looped(false)
          sc.set_is_playing(true)
 
+      if input_press(MOUSE_BUTTON_LEFT):
+         //DEBUG play with rays
+         with_temp_object(get_look_ray()) ray:
+            with_temp_object(gscene.ray_intersects(ray, FILTER_OPAQUE, ~player_layer), wi_matrix()) ir, mat:
+               if ir.entity.is_valid():
+                  let ent = gscene.create_decal_entity("spot", "spudge/spot.png")
+                  let tr = gscene.get_transform_component(ent)
+                  tr.translate(ir.position())
+                  mat.look_to(ir.position(), ir.normal())
+                  tr.transform_by_matrix(mat)
+
+
    var yvel = char_vel.y
    if not char_on_floor:
       yvel -= g_accel*dt
@@ -177,6 +212,7 @@ wi_set_app_variable_frame_fn():
    let char_rb = gscene.get_rigidbody_component(charent)
    var act_dp = char_vel*dt
 
+   let started_on_floor = char_on_floor
    char_on_floor = false
    with_temp_object(get_rigidbody_capsule(char_tr, char_rb)) cap:
       logmsg("\tctest capbase = {cap.base()}, tip={cap.tip()}, rad={cap.radius()}, v={char_vel} dp={act_dp} on_floor={char_on_floor}")
@@ -195,6 +231,8 @@ wi_set_app_variable_frame_fn():
             logmsg(sin.debug_string(3))
             cap.translate(n*sin.depth())
             if n.looks_like_floor:
+               if not started_on_floor:
+                  create_spot_decal(cap.base())
                char_on_floor = true
                char_vel = float3{char_vel.x, 0.0, char_vel.z}
             elif n.looks_like_ceiling:

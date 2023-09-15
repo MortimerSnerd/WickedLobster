@@ -25,6 +25,70 @@ def duplicate_entity(scene: H, entity: H) -> H
 "Merges src scene into dest scene."
 def scene_merge(dest: H, src: H)
 
+"Creates an entity with a transform component"
+def create_transform_entity(scene: H, name: string) -> H
+
+"Creates an entity with a object component"
+def create_object_entity(scene: H, name: string) -> H
+
+"Creates an entity with a mesh component"
+def create_mesh_entity(scene: H, name: string) -> H
+
+"Creates an entity with a light component"
+def create_light_entity(scene: H, name: string, position: float3, color: float3, intensity: float, range: float, type: int, outer_cone_angle: float, inner_cone_angle: float) -> H
+
+"Creates an entity with a force component"
+def create_force_entity(scene: H, name: string, position: float3) -> H
+
+"Creates an entity with a environment_probe component"
+def create_environment_probe_entity(scene: H, name: string, position: float3) -> H
+
+"Creates an entity with a emitter component"
+def create_emitter_entity(scene: H, name: string, position: float3) -> H
+
+"Creates an entity with a cube component"
+def create_cube_entity(scene: H, name: string) -> H
+
+"Creates an entity with a plane component"
+def create_plane_entity(scene: H, name: string) -> H
+
+
+"wi::primitive::Ray"
+struct primitive_ray
+    origin: float3
+    t_min: float
+    direction: float3
+    t_max: float
+    direction_inverse: float3
+endstruct
+
+"Creates a ray from the passed parameters"
+def make_ray_from(origin: float3, direction: float3, tmin: float, tmax: float) -> H
+
+"Tests intersection between a ray and capsule, returns bool, dist, direction"
+def ray_capsule_intersects(ray: H, capsule: H) -> bool, float, float3
+
+"Tests intersection between a ray and sphere, returns bool, dist, direction"
+def ray_sphere_intersects(ray: H, sphere: H) -> bool, float, float3
+
+"wi::scene::Scene::RayIntersectionResult"
+struct ray_intersection
+    entity: H
+    position: float3
+    normal: float3
+    velocity: float3
+    distance: float
+    subset_index: int
+    vertex_id0: int
+    vertex_id1: int
+    vertex_id2: int
+    bary: float2
+    orientation: H  
+endstruct
+
+
+
+
 "Loads the model from the file into the given scene. Returns valid entity handle if attached==true"
 def load_model(scene: H, fname: string, attach: bool) -> H
 
@@ -615,6 +679,9 @@ def sphere_capsule_intersects(sphere: H, cap: H) -> bool, float, float3
 "Tests whether a capsule intersects anything in the scene, returning a SphereIntersectionResult (not a typo)"
 def scene_capsule_intersects(scene: H, cap: H, filter_mask: int, layer_mask: int, lod: int) -> H
 
+"Tests whether a ray intersects anything in the scene, returning a RayIntersectionResult (not a typo)"
+def scene_ray_intersects(scene: H, ray: H, filter_mask: int, layer_mask: int, lod: int) -> H
+
 
 "wi::scene::RigidBodyPhysicsComponent"
 struct rigidbody_physics!
@@ -765,4 +832,31 @@ def entity_sound_get(scene: H, n: int) -> H
 
 "Creates a entity with a sound component in the given scene, and returns it"
 def scene_create_sound_entity(scene: H, name: string, filename: string, pos: float3) -> H
+
+
+"wi::scene::DecalComponent"
+struct decal_component!
+    slope_blend_power: float
+    texture: H
+    normal: H
+    surfacemap: H
+    is_base_color_only_alpha: bool
+endstruct
+
+"Creates a decal component for the given entity and returns a handle"
+def create_decal_component(scene: H, entity: H) -> H
+
+"Gets the decal component for the given entity."
+def get_decal_component(scene: H, entity: H) -> H
+
+"Returns the number of entities that have a decal component"
+def entity_decal_count(scene: H) -> int
+
+"Returns the nth entity that has a decal component"
+def entity_decal_get(scene: H, n: int) -> H
+
+"Creates a entity with a decal in the given scene, and returns it."
+def create_decal_entity(scene: H, name: string, texture_name: string, normal_map_name: string) -> H
+
+
 

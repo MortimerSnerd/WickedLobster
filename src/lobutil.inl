@@ -70,6 +70,402 @@ anfr("wi_scene_merge", "dest,src", "I}:2I}:2", "",
          wbnd::scene_merge(dest, src);
      });
 
+anfr("wi_create_transform_entity", "scene,name", "I}:2S", "I}:2",
+     "Creates an entity with a transform component",
+     [](StackPtr &sp, VM &vm) {
+         auto name  = Pop(sp).sval()->strv();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_transform_entity(scene, name));
+     });
+
+anfr("wi_create_object_entity", "scene,name", "I}:2S", "I}:2",
+     "Creates an entity with a object component",
+     [](StackPtr &sp, VM &vm) {
+         auto name  = Pop(sp).sval()->strv();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_object_entity(scene, name));
+     });
+
+anfr("wi_create_mesh_entity", "scene,name", "I}:2S", "I}:2",
+     "Creates an entity with a mesh component",
+     [](StackPtr &sp, VM &vm) {
+         auto name  = Pop(sp).sval()->strv();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_mesh_entity(scene, name));
+     });
+
+anfr("wi_create_light_entity", "scene,name,position,color,intensity,range,type,outer_cone_angle,inner_cone_angle", "I}:2SF}:3F}:3FFIFF", "I}:2",
+     "Creates an entity with a light component",
+     [](StackPtr &sp, VM &vm) {
+         auto     inner_cone_angle = Pop(sp).fltval();
+         auto     outer_cone_angle = Pop(sp).fltval();
+         auto     type             = (int32_t)Pop(sp).ival();
+         auto     range            = Pop(sp).fltval();
+         auto     intensity        = Pop(sp).fltval();
+         XMFLOAT3 color;
+         pop_xmfloat3(sp, color);
+         XMFLOAT3 position;
+         pop_xmfloat3(sp, position);
+         auto name  = Pop(sp).sval()->strv();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_light_entity(scene, name, position, color, intensity, range, type, outer_cone_angle, inner_cone_angle));
+     });
+
+anfr("wi_create_force_entity", "scene,name,position", "I}:2SF}:3", "I}:2",
+     "Creates an entity with a force component",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT3 position;
+         pop_xmfloat3(sp, position);
+         auto name  = Pop(sp).sval()->strv();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_force_entity(scene, name, position));
+     });
+
+anfr("wi_create_environment_probe_entity", "scene,name,position", "I}:2SF}:3", "I}:2",
+     "Creates an entity with a environment_probe component",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT3 position;
+         pop_xmfloat3(sp, position);
+         auto name  = Pop(sp).sval()->strv();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_environment_probe_entity(scene, name, position));
+     });
+
+anfr("wi_create_emitter_entity", "scene,name,position", "I}:2SF}:3", "I}:2",
+     "Creates an entity with a emitter component",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT3 position;
+         pop_xmfloat3(sp, position);
+         auto name  = Pop(sp).sval()->strv();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_emitter_entity(scene, name, position));
+     });
+
+anfr("wi_create_cube_entity", "scene,name", "I}:2S", "I}:2",
+     "Creates an entity with a cube component",
+     [](StackPtr &sp, VM &vm) {
+         auto name  = Pop(sp).sval()->strv();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_cube_entity(scene, name));
+     });
+
+anfr("wi_create_plane_entity", "scene,name", "I}:2S", "I}:2",
+     "Creates an entity with a plane component",
+     [](StackPtr &sp, VM &vm) {
+         auto name  = Pop(sp).sval()->strv();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_plane_entity(scene, name));
+     });
+
+anfr("wi_create_primitive_ray", "", "", "I}:2",
+     "",
+     [](StackPtr &sp, VM &vm) {
+         push_wo_handle(sp, wbnd::create_primitive_ray());
+     });
+
+anfr("wi_delete_primitive_ray", "primitive_ray", "I}:2", "",
+     "",
+     [](StackPtr &sp, VM &vm) {
+         auto primitive_ray = pop_wo_handle(sp);
+         wbnd::delete_primitive_ray(primitive_ray);
+     });
+
+anfr("wi_set_primitive_ray_origin", "primitive_ray,v", "I}:2F}:3", "",
+     "Sets primitive_ray.origin",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT3 v;
+         pop_xmfloat3(sp, v);
+         auto primitive_ray = pop_wo_handle(sp);
+         wbnd::set_primitive_ray_origin(primitive_ray, v);
+     });
+
+anfr("wi_get_primitive_ray_origin", "primitive_ray", "I}:2", "F}:3",
+     "Gets primitive_ray.origin",
+     [](StackPtr &sp, VM &vm) {
+         auto primitive_ray = pop_wo_handle(sp);
+         push_xmfloat3(sp, wbnd::get_primitive_ray_origin(primitive_ray));
+     });
+
+anfr("wi_set_primitive_ray_t_min", "primitive_ray,v", "I}:2F", "",
+     "Sets primitive_ray.t_min",
+     [](StackPtr &sp, VM &vm) {
+         auto v             = Pop(sp).fltval();
+         auto primitive_ray = pop_wo_handle(sp);
+         wbnd::set_primitive_ray_t_min(primitive_ray, v);
+     });
+
+anfr("wi_get_primitive_ray_t_min", "primitive_ray", "I}:2", "F",
+     "Gets primitive_ray.t_min",
+     [](StackPtr &sp, VM &vm) {
+         auto primitive_ray = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_primitive_ray_t_min(primitive_ray)));
+     });
+
+anfr("wi_set_primitive_ray_direction", "primitive_ray,v", "I}:2F}:3", "",
+     "Sets primitive_ray.direction",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT3 v;
+         pop_xmfloat3(sp, v);
+         auto primitive_ray = pop_wo_handle(sp);
+         wbnd::set_primitive_ray_direction(primitive_ray, v);
+     });
+
+anfr("wi_get_primitive_ray_direction", "primitive_ray", "I}:2", "F}:3",
+     "Gets primitive_ray.direction",
+     [](StackPtr &sp, VM &vm) {
+         auto primitive_ray = pop_wo_handle(sp);
+         push_xmfloat3(sp, wbnd::get_primitive_ray_direction(primitive_ray));
+     });
+
+anfr("wi_set_primitive_ray_t_max", "primitive_ray,v", "I}:2F", "",
+     "Sets primitive_ray.t_max",
+     [](StackPtr &sp, VM &vm) {
+         auto v             = Pop(sp).fltval();
+         auto primitive_ray = pop_wo_handle(sp);
+         wbnd::set_primitive_ray_t_max(primitive_ray, v);
+     });
+
+anfr("wi_get_primitive_ray_t_max", "primitive_ray", "I}:2", "F",
+     "Gets primitive_ray.t_max",
+     [](StackPtr &sp, VM &vm) {
+         auto primitive_ray = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_primitive_ray_t_max(primitive_ray)));
+     });
+
+anfr("wi_set_primitive_ray_direction_inverse", "primitive_ray,v", "I}:2F}:3", "",
+     "Sets primitive_ray.direction_inverse",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT3 v;
+         pop_xmfloat3(sp, v);
+         auto primitive_ray = pop_wo_handle(sp);
+         wbnd::set_primitive_ray_direction_inverse(primitive_ray, v);
+     });
+
+anfr("wi_get_primitive_ray_direction_inverse", "primitive_ray", "I}:2", "F}:3",
+     "Gets primitive_ray.direction_inverse",
+     [](StackPtr &sp, VM &vm) {
+         auto primitive_ray = pop_wo_handle(sp);
+         push_xmfloat3(sp, wbnd::get_primitive_ray_direction_inverse(primitive_ray));
+     });
+
+anfr("wi_make_ray_from", "origin,direction,tmin,tmax", "F}:3F}:3FF", "I}:2",
+     "Creates a ray from the passed parameters",
+     [](StackPtr &sp, VM &vm) {
+         auto     tmax      = Pop(sp).fltval();
+         auto     tmin      = Pop(sp).fltval();
+         XMFLOAT3 direction;
+         pop_xmfloat3(sp, direction);
+         XMFLOAT3 origin;
+         pop_xmfloat3(sp, origin);
+         push_wo_handle(sp, wbnd::make_ray_from(origin, direction, tmin, tmax));
+     });
+
+anfr("wi_ray_capsule_intersects", "ray,capsule", "I}:2I}:2", "BFF}:3",
+     "Tests intersection between a ray and capsule, returns bool, dist, direction",
+     [](StackPtr &sp, VM &vm) {
+         auto     capsule = pop_wo_handle(sp);
+         auto     ray     = pop_wo_handle(sp);
+         float    retval2;
+         XMFLOAT3 retval3;
+         Push(sp, Value(wbnd::ray_capsule_intersects(ray, capsule, retval2, retval3)));
+         Push(sp, Value(retval2));
+         push_xmfloat3(sp, retval3);
+     });
+
+anfr("wi_ray_sphere_intersects", "ray,sphere", "I}:2I}:2", "BFF}:3",
+     "Tests intersection between a ray and sphere, returns bool, dist, direction",
+     [](StackPtr &sp, VM &vm) {
+         auto     sphere  = pop_wo_handle(sp);
+         auto     ray     = pop_wo_handle(sp);
+         float    retval2;
+         XMFLOAT3 retval3;
+         Push(sp, Value(wbnd::ray_sphere_intersects(ray, sphere, retval2, retval3)));
+         Push(sp, Value(retval2));
+         push_xmfloat3(sp, retval3);
+     });
+
+anfr("wi_create_ray_intersection", "", "", "I}:2",
+     "",
+     [](StackPtr &sp, VM &vm) {
+         push_wo_handle(sp, wbnd::create_ray_intersection());
+     });
+
+anfr("wi_delete_ray_intersection", "ray_intersection", "I}:2", "",
+     "",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::delete_ray_intersection(ray_intersection);
+     });
+
+anfr("wi_set_ray_intersection_entity", "ray_intersection,v", "I}:2I}:2", "",
+     "Sets ray_intersection.entity",
+     [](StackPtr &sp, VM &vm) {
+         auto v                = pop_wo_handle(sp);
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_entity(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_entity", "ray_intersection", "I}:2", "I}:2",
+     "Gets ray_intersection.entity",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::get_ray_intersection_entity(ray_intersection));
+     });
+
+anfr("wi_set_ray_intersection_position", "ray_intersection,v", "I}:2F}:3", "",
+     "Sets ray_intersection.position",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT3 v;
+         pop_xmfloat3(sp, v);
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_position(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_position", "ray_intersection", "I}:2", "F}:3",
+     "Gets ray_intersection.position",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         push_xmfloat3(sp, wbnd::get_ray_intersection_position(ray_intersection));
+     });
+
+anfr("wi_set_ray_intersection_normal", "ray_intersection,v", "I}:2F}:3", "",
+     "Sets ray_intersection.normal",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT3 v;
+         pop_xmfloat3(sp, v);
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_normal(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_normal", "ray_intersection", "I}:2", "F}:3",
+     "Gets ray_intersection.normal",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         push_xmfloat3(sp, wbnd::get_ray_intersection_normal(ray_intersection));
+     });
+
+anfr("wi_set_ray_intersection_velocity", "ray_intersection,v", "I}:2F}:3", "",
+     "Sets ray_intersection.velocity",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT3 v;
+         pop_xmfloat3(sp, v);
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_velocity(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_velocity", "ray_intersection", "I}:2", "F}:3",
+     "Gets ray_intersection.velocity",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         push_xmfloat3(sp, wbnd::get_ray_intersection_velocity(ray_intersection));
+     });
+
+anfr("wi_set_ray_intersection_distance", "ray_intersection,v", "I}:2F", "",
+     "Sets ray_intersection.distance",
+     [](StackPtr &sp, VM &vm) {
+         auto v                = Pop(sp).fltval();
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_distance(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_distance", "ray_intersection", "I}:2", "F",
+     "Gets ray_intersection.distance",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_ray_intersection_distance(ray_intersection)));
+     });
+
+anfr("wi_set_ray_intersection_subset_index", "ray_intersection,v", "I}:2I", "",
+     "Sets ray_intersection.subset_index",
+     [](StackPtr &sp, VM &vm) {
+         auto v                = (int32_t)Pop(sp).ival();
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_subset_index(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_subset_index", "ray_intersection", "I}:2", "I",
+     "Gets ray_intersection.subset_index",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_ray_intersection_subset_index(ray_intersection)));
+     });
+
+anfr("wi_set_ray_intersection_vertex_id0", "ray_intersection,v", "I}:2I", "",
+     "Sets ray_intersection.vertex_id0",
+     [](StackPtr &sp, VM &vm) {
+         auto v                = (int32_t)Pop(sp).ival();
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_vertex_id0(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_vertex_id0", "ray_intersection", "I}:2", "I",
+     "Gets ray_intersection.vertex_id0",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_ray_intersection_vertex_id0(ray_intersection)));
+     });
+
+anfr("wi_set_ray_intersection_vertex_id1", "ray_intersection,v", "I}:2I", "",
+     "Sets ray_intersection.vertex_id1",
+     [](StackPtr &sp, VM &vm) {
+         auto v                = (int32_t)Pop(sp).ival();
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_vertex_id1(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_vertex_id1", "ray_intersection", "I}:2", "I",
+     "Gets ray_intersection.vertex_id1",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_ray_intersection_vertex_id1(ray_intersection)));
+     });
+
+anfr("wi_set_ray_intersection_vertex_id2", "ray_intersection,v", "I}:2I", "",
+     "Sets ray_intersection.vertex_id2",
+     [](StackPtr &sp, VM &vm) {
+         auto v                = (int32_t)Pop(sp).ival();
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_vertex_id2(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_vertex_id2", "ray_intersection", "I}:2", "I",
+     "Gets ray_intersection.vertex_id2",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_ray_intersection_vertex_id2(ray_intersection)));
+     });
+
+anfr("wi_set_ray_intersection_bary", "ray_intersection,v", "I}:2F}:2", "",
+     "Sets ray_intersection.bary",
+     [](StackPtr &sp, VM &vm) {
+         XMFLOAT2 v;
+         pop_xmfloat2(sp, v);
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_bary(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_bary", "ray_intersection", "I}:2", "F}:2",
+     "Gets ray_intersection.bary",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         push_xmfloat2(sp, wbnd::get_ray_intersection_bary(ray_intersection));
+     });
+
+anfr("wi_set_ray_intersection_orientation", "ray_intersection,v", "I}:2I}:2", "",
+     "Sets ray_intersection.orientation",
+     [](StackPtr &sp, VM &vm) {
+         auto v                = pop_wo_handle(sp);
+         auto ray_intersection = pop_wo_handle(sp);
+         wbnd::set_ray_intersection_orientation(ray_intersection, v);
+     });
+
+anfr("wi_get_ray_intersection_orientation", "ray_intersection", "I}:2", "I}:2",
+     "Gets ray_intersection.orientation",
+     [](StackPtr &sp, VM &vm) {
+         auto ray_intersection = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::get_ray_intersection_orientation(ray_intersection));
+     });
+
 anfr("wi_load_model", "scene,fname,attach", "I}:2SB", "I}:2",
      "Loads the model from the file into the given scene. Returns valid entity handle if attached==true",
      [](StackPtr &sp, VM &vm) {
@@ -2815,6 +3211,17 @@ anfr("wi_scene_capsule_intersects", "scene,cap,filter_mask,layer_mask,lod", "I}:
          push_wo_handle(sp, wbnd::scene_capsule_intersects(scene, cap, filter_mask, layer_mask, lod));
      });
 
+anfr("wi_scene_ray_intersects", "scene,ray,filter_mask,layer_mask,lod", "I}:2I}:2III", "I}:2",
+     "Tests whether a ray intersects anything in the scene, returning a RayIntersectionResult (not a typo)",
+     [](StackPtr &sp, VM &vm) {
+         auto lod         = (int32_t)Pop(sp).ival();
+         auto layer_mask  = (int32_t)Pop(sp).ival();
+         auto filter_mask = (int32_t)Pop(sp).ival();
+         auto ray         = pop_wo_handle(sp);
+         auto scene       = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::scene_ray_intersects(scene, ray, filter_mask, layer_mask, lod));
+     });
+
 anfr("wi_set_rigidbody_physics_shape", "rigidbody_physics,v", "I}:2I", "",
      "Sets rigidbody_physics.shape",
      [](StackPtr &sp, VM &vm) {
@@ -3740,6 +4147,122 @@ anfr("wi_scene_create_sound_entity", "scene,name,filename,pos", "I}:2SSF}:3", "I
          auto name     = Pop(sp).sval()->strv();
          auto scene    = pop_wo_handle(sp);
          push_wo_handle(sp, wbnd::scene_create_sound_entity(scene, name, filename, pos));
+     });
+
+anfr("wi_set_decal_component_slope_blend_power", "decal_component,v", "I}:2F", "",
+     "Sets decal_component.slope_blend_power",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = Pop(sp).fltval();
+         auto decal_component = pop_wo_handle(sp);
+         wbnd::set_decal_component_slope_blend_power(decal_component, v);
+     });
+
+anfr("wi_get_decal_component_slope_blend_power", "decal_component", "I}:2", "F",
+     "Gets decal_component.slope_blend_power",
+     [](StackPtr &sp, VM &vm) {
+         auto decal_component = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_decal_component_slope_blend_power(decal_component)));
+     });
+
+anfr("wi_set_decal_component_texture", "decal_component,v", "I}:2I}:2", "",
+     "Sets decal_component.texture",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = pop_wo_handle(sp);
+         auto decal_component = pop_wo_handle(sp);
+         wbnd::set_decal_component_texture(decal_component, v);
+     });
+
+anfr("wi_get_decal_component_texture", "decal_component", "I}:2", "I}:2",
+     "Gets decal_component.texture",
+     [](StackPtr &sp, VM &vm) {
+         auto decal_component = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::get_decal_component_texture(decal_component));
+     });
+
+anfr("wi_set_decal_component_normal", "decal_component,v", "I}:2I}:2", "",
+     "Sets decal_component.normal",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = pop_wo_handle(sp);
+         auto decal_component = pop_wo_handle(sp);
+         wbnd::set_decal_component_normal(decal_component, v);
+     });
+
+anfr("wi_get_decal_component_normal", "decal_component", "I}:2", "I}:2",
+     "Gets decal_component.normal",
+     [](StackPtr &sp, VM &vm) {
+         auto decal_component = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::get_decal_component_normal(decal_component));
+     });
+
+anfr("wi_set_decal_component_surfacemap", "decal_component,v", "I}:2I}:2", "",
+     "Sets decal_component.surfacemap",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = pop_wo_handle(sp);
+         auto decal_component = pop_wo_handle(sp);
+         wbnd::set_decal_component_surfacemap(decal_component, v);
+     });
+
+anfr("wi_get_decal_component_surfacemap", "decal_component", "I}:2", "I}:2",
+     "Gets decal_component.surfacemap",
+     [](StackPtr &sp, VM &vm) {
+         auto decal_component = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::get_decal_component_surfacemap(decal_component));
+     });
+
+anfr("wi_set_decal_component_is_base_color_only_alpha", "decal_component,v", "I}:2B", "",
+     "Sets decal_component.is_base_color_only_alpha",
+     [](StackPtr &sp, VM &vm) {
+         auto v               = Pop(sp).True();
+         auto decal_component = pop_wo_handle(sp);
+         wbnd::set_decal_component_is_base_color_only_alpha(decal_component, v);
+     });
+
+anfr("wi_get_decal_component_is_base_color_only_alpha", "decal_component", "I}:2", "B",
+     "Gets decal_component.is_base_color_only_alpha",
+     [](StackPtr &sp, VM &vm) {
+         auto decal_component = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::get_decal_component_is_base_color_only_alpha(decal_component)));
+     });
+
+anfr("wi_create_decal_component", "scene,entity", "I}:2I}:2", "I}:2",
+     "Creates a decal component for the given entity and returns a handle",
+     [](StackPtr &sp, VM &vm) {
+         auto entity = pop_wo_handle(sp);
+         auto scene  = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_decal_component(scene, entity));
+     });
+
+anfr("wi_get_decal_component", "scene,entity", "I}:2I}:2", "I}:2",
+     "Gets the decal component for the given entity.",
+     [](StackPtr &sp, VM &vm) {
+         auto entity = pop_wo_handle(sp);
+         auto scene  = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::get_decal_component(scene, entity));
+     });
+
+anfr("wi_entity_decal_count", "scene", "I}:2", "I",
+     "Returns the number of entities that have a decal component",
+     [](StackPtr &sp, VM &vm) {
+         auto scene = pop_wo_handle(sp);
+         Push(sp, Value(wbnd::entity_decal_count(scene)));
+     });
+
+anfr("wi_entity_decal_get", "scene,n", "I}:2I", "I}:2",
+     "Returns the nth entity that has a decal component",
+     [](StackPtr &sp, VM &vm) {
+         auto n     = (int32_t)Pop(sp).ival();
+         auto scene = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::entity_decal_get(scene, n));
+     });
+
+anfr("wi_create_decal_entity", "scene,name,texture_name,normal_map_name", "I}:2SSS", "I}:2",
+     "Creates a entity with a decal in the given scene, and returns it.",
+     [](StackPtr &sp, VM &vm) {
+         auto normal_map_name = Pop(sp).sval()->strv();
+         auto texture_name    = Pop(sp).sval()->strv();
+         auto name            = Pop(sp).sval()->strv();
+         auto scene           = pop_wo_handle(sp);
+         push_wo_handle(sp, wbnd::create_decal_entity(scene, name, texture_name, normal_map_name));
      }); 
 
 

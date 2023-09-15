@@ -293,7 +293,6 @@ string run_lobster(lobster_options &args, function<void()> main)
         return err;
     }
     return "";
-
 }
 
 void lobster_fixed_update()
