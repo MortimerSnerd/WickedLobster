@@ -17,12 +17,21 @@ using namespace std;
 // that the Lobster side needs to free when it is done with them.
 lobster::ResourceType alien_type = {"alien"};
 
+// Base class for resources that Lobster needs to manage the lifetime of.
+// So far, mostly temporary structures for collisions and math.
 class AlienResource : public lobster::Resource
 {
 public:
+    // Tagged pointer
+    wo_handle h;
+
+    AlienResource(wo_handle const &oh) : h(oh)
+    {
+    }
 
     virtual ~AlienResource()
     {
+        wbnd::delete_alien(h);
     }
 };
 
@@ -89,7 +98,7 @@ namespace
         return {i2[0], i2[1]};
     }
 
-    void push_wo_handle(lobster::StackPtr &sp, wo_handle h)
+    void push_wo_handle(lobster::StackPtr &sp, wo_handle const& h)
     {
         PushVec(sp, iint2{(iint)h.kind, h.name});
     }
@@ -98,6 +107,26 @@ namespace
     {
         auto i2 = PopVec<iint2>(sp);
         return {(int)i2[0], i2[1]};
+    }
+
+    void push_alien(lobster::StackPtr &sp, lobster::VM& vm, wo_handle const& h)
+    {
+        Push(sp, vm.NewResource(&alien_type, new AlienResource(h)));
+    }
+
+    wo_handle pop_alien(lobster::StackPtr &sp)
+    {
+        auto lobr = Pop(sp).xval()->res;
+        auto ar = dynamic_cast<AlienResource *>(lobr);
+        if (ar) {
+            return ar->h;
+        } else {
+            printf("bad alien resource\n");
+            dump_lobster_stack();
+            fflush(stdout);
+            abort();
+            return {0, 0};
+        }
     }
 
     void push_xmint2(lobster::StackPtr &sp, XMINT2 const &v)
@@ -210,17 +239,11 @@ void add_wl_builtins(lobster::NativeRegistry &anfr)
             return Value(update_dt);
     });
 
-    anfr("test_function", "", "", "R:alien",
-         "nonesuch",
-        [](StackPtr &, VM &vm) {
-            return Value(vm.NewResource(&alien_type, new AlienResource()));
-    });
-
     anfr("logmsg", "msg", "S", "",
          "Writes out a log message and flushes it",
          [](StackPtr&, VM&, Value& msg){
-             fprintf(stderr, "%s\n", msg.sval()->data());
-             fflush(stderr);
+             fprintf(stdout, "%s\n", msg.sval()->data());
+             fflush(stdout);
              return NilVal();
          });
 

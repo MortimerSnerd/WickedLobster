@@ -1,7 +1,6 @@
 // GENERATED for inclusion in wibindings.h by tools/bindgen.lobster, do not edit
 wo_handle get_transform_component(wo_handle const& scene, wo_handle const& entity);
 wo_handle new_scene();
-void delete_scene(wo_handle const& scene);
 wo_handle global_scene();
 bool is_descendant_entity(wo_handle const& scene, wo_handle const& entity, wo_handle const& ancestor);
 wo_handle retarget_animation(wo_handle const& scene, wo_handle const& dest_entity, wo_handle const& src_entity, bool bake_data);
@@ -17,8 +16,8 @@ wo_handle create_environment_probe_entity(wo_handle const& scene, std::string_vi
 wo_handle create_emitter_entity(wo_handle const& scene, std::string_view const& name, XMFLOAT3 const& position);
 wo_handle create_cube_entity(wo_handle const& scene, std::string_view const& name);
 wo_handle create_plane_entity(wo_handle const& scene, std::string_view const& name);
+void component_attach(wo_handle const& scene, wo_handle const& entity, wo_handle const& parent, bool child_already_in_local_space);
 wo_handle create_primitive_ray();
-void delete_primitive_ray(wo_handle const& primitive_ray);
 void set_primitive_ray_origin(wo_handle const& primitive_ray, XMFLOAT3 const& v);
 XMFLOAT3 get_primitive_ray_origin(wo_handle const& primitive_ray);
 void set_primitive_ray_t_min(wo_handle const& primitive_ray, float v);
@@ -33,7 +32,6 @@ wo_handle make_ray_from(XMFLOAT3 const& origin, XMFLOAT3 const& direction, float
 bool ray_capsule_intersects(wo_handle const& ray, wo_handle const& capsule, float& retval2, XMFLOAT3& retval3);
 bool ray_sphere_intersects(wo_handle const& ray, wo_handle const& sphere, float& retval2, XMFLOAT3& retval3);
 wo_handle create_ray_intersection();
-void delete_ray_intersection(wo_handle const& ray_intersection);
 void set_ray_intersection_entity(wo_handle const& ray_intersection, wo_handle const& v);
 wo_handle get_ray_intersection_entity(wo_handle const& ray_intersection);
 void set_ray_intersection_position(wo_handle const& ray_intersection, XMFLOAT3 const& v);
@@ -335,7 +333,6 @@ int32_t entity_collider_count(wo_handle const& scene);
 wo_handle entity_collider_get(wo_handle const& scene, int32_t n);
 wo_handle get_collider_capsule(wo_handle const& collider);
 wo_handle create_matrix4x4();
-void delete_matrix(wo_handle const& m);
 void identity_matrix(wo_handle const& m);
 XMFLOAT4 transform_vector(wo_handle const& matrix, XMFLOAT4 const& v);
 void assign_matrix(wo_handle const& lhs, wo_handle const& rhs);
@@ -380,14 +377,12 @@ wo_handle entity_animation_get(wo_handle const& scene, int32_t n);
 void renderer_set_vxgi_enabled(bool v);
 bool renderer_vxgi_enabled();
 wo_handle create_primitive_sphere();
-void delete_primitive_sphere(wo_handle const& primitive_sphere);
 void set_primitive_sphere_center(wo_handle const& primitive_sphere, XMFLOAT3 const& v);
 XMFLOAT3 get_primitive_sphere_center(wo_handle const& primitive_sphere);
 void set_primitive_sphere_radius(wo_handle const& primitive_sphere, float v);
 float get_primitive_sphere_radius(wo_handle const& primitive_sphere);
 bool sphere_sphere_intersects(wo_handle const& sphere0, wo_handle const& sphere1, float& retval2, XMFLOAT3& retval3);
 wo_handle create_sphere_intersection_result();
-void delete_sphere_intersection_result(wo_handle const& sphere_intersection_result);
 void set_sphere_intersection_result_entity(wo_handle const& sphere_intersection_result, wo_handle const& v);
 wo_handle get_sphere_intersection_result_entity(wo_handle const& sphere_intersection_result);
 void set_sphere_intersection_result_position(wo_handle const& sphere_intersection_result, XMFLOAT3 const& v);
@@ -400,7 +395,6 @@ void set_sphere_intersection_result_depth(wo_handle const& sphere_intersection_r
 float get_sphere_intersection_result_depth(wo_handle const& sphere_intersection_result);
 wo_handle scene_sphere_intersects(wo_handle const& scene, wo_handle const& sphere, int32_t filter_mask, int32_t layer_mask, int32_t lod);
 wo_handle create_primitive_capsule();
-void delete_primitive_capsule(wo_handle const& primitive_capsule);
 void set_primitive_capsule_base(wo_handle const& primitive_capsule, XMFLOAT3 const& v);
 XMFLOAT3 get_primitive_capsule_base(wo_handle const& primitive_capsule);
 void set_primitive_capsule_tip(wo_handle const& primitive_capsule, XMFLOAT3 const& v);

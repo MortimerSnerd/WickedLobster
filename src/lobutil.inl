@@ -1,100 +1,93 @@
 // GENERATED for inclusion into lobutils.cpp, do not edit.
-anfr("wi_get_transform_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_transform_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Returns the transform component for 'entity' if it exists, or int2{?, 0} if there is none.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_transform_component(scene, entity));
      });
 
-anfr("wi_new_scene", "", "", "I}:2",
+anfr("wi_new_scene", "", "", "R:alien",
      "Creates a new empty scene.",
      [](StackPtr &sp, VM &vm) {
-         push_wo_handle(sp, wbnd::new_scene());
+         push_alien(sp, vm, wbnd::new_scene());
      });
 
-anfr("wi_delete_scene", "scene", "I}:2", "",
-     "Deletes a scene.",
-     [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
-         wbnd::delete_scene(scene);
-     });
-
-anfr("wi_global_scene", "", "", "I}:2",
+anfr("wi_global_scene", "", "", "R:alien",
      "Returns the global scene",
      [](StackPtr &sp, VM &vm) {
-         push_wo_handle(sp, wbnd::global_scene());
+         push_alien(sp, vm, wbnd::global_scene());
      });
 
-anfr("wi_is_descendant_entity", "scene,entity,ancestor", "I}:2I}:2I}:2", "B",
+anfr("wi_is_descendant_entity", "scene,entity,ancestor", "R:alienI}:2I}:2", "B",
      "Returns true if 'entity' is descendant of 'ancestor'",
      [](StackPtr &sp, VM &vm) {
          auto ancestor = pop_wo_handle(sp);
          auto entity   = pop_wo_handle(sp);
-         auto scene    = pop_wo_handle(sp);
+         auto scene    = pop_alien(sp);
          Push(sp, Value(wbnd::is_descendant_entity(scene, entity, ancestor)));
      });
 
-anfr("wi_retarget_animation", "scene,dest_entity,src_entity,bake_data", "I}:2I}:2I}:2B", "I}:2",
+anfr("wi_retarget_animation", "scene,dest_entity,src_entity,bake_data", "R:alienI}:2I}:2B", "I}:2",
      "Retargets an animation from one humanoid to another and returns resulting entity",
      [](StackPtr &sp, VM &vm) {
          auto bake_data   = Pop(sp).True();
          auto src_entity  = pop_wo_handle(sp);
          auto dest_entity = pop_wo_handle(sp);
-         auto scene       = pop_wo_handle(sp);
+         auto scene       = pop_alien(sp);
          push_wo_handle(sp, wbnd::retarget_animation(scene, dest_entity, src_entity, bake_data));
      });
 
-anfr("wi_remove_entity", "scene,entity,recursive", "I}:2I}:2B", "",
+anfr("wi_remove_entity", "scene,entity,recursive", "R:alienI}:2B", "",
      "Deletes an entity from the scene",
      [](StackPtr &sp, VM &vm) {
          auto recursive = Pop(sp).True();
          auto entity    = pop_wo_handle(sp);
-         auto scene     = pop_wo_handle(sp);
+         auto scene     = pop_alien(sp);
          wbnd::remove_entity(scene, entity, recursive);
      });
 
-anfr("wi_duplicate_entity", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_duplicate_entity", "scene,entity", "R:alienI}:2", "I}:2",
      "Duplicates an entity",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::duplicate_entity(scene, entity));
      });
 
-anfr("wi_scene_merge", "dest,src", "I}:2I}:2", "",
+anfr("wi_scene_merge", "dest,src", "R:alienR:alien", "",
      "Merges src scene into dest scene.",
      [](StackPtr &sp, VM &vm) {
-         auto src  = pop_wo_handle(sp);
-         auto dest = pop_wo_handle(sp);
+         auto src  = pop_alien(sp);
+         auto dest = pop_alien(sp);
          wbnd::scene_merge(dest, src);
      });
 
-anfr("wi_create_transform_entity", "scene,name", "I}:2S", "I}:2",
+anfr("wi_create_transform_entity", "scene,name", "R:alienS", "I}:2",
      "Creates an entity with a transform component",
      [](StackPtr &sp, VM &vm) {
          auto name  = Pop(sp).sval()->strv();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_transform_entity(scene, name));
      });
 
-anfr("wi_create_object_entity", "scene,name", "I}:2S", "I}:2",
+anfr("wi_create_object_entity", "scene,name", "R:alienS", "I}:2",
      "Creates an entity with a object component",
      [](StackPtr &sp, VM &vm) {
          auto name  = Pop(sp).sval()->strv();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_object_entity(scene, name));
      });
 
-anfr("wi_create_mesh_entity", "scene,name", "I}:2S", "I}:2",
+anfr("wi_create_mesh_entity", "scene,name", "R:alienS", "I}:2",
      "Creates an entity with a mesh component",
      [](StackPtr &sp, VM &vm) {
          auto name  = Pop(sp).sval()->strv();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_mesh_entity(scene, name));
      });
 
-anfr("wi_create_light_entity", "scene,name,position,color,intensity,range,type,outer_cone_angle,inner_cone_angle", "I}:2SF}:3F}:3FFIFF", "I}:2",
+anfr("wi_create_light_entity", "scene,name,position,color,intensity,range,type,outer_cone_angle,inner_cone_angle", "R:alienSF}:3F}:3FFIFF", "I}:2",
      "Creates an entity with a light component",
      [](StackPtr &sp, VM &vm) {
          auto     inner_cone_angle = Pop(sp).fltval();
@@ -107,148 +100,151 @@ anfr("wi_create_light_entity", "scene,name,position,color,intensity,range,type,o
          XMFLOAT3 position;
          pop_xmfloat3(sp, position);
          auto name  = Pop(sp).sval()->strv();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_light_entity(scene, name, position, color, intensity, range, type, outer_cone_angle, inner_cone_angle));
      });
 
-anfr("wi_create_force_entity", "scene,name,position", "I}:2SF}:3", "I}:2",
+anfr("wi_create_force_entity", "scene,name,position", "R:alienSF}:3", "I}:2",
      "Creates an entity with a force component",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 position;
          pop_xmfloat3(sp, position);
          auto name  = Pop(sp).sval()->strv();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_force_entity(scene, name, position));
      });
 
-anfr("wi_create_environment_probe_entity", "scene,name,position", "I}:2SF}:3", "I}:2",
+anfr("wi_create_environment_probe_entity", "scene,name,position", "R:alienSF}:3", "I}:2",
      "Creates an entity with a environment_probe component",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 position;
          pop_xmfloat3(sp, position);
          auto name  = Pop(sp).sval()->strv();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_environment_probe_entity(scene, name, position));
      });
 
-anfr("wi_create_emitter_entity", "scene,name,position", "I}:2SF}:3", "I}:2",
+anfr("wi_create_emitter_entity", "scene,name,position", "R:alienSF}:3", "I}:2",
      "Creates an entity with a emitter component",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 position;
          pop_xmfloat3(sp, position);
          auto name  = Pop(sp).sval()->strv();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_emitter_entity(scene, name, position));
      });
 
-anfr("wi_create_cube_entity", "scene,name", "I}:2S", "I}:2",
+anfr("wi_create_cube_entity", "scene,name", "R:alienS", "I}:2",
      "Creates an entity with a cube component",
      [](StackPtr &sp, VM &vm) {
          auto name  = Pop(sp).sval()->strv();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_cube_entity(scene, name));
      });
 
-anfr("wi_create_plane_entity", "scene,name", "I}:2S", "I}:2",
+anfr("wi_create_plane_entity", "scene,name", "R:alienS", "I}:2",
      "Creates an entity with a plane component",
      [](StackPtr &sp, VM &vm) {
          auto name  = Pop(sp).sval()->strv();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_plane_entity(scene, name));
      });
 
-anfr("wi_create_primitive_ray", "", "", "I}:2",
-     "",
+anfr("wi_component_attach", "scene,entity,parent,child_already_in_local_space", "R:alienI}:2I}:2B", "",
+     "Attaches an entity to a parent",
      [](StackPtr &sp, VM &vm) {
-         push_wo_handle(sp, wbnd::create_primitive_ray());
+         auto child_already_in_local_space = Pop(sp).True();
+         auto parent                       = pop_wo_handle(sp);
+         auto entity                       = pop_wo_handle(sp);
+         auto scene                        = pop_alien(sp);
+         wbnd::component_attach(scene, entity, parent, child_already_in_local_space);
      });
 
-anfr("wi_delete_primitive_ray", "primitive_ray", "I}:2", "",
+anfr("wi_create_primitive_ray", "", "", "R:alien",
      "",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_ray = pop_wo_handle(sp);
-         wbnd::delete_primitive_ray(primitive_ray);
+         push_alien(sp, vm, wbnd::create_primitive_ray());
      });
 
-anfr("wi_set_primitive_ray_origin", "primitive_ray,v", "I}:2F}:3", "",
+anfr("wi_set_primitive_ray_origin", "primitive_ray,v", "R:alienF}:3", "",
      "Sets primitive_ray.origin",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto primitive_ray = pop_wo_handle(sp);
+         auto primitive_ray = pop_alien(sp);
          wbnd::set_primitive_ray_origin(primitive_ray, v);
      });
 
-anfr("wi_get_primitive_ray_origin", "primitive_ray", "I}:2", "F}:3",
+anfr("wi_get_primitive_ray_origin", "primitive_ray", "R:alien", "F}:3",
      "Gets primitive_ray.origin",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_ray = pop_wo_handle(sp);
+         auto primitive_ray = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_primitive_ray_origin(primitive_ray));
      });
 
-anfr("wi_set_primitive_ray_t_min", "primitive_ray,v", "I}:2F", "",
+anfr("wi_set_primitive_ray_t_min", "primitive_ray,v", "R:alienF", "",
      "Sets primitive_ray.t_min",
      [](StackPtr &sp, VM &vm) {
          auto v             = Pop(sp).fltval();
-         auto primitive_ray = pop_wo_handle(sp);
+         auto primitive_ray = pop_alien(sp);
          wbnd::set_primitive_ray_t_min(primitive_ray, v);
      });
 
-anfr("wi_get_primitive_ray_t_min", "primitive_ray", "I}:2", "F",
+anfr("wi_get_primitive_ray_t_min", "primitive_ray", "R:alien", "F",
      "Gets primitive_ray.t_min",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_ray = pop_wo_handle(sp);
+         auto primitive_ray = pop_alien(sp);
          Push(sp, Value(wbnd::get_primitive_ray_t_min(primitive_ray)));
      });
 
-anfr("wi_set_primitive_ray_direction", "primitive_ray,v", "I}:2F}:3", "",
+anfr("wi_set_primitive_ray_direction", "primitive_ray,v", "R:alienF}:3", "",
      "Sets primitive_ray.direction",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto primitive_ray = pop_wo_handle(sp);
+         auto primitive_ray = pop_alien(sp);
          wbnd::set_primitive_ray_direction(primitive_ray, v);
      });
 
-anfr("wi_get_primitive_ray_direction", "primitive_ray", "I}:2", "F}:3",
+anfr("wi_get_primitive_ray_direction", "primitive_ray", "R:alien", "F}:3",
      "Gets primitive_ray.direction",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_ray = pop_wo_handle(sp);
+         auto primitive_ray = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_primitive_ray_direction(primitive_ray));
      });
 
-anfr("wi_set_primitive_ray_t_max", "primitive_ray,v", "I}:2F", "",
+anfr("wi_set_primitive_ray_t_max", "primitive_ray,v", "R:alienF", "",
      "Sets primitive_ray.t_max",
      [](StackPtr &sp, VM &vm) {
          auto v             = Pop(sp).fltval();
-         auto primitive_ray = pop_wo_handle(sp);
+         auto primitive_ray = pop_alien(sp);
          wbnd::set_primitive_ray_t_max(primitive_ray, v);
      });
 
-anfr("wi_get_primitive_ray_t_max", "primitive_ray", "I}:2", "F",
+anfr("wi_get_primitive_ray_t_max", "primitive_ray", "R:alien", "F",
      "Gets primitive_ray.t_max",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_ray = pop_wo_handle(sp);
+         auto primitive_ray = pop_alien(sp);
          Push(sp, Value(wbnd::get_primitive_ray_t_max(primitive_ray)));
      });
 
-anfr("wi_set_primitive_ray_direction_inverse", "primitive_ray,v", "I}:2F}:3", "",
+anfr("wi_set_primitive_ray_direction_inverse", "primitive_ray,v", "R:alienF}:3", "",
      "Sets primitive_ray.direction_inverse",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto primitive_ray = pop_wo_handle(sp);
+         auto primitive_ray = pop_alien(sp);
          wbnd::set_primitive_ray_direction_inverse(primitive_ray, v);
      });
 
-anfr("wi_get_primitive_ray_direction_inverse", "primitive_ray", "I}:2", "F}:3",
+anfr("wi_get_primitive_ray_direction_inverse", "primitive_ray", "R:alien", "F}:3",
      "Gets primitive_ray.direction_inverse",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_ray = pop_wo_handle(sp);
+         auto primitive_ray = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_primitive_ray_direction_inverse(primitive_ray));
      });
 
-anfr("wi_make_ray_from", "origin,direction,tmin,tmax", "F}:3F}:3FF", "I}:2",
+anfr("wi_make_ray_from", "origin,direction,tmin,tmax", "F}:3F}:3FF", "R:alien",
      "Creates a ray from the passed parameters",
      [](StackPtr &sp, VM &vm) {
          auto     tmax      = Pop(sp).fltval();
@@ -257,14 +253,14 @@ anfr("wi_make_ray_from", "origin,direction,tmin,tmax", "F}:3F}:3FF", "I}:2",
          pop_xmfloat3(sp, direction);
          XMFLOAT3 origin;
          pop_xmfloat3(sp, origin);
-         push_wo_handle(sp, wbnd::make_ray_from(origin, direction, tmin, tmax));
+         push_alien(sp, vm, wbnd::make_ray_from(origin, direction, tmin, tmax));
      });
 
-anfr("wi_ray_capsule_intersects", "ray,capsule", "I}:2I}:2", "BFF}:3",
+anfr("wi_ray_capsule_intersects", "ray,capsule", "R:alienR:alien", "BFF}:3",
      "Tests intersection between a ray and capsule, returns bool, dist, direction",
      [](StackPtr &sp, VM &vm) {
-         auto     capsule = pop_wo_handle(sp);
-         auto     ray     = pop_wo_handle(sp);
+         auto     capsule = pop_alien(sp);
+         auto     ray     = pop_alien(sp);
          float    retval2;
          XMFLOAT3 retval3;
          Push(sp, Value(wbnd::ray_capsule_intersects(ray, capsule, retval2, retval3)));
@@ -272,11 +268,11 @@ anfr("wi_ray_capsule_intersects", "ray,capsule", "I}:2I}:2", "BFF}:3",
          push_xmfloat3(sp, retval3);
      });
 
-anfr("wi_ray_sphere_intersects", "ray,sphere", "I}:2I}:2", "BFF}:3",
+anfr("wi_ray_sphere_intersects", "ray,sphere", "R:alienR:alien", "BFF}:3",
      "Tests intersection between a ray and sphere, returns bool, dist, direction",
      [](StackPtr &sp, VM &vm) {
-         auto     sphere  = pop_wo_handle(sp);
-         auto     ray     = pop_wo_handle(sp);
+         auto     sphere  = pop_alien(sp);
+         auto     ray     = pop_alien(sp);
          float    retval2;
          XMFLOAT3 retval3;
          Push(sp, Value(wbnd::ray_sphere_intersects(ray, sphere, retval2, retval3)));
@@ -284,194 +280,187 @@ anfr("wi_ray_sphere_intersects", "ray,sphere", "I}:2I}:2", "BFF}:3",
          push_xmfloat3(sp, retval3);
      });
 
-anfr("wi_create_ray_intersection", "", "", "I}:2",
+anfr("wi_create_ray_intersection", "", "", "R:alien",
      "",
      [](StackPtr &sp, VM &vm) {
-         push_wo_handle(sp, wbnd::create_ray_intersection());
+         push_alien(sp, vm, wbnd::create_ray_intersection());
      });
 
-anfr("wi_delete_ray_intersection", "ray_intersection", "I}:2", "",
-     "",
-     [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
-         wbnd::delete_ray_intersection(ray_intersection);
-     });
-
-anfr("wi_set_ray_intersection_entity", "ray_intersection,v", "I}:2I}:2", "",
+anfr("wi_set_ray_intersection_entity", "ray_intersection,v", "R:alienI}:2", "",
      "Sets ray_intersection.entity",
      [](StackPtr &sp, VM &vm) {
          auto v                = pop_wo_handle(sp);
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_entity(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_entity", "ray_intersection", "I}:2", "I}:2",
+anfr("wi_get_ray_intersection_entity", "ray_intersection", "R:alien", "I}:2",
      "Gets ray_intersection.entity",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_ray_intersection_entity(ray_intersection));
      });
 
-anfr("wi_set_ray_intersection_position", "ray_intersection,v", "I}:2F}:3", "",
+anfr("wi_set_ray_intersection_position", "ray_intersection,v", "R:alienF}:3", "",
      "Sets ray_intersection.position",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_position(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_position", "ray_intersection", "I}:2", "F}:3",
+anfr("wi_get_ray_intersection_position", "ray_intersection", "R:alien", "F}:3",
      "Gets ray_intersection.position",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_ray_intersection_position(ray_intersection));
      });
 
-anfr("wi_set_ray_intersection_normal", "ray_intersection,v", "I}:2F}:3", "",
+anfr("wi_set_ray_intersection_normal", "ray_intersection,v", "R:alienF}:3", "",
      "Sets ray_intersection.normal",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_normal(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_normal", "ray_intersection", "I}:2", "F}:3",
+anfr("wi_get_ray_intersection_normal", "ray_intersection", "R:alien", "F}:3",
      "Gets ray_intersection.normal",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_ray_intersection_normal(ray_intersection));
      });
 
-anfr("wi_set_ray_intersection_velocity", "ray_intersection,v", "I}:2F}:3", "",
+anfr("wi_set_ray_intersection_velocity", "ray_intersection,v", "R:alienF}:3", "",
      "Sets ray_intersection.velocity",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_velocity(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_velocity", "ray_intersection", "I}:2", "F}:3",
+anfr("wi_get_ray_intersection_velocity", "ray_intersection", "R:alien", "F}:3",
      "Gets ray_intersection.velocity",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_ray_intersection_velocity(ray_intersection));
      });
 
-anfr("wi_set_ray_intersection_distance", "ray_intersection,v", "I}:2F", "",
+anfr("wi_set_ray_intersection_distance", "ray_intersection,v", "R:alienF", "",
      "Sets ray_intersection.distance",
      [](StackPtr &sp, VM &vm) {
          auto v                = Pop(sp).fltval();
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_distance(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_distance", "ray_intersection", "I}:2", "F",
+anfr("wi_get_ray_intersection_distance", "ray_intersection", "R:alien", "F",
      "Gets ray_intersection.distance",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          Push(sp, Value(wbnd::get_ray_intersection_distance(ray_intersection)));
      });
 
-anfr("wi_set_ray_intersection_subset_index", "ray_intersection,v", "I}:2I", "",
+anfr("wi_set_ray_intersection_subset_index", "ray_intersection,v", "R:alienI", "",
      "Sets ray_intersection.subset_index",
      [](StackPtr &sp, VM &vm) {
          auto v                = (int32_t)Pop(sp).ival();
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_subset_index(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_subset_index", "ray_intersection", "I}:2", "I",
+anfr("wi_get_ray_intersection_subset_index", "ray_intersection", "R:alien", "I",
      "Gets ray_intersection.subset_index",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          Push(sp, Value(wbnd::get_ray_intersection_subset_index(ray_intersection)));
      });
 
-anfr("wi_set_ray_intersection_vertex_id0", "ray_intersection,v", "I}:2I", "",
+anfr("wi_set_ray_intersection_vertex_id0", "ray_intersection,v", "R:alienI", "",
      "Sets ray_intersection.vertex_id0",
      [](StackPtr &sp, VM &vm) {
          auto v                = (int32_t)Pop(sp).ival();
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_vertex_id0(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_vertex_id0", "ray_intersection", "I}:2", "I",
+anfr("wi_get_ray_intersection_vertex_id0", "ray_intersection", "R:alien", "I",
      "Gets ray_intersection.vertex_id0",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          Push(sp, Value(wbnd::get_ray_intersection_vertex_id0(ray_intersection)));
      });
 
-anfr("wi_set_ray_intersection_vertex_id1", "ray_intersection,v", "I}:2I", "",
+anfr("wi_set_ray_intersection_vertex_id1", "ray_intersection,v", "R:alienI", "",
      "Sets ray_intersection.vertex_id1",
      [](StackPtr &sp, VM &vm) {
          auto v                = (int32_t)Pop(sp).ival();
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_vertex_id1(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_vertex_id1", "ray_intersection", "I}:2", "I",
+anfr("wi_get_ray_intersection_vertex_id1", "ray_intersection", "R:alien", "I",
      "Gets ray_intersection.vertex_id1",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          Push(sp, Value(wbnd::get_ray_intersection_vertex_id1(ray_intersection)));
      });
 
-anfr("wi_set_ray_intersection_vertex_id2", "ray_intersection,v", "I}:2I", "",
+anfr("wi_set_ray_intersection_vertex_id2", "ray_intersection,v", "R:alienI", "",
      "Sets ray_intersection.vertex_id2",
      [](StackPtr &sp, VM &vm) {
          auto v                = (int32_t)Pop(sp).ival();
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_vertex_id2(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_vertex_id2", "ray_intersection", "I}:2", "I",
+anfr("wi_get_ray_intersection_vertex_id2", "ray_intersection", "R:alien", "I",
      "Gets ray_intersection.vertex_id2",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          Push(sp, Value(wbnd::get_ray_intersection_vertex_id2(ray_intersection)));
      });
 
-anfr("wi_set_ray_intersection_bary", "ray_intersection,v", "I}:2F}:2", "",
+anfr("wi_set_ray_intersection_bary", "ray_intersection,v", "R:alienF}:2", "",
      "Sets ray_intersection.bary",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT2 v;
          pop_xmfloat2(sp, v);
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_bary(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_bary", "ray_intersection", "I}:2", "F}:2",
+anfr("wi_get_ray_intersection_bary", "ray_intersection", "R:alien", "F}:2",
      "Gets ray_intersection.bary",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          push_xmfloat2(sp, wbnd::get_ray_intersection_bary(ray_intersection));
      });
 
-anfr("wi_set_ray_intersection_orientation", "ray_intersection,v", "I}:2I}:2", "",
+anfr("wi_set_ray_intersection_orientation", "ray_intersection,v", "R:alienI}:2", "",
      "Sets ray_intersection.orientation",
      [](StackPtr &sp, VM &vm) {
          auto v                = pop_wo_handle(sp);
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          wbnd::set_ray_intersection_orientation(ray_intersection, v);
      });
 
-anfr("wi_get_ray_intersection_orientation", "ray_intersection", "I}:2", "I}:2",
+anfr("wi_get_ray_intersection_orientation", "ray_intersection", "R:alien", "I}:2",
      "Gets ray_intersection.orientation",
      [](StackPtr &sp, VM &vm) {
-         auto ray_intersection = pop_wo_handle(sp);
+         auto ray_intersection = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_ray_intersection_orientation(ray_intersection));
      });
 
-anfr("wi_load_model", "scene,fname,attach", "I}:2SB", "I}:2",
+anfr("wi_load_model", "scene,fname,attach", "R:alienSB", "I}:2",
      "Loads the model from the file into the given scene. Returns valid entity handle if attached==true",
      [](StackPtr &sp, VM &vm) {
          auto attach = Pop(sp).True();
          auto fname  = Pop(sp).sval()->strv();
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::load_model(scene, fname, attach));
      });
 
@@ -481,73 +470,73 @@ anfr("wi_create_entity", "", "", "I}:2",
          push_wo_handle(sp, wbnd::create_entity());
      });
 
-anfr("wi_create_layer_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_layer_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a layer component for the given entity and returns a handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_layer_component(scene, entity));
      });
 
-anfr("wi_get_layer_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_layer_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the layer component for the given entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_layer_component(scene, entity));
      });
 
-anfr("wi_entity_layer_count", "scene", "I}:2", "I",
+anfr("wi_entity_layer_count", "scene", "R:alien", "I",
      "Returns the number of entities that have a layer component",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_layer_count(scene)));
      });
 
-anfr("wi_entity_layer_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_layer_get", "scene,n", "R:alienI", "I}:2",
      "Returns the nth entity that has a layer component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_layer_get(scene, n));
      });
 
-anfr("wi_create_humanoid_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_humanoid_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a humanoid component for the given entity and returns a handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_humanoid_component(scene, entity));
      });
 
-anfr("wi_get_humanoid_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_humanoid_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the humanoid component for the given entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_humanoid_component(scene, entity));
      });
 
-anfr("wi_entity_humanoid_count", "scene", "I}:2", "I",
+anfr("wi_entity_humanoid_count", "scene", "R:alien", "I",
      "Returns the number of entities that have a humanoid component",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_humanoid_count(scene)));
      });
 
-anfr("wi_entity_humanoid_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_humanoid_get", "scene,n", "R:alienI", "I}:2",
      "Returns the nth entity that has a humanoid component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_humanoid_get(scene, n));
      });
 
-anfr("wi_create_name_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_name_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a name component for the given entity, and returns a the handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_name_component(scene, entity));
      });
 
@@ -566,35 +555,35 @@ anfr("wi_nc_get_name", "name_comp", "I}:2", "S",
          Push(sp, Value(vm.NewString(wbnd::nc_get_name(name_comp))));
      });
 
-anfr("wi_get_name_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_name_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the name component for the given entity",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_name_component(scene, entity));
      });
 
-anfr("wi_entity_names_count", "scene", "I}:2", "I",
+anfr("wi_entity_names_count", "scene", "R:alien", "I",
      "Returns number of entities that have name components.",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_names_count(scene)));
      });
 
-anfr("wi_entity_names_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_names_get", "scene,n", "R:alienI", "I}:2",
      "Returns entity #n that has a name component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_names_get(scene, n));
      });
 
-anfr("wi_find_entity_by_name", "scene,name,ancestor_entity", "I}:2SI}:2", "I}:2",
+anfr("wi_find_entity_by_name", "scene,name,ancestor_entity", "R:alienSI}:2", "I}:2",
      "Searches scene for an entity by name. Returns INVALID_ENTITY if not found.",
      [](StackPtr &sp, VM &vm) {
          auto ancestor_entity = pop_wo_handle(sp);
          auto name            = Pop(sp).sval()->strv();
-         auto scene           = pop_wo_handle(sp);
+         auto scene           = pop_alien(sp);
          push_wo_handle(sp, wbnd::find_entity_by_name(scene, name, ancestor_entity));
      });
 
@@ -612,11 +601,11 @@ anfr("wi_is_backlog_active", "", "", "B",
          Push(sp, Value(wbnd::is_backlog_active()));
      });
 
-anfr("wi_create_camera_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_camera_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a camera component on an entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_camera_component(scene, entity));
      });
 
@@ -683,11 +672,11 @@ anfr("wi_get_transform_dirty", "transform", "I}:2", "B",
          Push(sp, Value(wbnd::get_transform_dirty(transform)));
      });
 
-anfr("wi_create_transform_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_transform_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a transform component on an entity",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_transform_component(scene, entity));
      });
 
@@ -810,24 +799,24 @@ anfr("wi_transform_lerp", "tcomp,a,b,t", "I}:2I}:2I}:2F", "",
          wbnd::transform_lerp(tcomp, a, b, t);
      });
 
-anfr("wi_get_transform_local_matrix", "tcomp", "I}:2", "I}:2",
+anfr("wi_get_transform_local_matrix", "tcomp", "I}:2", "R:alien",
      "gets the local matrix for the transform",
      [](StackPtr &sp, VM &vm) {
          auto tcomp = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::get_transform_local_matrix(tcomp));
+         push_alien(sp, vm, wbnd::get_transform_local_matrix(tcomp));
      });
 
-anfr("wi_get_transform_world_matrix", "tcomp", "I}:2", "I}:2",
+anfr("wi_get_transform_world_matrix", "tcomp", "I}:2", "R:alien",
      "gets the world matrix for the transform",
      [](StackPtr &sp, VM &vm) {
          auto tcomp = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::get_transform_world_matrix(tcomp));
+         push_alien(sp, vm, wbnd::get_transform_world_matrix(tcomp));
      });
 
-anfr("wi_transform_transform_matrix", "tcomp,matrix", "I}:2I}:2", "",
+anfr("wi_transform_transform_matrix", "tcomp,matrix", "I}:2R:alien", "",
      "Trasforms the transform by the given matrix",
      [](StackPtr &sp, VM &vm) {
-         auto matrix = pop_wo_handle(sp);
+         auto matrix = pop_alien(sp);
          auto tcomp  = pop_wo_handle(sp);
          wbnd::transform_transform_matrix(tcomp, matrix);
      });
@@ -923,34 +912,34 @@ anfr("wi_transform_camera", "camera,tcomp", "I}:2I}:2", "",
          wbnd::transform_camera(camera, tcomp);
      });
 
-anfr("wi_transform_camera_set_matrix", "camera,matrix", "I}:2I}:2", "",
+anfr("wi_transform_camera_set_matrix", "camera,matrix", "I}:2R:alien", "",
      "Sets the camera's transform from the matris",
      [](StackPtr &sp, VM &vm) {
-         auto matrix = pop_wo_handle(sp);
+         auto matrix = pop_alien(sp);
          auto camera = pop_wo_handle(sp);
          wbnd::transform_camera_set_matrix(camera, matrix);
      });
 
-anfr("wi_get_camera_component", "scene,ent", "I}:2I}:2", "I}:2",
+anfr("wi_get_camera_component", "scene,ent", "R:alienI}:2", "I}:2",
      "Gets the camera component of an entity",
      [](StackPtr &sp, VM &vm) {
          auto ent   = pop_wo_handle(sp);
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_camera_component(scene, ent));
      });
 
-anfr("wi_get_camera_count", "scene", "I}:2", "I",
+anfr("wi_get_camera_count", "scene", "R:alien", "I",
      "Returns the number of cameras in the scene",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::get_camera_count(scene)));
      });
 
-anfr("wi_get_camera_entity", "scene,n", "I}:2I", "I}:2",
+anfr("wi_get_camera_entity", "scene,n", "R:alienI", "I}:2",
      "returns entity holding the nth camera in the scene",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_camera_entity(scene, n));
      });
 
@@ -1002,46 +991,46 @@ anfr("wi_get_camera_up", "camera", "I}:2", "F}:3",
          push_xmfloat3(sp, wbnd::get_camera_up(camera));
      });
 
-anfr("wi_get_camera_projection", "tcomp", "I}:2", "I}:2",
+anfr("wi_get_camera_projection", "tcomp", "I}:2", "R:alien",
      "Gets the camera projection matrix.  Matrix valid as long as camera component exists.",
      [](StackPtr &sp, VM &vm) {
          auto tcomp = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::get_camera_projection(tcomp));
+         push_alien(sp, vm, wbnd::get_camera_projection(tcomp));
      });
 
-anfr("wi_get_camera_view", "tcomp", "I}:2", "I}:2",
+anfr("wi_get_camera_view", "tcomp", "I}:2", "R:alien",
      "Gets the camera view matrix.  Matrix valid as long as camera component exists.",
      [](StackPtr &sp, VM &vm) {
          auto tcomp = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::get_camera_view(tcomp));
+         push_alien(sp, vm, wbnd::get_camera_view(tcomp));
      });
 
-anfr("wi_get_camera_VP", "tcomp", "I}:2", "I}:2",
+anfr("wi_get_camera_VP", "tcomp", "I}:2", "R:alien",
      "Gets the camera VP matrix.  Matrix valid as long as camera component exists.",
      [](StackPtr &sp, VM &vm) {
          auto tcomp = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::get_camera_VP(tcomp));
+         push_alien(sp, vm, wbnd::get_camera_VP(tcomp));
      });
 
-anfr("wi_get_camera_inverse_projection", "tcomp", "I}:2", "I}:2",
+anfr("wi_get_camera_inverse_projection", "tcomp", "I}:2", "R:alien",
      "Gets the camera inverse projection matrix.  Matrix valid as long as camera component exists.",
      [](StackPtr &sp, VM &vm) {
          auto tcomp = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::get_camera_inverse_projection(tcomp));
+         push_alien(sp, vm, wbnd::get_camera_inverse_projection(tcomp));
      });
 
-anfr("wi_get_camera_inverse_view", "tcomp", "I}:2", "I}:2",
+anfr("wi_get_camera_inverse_view", "tcomp", "I}:2", "R:alien",
      "Gets the camera inverse view matrix.  Matrix valid as long as camera component exists.",
      [](StackPtr &sp, VM &vm) {
          auto tcomp = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::get_camera_inverse_view(tcomp));
+         push_alien(sp, vm, wbnd::get_camera_inverse_view(tcomp));
      });
 
-anfr("wi_get_camera_inverse_VP", "tcomp", "I}:2", "I}:2",
+anfr("wi_get_camera_inverse_VP", "tcomp", "I}:2", "R:alien",
      "Gets the camera inverse VP matrix.  Matrix valid as long as camera component exists.",
      [](StackPtr &sp, VM &vm) {
          auto tcomp = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::get_camera_inverse_VP(tcomp));
+         push_alien(sp, vm, wbnd::get_camera_inverse_VP(tcomp));
      });
 
 anfr("wi_input_down", "button,playerindex", "II", "B",
@@ -2543,89 +2532,82 @@ anfr("wi_set_collider_is_cpu_enabled", "collider,v", "I}:2B", "",
          wbnd::set_collider_is_cpu_enabled(collider, v);
      });
 
-anfr("wi_create_collider_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_collider_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a collider component for the given entity and returns a handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_collider_component(scene, entity));
      });
 
-anfr("wi_get_collider_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_collider_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the collider component for the given entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_collider_component(scene, entity));
      });
 
-anfr("wi_entity_collider_count", "scene", "I}:2", "I",
+anfr("wi_entity_collider_count", "scene", "R:alien", "I",
      "Returns the number of entities that have a collider component",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_collider_count(scene)));
      });
 
-anfr("wi_entity_collider_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_collider_get", "scene,n", "R:alienI", "I}:2",
      "Returns the nth entity that has a collider component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_collider_get(scene, n));
      });
 
-anfr("wi_get_collider_capsule", "collider", "I}:2", "I}:2",
-     "Returns the primitive capsule for the collider, only valid if the shape is CAPSULE.  Returns value does not need to be deleted, valid until there is an ecs change in the scene",
+anfr("wi_get_collider_capsule", "collider", "I}:2", "R:alien",
+     "Returns the primitive capsule for the collider, only valid if the shape is CAPSULE.",
      [](StackPtr &sp, VM &vm) {
          auto collider = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::get_collider_capsule(collider));
+         push_alien(sp, vm, wbnd::get_collider_capsule(collider));
      });
 
-anfr("wi_create_matrix4x4", "", "", "I}:2",
+anfr("wi_create_matrix4x4", "", "", "R:alien",
      "Creates a matrix",
      [](StackPtr &sp, VM &vm) {
-         push_wo_handle(sp, wbnd::create_matrix4x4());
+         push_alien(sp, vm, wbnd::create_matrix4x4());
      });
 
-anfr("wi_delete_matrix", "m", "I}:2", "",
-     "Deletes a matrix",
-     [](StackPtr &sp, VM &vm) {
-         auto m = pop_wo_handle(sp);
-         wbnd::delete_matrix(m);
-     });
-
-anfr("wi_identity_matrix", "m", "I}:2", "",
+anfr("wi_identity_matrix", "m", "R:alien", "",
      "Initializes the matrix as an identity matrix",
      [](StackPtr &sp, VM &vm) {
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::identity_matrix(m);
      });
 
-anfr("wi_transform_vector", "matrix,v", "I}:2F}:4", "F}:4",
+anfr("wi_transform_vector", "matrix,v", "R:alienF}:4", "F}:4",
      "Transforms a vector with the matrix",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT4 v;
          pop_xmfloat4(sp, v);
-         auto matrix = pop_wo_handle(sp);
+         auto matrix = pop_alien(sp);
          push_xmfloat4(sp, wbnd::transform_vector(matrix, v));
      });
 
-anfr("wi_assign_matrix", "lhs,rhs", "I}:2I}:2", "",
+anfr("wi_assign_matrix", "lhs,rhs", "R:alienR:alien", "",
      "Assigns matrix lhs the value from rhs",
      [](StackPtr &sp, VM &vm) {
-         auto rhs = pop_wo_handle(sp);
-         auto lhs = pop_wo_handle(sp);
+         auto rhs = pop_alien(sp);
+         auto lhs = pop_alien(sp);
          wbnd::assign_matrix(lhs, rhs);
      });
 
-anfr("wi_get_matrix_translation", "matrix", "I}:2", "F}:3",
+anfr("wi_get_matrix_translation", "matrix", "R:alien", "F}:3",
      "Returns the translation part of the given matrix",
      [](StackPtr &sp, VM &vm) {
-         auto matrix = pop_wo_handle(sp);
+         auto matrix = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_matrix_translation(matrix));
      });
 
-anfr("wi_assign_matrix_rows", "m,r1,r2,r3,r4", "I}:2F}:4F}:4F}:4F}:4", "",
+anfr("wi_assign_matrix_rows", "m,r1,r2,r3,r4", "R:alienF}:4F}:4F}:4F}:4", "",
      "Initializes a matrix from rows",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT4 r4;
@@ -2636,79 +2618,79 @@ anfr("wi_assign_matrix_rows", "m,r1,r2,r3,r4", "I}:2F}:4F}:4F}:4F}:4", "",
          pop_xmfloat4(sp, r2);
          XMFLOAT4 r1;
          pop_xmfloat4(sp, r1);
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::assign_matrix_rows(m, r1, r2, r3, r4);
      });
 
-anfr("wi_return_matrix_row", "m,r", "I}:2I", "F}:4",
+anfr("wi_return_matrix_row", "m,r", "R:alienI", "F}:4",
      "Returns a row from a matrix",
      [](StackPtr &sp, VM &vm) {
          auto r = (int32_t)Pop(sp).ival();
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          push_xmfloat4(sp, wbnd::return_matrix_row(m, r));
      });
 
-anfr("wi_translation_matrix", "m,v", "I}:2F}:3", "",
+anfr("wi_translation_matrix", "m,v", "R:alienF}:3", "",
      "Set up as a translation matrix",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::translation_matrix(m, v);
      });
 
-anfr("wi_rotation_euler_matrix", "m,angles", "I}:2F}:3", "",
+anfr("wi_rotation_euler_matrix", "m,angles", "R:alienF}:3", "",
      "Set up as a rotation matrix",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 angles;
          pop_xmfloat3(sp, angles);
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::rotation_euler_matrix(m, angles);
      });
 
-anfr("wi_rotation_x_matrix", "m,a", "I}:2F", "",
+anfr("wi_rotation_x_matrix", "m,a", "R:alienF", "",
      "Set up as a rotation around x matrix",
      [](StackPtr &sp, VM &vm) {
          auto a = Pop(sp).fltval();
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::rotation_x_matrix(m, a);
      });
 
-anfr("wi_rotation_y_matrix", "m,a", "I}:2F", "",
+anfr("wi_rotation_y_matrix", "m,a", "R:alienF", "",
      "Set up as a rotation around y matrix",
      [](StackPtr &sp, VM &vm) {
          auto a = Pop(sp).fltval();
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::rotation_y_matrix(m, a);
      });
 
-anfr("wi_rotation_z_matrix", "m,a", "I}:2F", "",
+anfr("wi_rotation_z_matrix", "m,a", "R:alienF", "",
      "Set up as a rotation around z matrix",
      [](StackPtr &sp, VM &vm) {
          auto a = Pop(sp).fltval();
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::rotation_z_matrix(m, a);
      });
 
-anfr("wi_rotation_quat_matrix", "m,quat", "I}:2F}:4", "",
+anfr("wi_rotation_quat_matrix", "m,quat", "R:alienF}:4", "",
      "Set matrix as quaternion rotation",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT4 quat;
          pop_xmfloat4(sp, quat);
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::rotation_quat_matrix(m, quat);
      });
 
-anfr("wi_scaling_matrix", "m,scale", "I}:2F}:4", "",
+anfr("wi_scaling_matrix", "m,scale", "R:alienF}:4", "",
      "Set up matrix as a scaling matrix",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT4 scale;
          pop_xmfloat4(sp, scale);
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::scaling_matrix(m, scale);
      });
 
-anfr("wi_look_to_matrix", "m,eyepos,eyedir,up", "I}:2F}:3F}:3F}:3", "",
+anfr("wi_look_to_matrix", "m,eyepos,eyedir,up", "R:alienF}:3F}:3F}:3", "",
      "Set up matrix to look to a pos",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 up;
@@ -2717,11 +2699,11 @@ anfr("wi_look_to_matrix", "m,eyepos,eyedir,up", "I}:2F}:3F}:3F}:3", "",
          pop_xmfloat3(sp, eyedir);
          XMFLOAT3 eyepos;
          pop_xmfloat3(sp, eyepos);
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::look_to_matrix(m, eyepos, eyedir, up);
      });
 
-anfr("wi_look_at_matrix", "m,eyepos,focuspos,up", "I}:2F}:3F}:3F}:3", "",
+anfr("wi_look_at_matrix", "m,eyepos,focuspos,up", "R:alienF}:3F}:3F}:3", "",
      "Set up matrix to look at a pos",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 up;
@@ -2730,41 +2712,41 @@ anfr("wi_look_at_matrix", "m,eyepos,focuspos,up", "I}:2F}:3F}:3F}:3", "",
          pop_xmfloat3(sp, focuspos);
          XMFLOAT3 eyepos;
          pop_xmfloat3(sp, eyepos);
-         auto m = pop_wo_handle(sp);
+         auto m = pop_alien(sp);
          wbnd::look_at_matrix(m, eyepos, focuspos, up);
      });
 
-anfr("wi_multiply_matrix", "lhs,rhs,result", "I}:2I}:2I}:2", "",
+anfr("wi_multiply_matrix", "lhs,rhs,result", "R:alienR:alienR:alien", "",
      "Multiply lhs by rhs and put the reuslt into result",
      [](StackPtr &sp, VM &vm) {
-         auto result = pop_wo_handle(sp);
-         auto rhs    = pop_wo_handle(sp);
-         auto lhs    = pop_wo_handle(sp);
+         auto result = pop_alien(sp);
+         auto rhs    = pop_alien(sp);
+         auto lhs    = pop_alien(sp);
          wbnd::multiply_matrix(lhs, rhs, result);
      });
 
-anfr("wi_add_matrix", "lhs,rhs,result", "I}:2I}:2I}:2", "",
+anfr("wi_add_matrix", "lhs,rhs,result", "R:alienR:alienR:alien", "",
      "Add lhs and rhs, and put the result in result",
      [](StackPtr &sp, VM &vm) {
-         auto result = pop_wo_handle(sp);
-         auto rhs    = pop_wo_handle(sp);
-         auto lhs    = pop_wo_handle(sp);
+         auto result = pop_alien(sp);
+         auto rhs    = pop_alien(sp);
+         auto lhs    = pop_alien(sp);
          wbnd::add_matrix(lhs, rhs, result);
      });
 
-anfr("wi_transpose_matrix", "m,result", "I}:2I}:2", "",
+anfr("wi_transpose_matrix", "m,result", "R:alienR:alien", "",
      "Transpose a matrix",
      [](StackPtr &sp, VM &vm) {
-         auto result = pop_wo_handle(sp);
-         auto m      = pop_wo_handle(sp);
+         auto result = pop_alien(sp);
+         auto m      = pop_alien(sp);
          wbnd::transpose_matrix(m, result);
      });
 
-anfr("wi_invert_matrix", "m,result", "I}:2I}:2", "",
+anfr("wi_invert_matrix", "m,result", "R:alienR:alien", "",
      "Inverts 'm' and puts the result in 'result'",
      [](StackPtr &sp, VM &vm) {
-         auto result = pop_wo_handle(sp);
-         auto m      = pop_wo_handle(sp);
+         auto result = pop_alien(sp);
+         auto m      = pop_alien(sp);
          wbnd::invert_matrix(m, result);
      });
 
@@ -2900,34 +2882,34 @@ anfr("wi_set_animation_looped", "anim,v", "I}:2B", "",
          wbnd::set_animation_looped(anim, v);
      });
 
-anfr("wi_create_animation_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_animation_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a animation component for the given entity and returns a handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_animation_component(scene, entity));
      });
 
-anfr("wi_get_animation_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_animation_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the animation component for the given entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_animation_component(scene, entity));
      });
 
-anfr("wi_entity_animation_count", "scene", "I}:2", "I",
+anfr("wi_entity_animation_count", "scene", "R:alien", "I",
      "Returns the number of entities that have a animation component",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_animation_count(scene)));
      });
 
-anfr("wi_entity_animation_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_animation_get", "scene,n", "R:alienI", "I}:2",
      "Returns the nth entity that has a animation component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_animation_get(scene, n));
      });
 
@@ -2944,55 +2926,48 @@ anfr("wi_renderer_vxgi_enabled", "", "", "B",
          Push(sp, Value(wbnd::renderer_vxgi_enabled()));
      });
 
-anfr("wi_create_primitive_sphere", "", "", "I}:2",
+anfr("wi_create_primitive_sphere", "", "", "R:alien",
      "",
      [](StackPtr &sp, VM &vm) {
-         push_wo_handle(sp, wbnd::create_primitive_sphere());
+         push_alien(sp, vm, wbnd::create_primitive_sphere());
      });
 
-anfr("wi_delete_primitive_sphere", "primitive_sphere", "I}:2", "",
-     "",
-     [](StackPtr &sp, VM &vm) {
-         auto primitive_sphere = pop_wo_handle(sp);
-         wbnd::delete_primitive_sphere(primitive_sphere);
-     });
-
-anfr("wi_set_primitive_sphere_center", "primitive_sphere,v", "I}:2F}:3", "",
+anfr("wi_set_primitive_sphere_center", "primitive_sphere,v", "R:alienF}:3", "",
      "Sets primitive_sphere.center",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto primitive_sphere = pop_wo_handle(sp);
+         auto primitive_sphere = pop_alien(sp);
          wbnd::set_primitive_sphere_center(primitive_sphere, v);
      });
 
-anfr("wi_get_primitive_sphere_center", "primitive_sphere", "I}:2", "F}:3",
+anfr("wi_get_primitive_sphere_center", "primitive_sphere", "R:alien", "F}:3",
      "Gets primitive_sphere.center",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_sphere = pop_wo_handle(sp);
+         auto primitive_sphere = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_primitive_sphere_center(primitive_sphere));
      });
 
-anfr("wi_set_primitive_sphere_radius", "primitive_sphere,v", "I}:2F", "",
+anfr("wi_set_primitive_sphere_radius", "primitive_sphere,v", "R:alienF", "",
      "Sets primitive_sphere.radius",
      [](StackPtr &sp, VM &vm) {
          auto v                = Pop(sp).fltval();
-         auto primitive_sphere = pop_wo_handle(sp);
+         auto primitive_sphere = pop_alien(sp);
          wbnd::set_primitive_sphere_radius(primitive_sphere, v);
      });
 
-anfr("wi_get_primitive_sphere_radius", "primitive_sphere", "I}:2", "F",
+anfr("wi_get_primitive_sphere_radius", "primitive_sphere", "R:alien", "F",
      "Gets primitive_sphere.radius",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_sphere = pop_wo_handle(sp);
+         auto primitive_sphere = pop_alien(sp);
          Push(sp, Value(wbnd::get_primitive_sphere_radius(primitive_sphere)));
      });
 
-anfr("wi_sphere_sphere_intersects", "sphere0,sphere1", "I}:2I}:2", "BFF}:3",
+anfr("wi_sphere_sphere_intersects", "sphere0,sphere1", "R:alienR:alien", "BFF}:3",
      "Primitive to primitive intersection test, returns true|false,distance,direction",
      [](StackPtr &sp, VM &vm) {
-         auto     sphere1 = pop_wo_handle(sp);
-         auto     sphere0 = pop_wo_handle(sp);
+         auto     sphere1 = pop_alien(sp);
+         auto     sphere0 = pop_alien(sp);
          float    retval2;
          XMFLOAT3 retval3;
          Push(sp, Value(wbnd::sphere_sphere_intersects(sphere0, sphere1, retval2, retval3)));
@@ -3000,173 +2975,159 @@ anfr("wi_sphere_sphere_intersects", "sphere0,sphere1", "I}:2I}:2", "BFF}:3",
          push_xmfloat3(sp, retval3);
      });
 
-anfr("wi_create_sphere_intersection_result", "", "", "I}:2",
+anfr("wi_create_sphere_intersection_result", "", "", "R:alien",
      "",
      [](StackPtr &sp, VM &vm) {
-         push_wo_handle(sp, wbnd::create_sphere_intersection_result());
+         push_alien(sp, vm, wbnd::create_sphere_intersection_result());
      });
 
-anfr("wi_delete_sphere_intersection_result", "sphere_intersection_result", "I}:2", "",
-     "",
-     [](StackPtr &sp, VM &vm) {
-         auto sphere_intersection_result = pop_wo_handle(sp);
-         wbnd::delete_sphere_intersection_result(sphere_intersection_result);
-     });
-
-anfr("wi_set_sphere_intersection_result_entity", "sphere_intersection_result,v", "I}:2I}:2", "",
+anfr("wi_set_sphere_intersection_result_entity", "sphere_intersection_result,v", "R:alienI}:2", "",
      "Sets sphere_intersection_result.entity",
      [](StackPtr &sp, VM &vm) {
          auto v                          = pop_wo_handle(sp);
-         auto sphere_intersection_result = pop_wo_handle(sp);
+         auto sphere_intersection_result = pop_alien(sp);
          wbnd::set_sphere_intersection_result_entity(sphere_intersection_result, v);
      });
 
-anfr("wi_get_sphere_intersection_result_entity", "sphere_intersection_result", "I}:2", "I}:2",
+anfr("wi_get_sphere_intersection_result_entity", "sphere_intersection_result", "R:alien", "I}:2",
      "Gets sphere_intersection_result.entity",
      [](StackPtr &sp, VM &vm) {
-         auto sphere_intersection_result = pop_wo_handle(sp);
+         auto sphere_intersection_result = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_sphere_intersection_result_entity(sphere_intersection_result));
      });
 
-anfr("wi_set_sphere_intersection_result_position", "sphere_intersection_result,v", "I}:2F}:3", "",
+anfr("wi_set_sphere_intersection_result_position", "sphere_intersection_result,v", "R:alienF}:3", "",
      "Sets sphere_intersection_result.position",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto sphere_intersection_result = pop_wo_handle(sp);
+         auto sphere_intersection_result = pop_alien(sp);
          wbnd::set_sphere_intersection_result_position(sphere_intersection_result, v);
      });
 
-anfr("wi_get_sphere_intersection_result_position", "sphere_intersection_result", "I}:2", "F}:3",
+anfr("wi_get_sphere_intersection_result_position", "sphere_intersection_result", "R:alien", "F}:3",
      "Gets sphere_intersection_result.position",
      [](StackPtr &sp, VM &vm) {
-         auto sphere_intersection_result = pop_wo_handle(sp);
+         auto sphere_intersection_result = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_sphere_intersection_result_position(sphere_intersection_result));
      });
 
-anfr("wi_set_sphere_intersection_result_normal", "sphere_intersection_result,v", "I}:2F}:3", "",
+anfr("wi_set_sphere_intersection_result_normal", "sphere_intersection_result,v", "R:alienF}:3", "",
      "Sets sphere_intersection_result.normal",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto sphere_intersection_result = pop_wo_handle(sp);
+         auto sphere_intersection_result = pop_alien(sp);
          wbnd::set_sphere_intersection_result_normal(sphere_intersection_result, v);
      });
 
-anfr("wi_get_sphere_intersection_result_normal", "sphere_intersection_result", "I}:2", "F}:3",
+anfr("wi_get_sphere_intersection_result_normal", "sphere_intersection_result", "R:alien", "F}:3",
      "Gets sphere_intersection_result.normal",
      [](StackPtr &sp, VM &vm) {
-         auto sphere_intersection_result = pop_wo_handle(sp);
+         auto sphere_intersection_result = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_sphere_intersection_result_normal(sphere_intersection_result));
      });
 
-anfr("wi_set_sphere_intersection_result_velocity", "sphere_intersection_result,v", "I}:2F}:3", "",
+anfr("wi_set_sphere_intersection_result_velocity", "sphere_intersection_result,v", "R:alienF}:3", "",
      "Sets sphere_intersection_result.velocity",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto sphere_intersection_result = pop_wo_handle(sp);
+         auto sphere_intersection_result = pop_alien(sp);
          wbnd::set_sphere_intersection_result_velocity(sphere_intersection_result, v);
      });
 
-anfr("wi_get_sphere_intersection_result_velocity", "sphere_intersection_result", "I}:2", "F}:3",
+anfr("wi_get_sphere_intersection_result_velocity", "sphere_intersection_result", "R:alien", "F}:3",
      "Gets sphere_intersection_result.velocity",
      [](StackPtr &sp, VM &vm) {
-         auto sphere_intersection_result = pop_wo_handle(sp);
+         auto sphere_intersection_result = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_sphere_intersection_result_velocity(sphere_intersection_result));
      });
 
-anfr("wi_set_sphere_intersection_result_depth", "sphere_intersection_result,v", "I}:2F", "",
+anfr("wi_set_sphere_intersection_result_depth", "sphere_intersection_result,v", "R:alienF", "",
      "Sets sphere_intersection_result.depth",
      [](StackPtr &sp, VM &vm) {
          auto v                          = Pop(sp).fltval();
-         auto sphere_intersection_result = pop_wo_handle(sp);
+         auto sphere_intersection_result = pop_alien(sp);
          wbnd::set_sphere_intersection_result_depth(sphere_intersection_result, v);
      });
 
-anfr("wi_get_sphere_intersection_result_depth", "sphere_intersection_result", "I}:2", "F",
+anfr("wi_get_sphere_intersection_result_depth", "sphere_intersection_result", "R:alien", "F",
      "Gets sphere_intersection_result.depth",
      [](StackPtr &sp, VM &vm) {
-         auto sphere_intersection_result = pop_wo_handle(sp);
+         auto sphere_intersection_result = pop_alien(sp);
          Push(sp, Value(wbnd::get_sphere_intersection_result_depth(sphere_intersection_result)));
      });
 
-anfr("wi_scene_sphere_intersects", "scene,sphere,filter_mask,layer_mask,lod", "I}:2I}:2III", "I}:2",
+anfr("wi_scene_sphere_intersects", "scene,sphere,filter_mask,layer_mask,lod", "R:alienR:alienIII", "R:alien",
      "Tests a sphere intersection with a scene, and returns a SphereIntersectionResult",
      [](StackPtr &sp, VM &vm) {
          auto lod         = (int32_t)Pop(sp).ival();
          auto layer_mask  = (int32_t)Pop(sp).ival();
          auto filter_mask = (int32_t)Pop(sp).ival();
-         auto sphere      = pop_wo_handle(sp);
-         auto scene       = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::scene_sphere_intersects(scene, sphere, filter_mask, layer_mask, lod));
+         auto sphere      = pop_alien(sp);
+         auto scene       = pop_alien(sp);
+         push_alien(sp, vm, wbnd::scene_sphere_intersects(scene, sphere, filter_mask, layer_mask, lod));
      });
 
-anfr("wi_create_primitive_capsule", "", "", "I}:2",
+anfr("wi_create_primitive_capsule", "", "", "R:alien",
      "",
      [](StackPtr &sp, VM &vm) {
-         push_wo_handle(sp, wbnd::create_primitive_capsule());
+         push_alien(sp, vm, wbnd::create_primitive_capsule());
      });
 
-anfr("wi_delete_primitive_capsule", "primitive_capsule", "I}:2", "",
-     "",
-     [](StackPtr &sp, VM &vm) {
-         auto primitive_capsule = pop_wo_handle(sp);
-         wbnd::delete_primitive_capsule(primitive_capsule);
-     });
-
-anfr("wi_set_primitive_capsule_base", "primitive_capsule,v", "I}:2F}:3", "",
+anfr("wi_set_primitive_capsule_base", "primitive_capsule,v", "R:alienF}:3", "",
      "Sets primitive_capsule.base",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto primitive_capsule = pop_wo_handle(sp);
+         auto primitive_capsule = pop_alien(sp);
          wbnd::set_primitive_capsule_base(primitive_capsule, v);
      });
 
-anfr("wi_get_primitive_capsule_base", "primitive_capsule", "I}:2", "F}:3",
+anfr("wi_get_primitive_capsule_base", "primitive_capsule", "R:alien", "F}:3",
      "Gets primitive_capsule.base",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_capsule = pop_wo_handle(sp);
+         auto primitive_capsule = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_primitive_capsule_base(primitive_capsule));
      });
 
-anfr("wi_set_primitive_capsule_tip", "primitive_capsule,v", "I}:2F}:3", "",
+anfr("wi_set_primitive_capsule_tip", "primitive_capsule,v", "R:alienF}:3", "",
      "Sets primitive_capsule.tip",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 v;
          pop_xmfloat3(sp, v);
-         auto primitive_capsule = pop_wo_handle(sp);
+         auto primitive_capsule = pop_alien(sp);
          wbnd::set_primitive_capsule_tip(primitive_capsule, v);
      });
 
-anfr("wi_get_primitive_capsule_tip", "primitive_capsule", "I}:2", "F}:3",
+anfr("wi_get_primitive_capsule_tip", "primitive_capsule", "R:alien", "F}:3",
      "Gets primitive_capsule.tip",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_capsule = pop_wo_handle(sp);
+         auto primitive_capsule = pop_alien(sp);
          push_xmfloat3(sp, wbnd::get_primitive_capsule_tip(primitive_capsule));
      });
 
-anfr("wi_set_primitive_capsule_radius", "primitive_capsule,v", "I}:2F", "",
+anfr("wi_set_primitive_capsule_radius", "primitive_capsule,v", "R:alienF", "",
      "Sets primitive_capsule.radius",
      [](StackPtr &sp, VM &vm) {
          auto v                 = Pop(sp).fltval();
-         auto primitive_capsule = pop_wo_handle(sp);
+         auto primitive_capsule = pop_alien(sp);
          wbnd::set_primitive_capsule_radius(primitive_capsule, v);
      });
 
-anfr("wi_get_primitive_capsule_radius", "primitive_capsule", "I}:2", "F",
+anfr("wi_get_primitive_capsule_radius", "primitive_capsule", "R:alien", "F",
      "Gets primitive_capsule.radius",
      [](StackPtr &sp, VM &vm) {
-         auto primitive_capsule = pop_wo_handle(sp);
+         auto primitive_capsule = pop_alien(sp);
          Push(sp, Value(wbnd::get_primitive_capsule_radius(primitive_capsule)));
      });
 
-anfr("wi_capsule_capsule_intersects", "cap0,cap1", "I}:2I}:2", "BF}:3F}:3F",
+anfr("wi_capsule_capsule_intersects", "cap0,cap1", "R:alienR:alien", "BF}:3F}:3F",
      "Capsule to capsule intersection test, returns true/false, position, normal, penetration_depth",
      [](StackPtr &sp, VM &vm) {
-         auto     cap1    = pop_wo_handle(sp);
-         auto     cap0    = pop_wo_handle(sp);
+         auto     cap1    = pop_alien(sp);
+         auto     cap0    = pop_alien(sp);
          XMFLOAT3 retval2;
          XMFLOAT3 retval3;
          float    retval4;
@@ -3176,11 +3137,11 @@ anfr("wi_capsule_capsule_intersects", "cap0,cap1", "I}:2I}:2", "BF}:3F}:3F",
          Push(sp, Value(retval4));
      });
 
-anfr("wi_capsule_sphere_intersects", "cap,sphere", "I}:2I}:2", "BFF}:3",
+anfr("wi_capsule_sphere_intersects", "cap,sphere", "R:alienR:alien", "BFF}:3",
      "Capsule to sphere intersection test, returns bool, dist, direction",
      [](StackPtr &sp, VM &vm) {
-         auto     sphere  = pop_wo_handle(sp);
-         auto     cap     = pop_wo_handle(sp);
+         auto     sphere  = pop_alien(sp);
+         auto     cap     = pop_alien(sp);
          float    retval2;
          XMFLOAT3 retval3;
          Push(sp, Value(wbnd::capsule_sphere_intersects(cap, sphere, retval2, retval3)));
@@ -3188,11 +3149,11 @@ anfr("wi_capsule_sphere_intersects", "cap,sphere", "I}:2I}:2", "BFF}:3",
          push_xmfloat3(sp, retval3);
      });
 
-anfr("wi_sphere_capsule_intersects", "sphere,cap", "I}:2I}:2", "BFF}:3",
+anfr("wi_sphere_capsule_intersects", "sphere,cap", "R:alienR:alien", "BFF}:3",
      "Sphere to capsule intersection test, returns bool, dist, direction",
      [](StackPtr &sp, VM &vm) {
-         auto     cap     = pop_wo_handle(sp);
-         auto     sphere  = pop_wo_handle(sp);
+         auto     cap     = pop_alien(sp);
+         auto     sphere  = pop_alien(sp);
          float    retval2;
          XMFLOAT3 retval3;
          Push(sp, Value(wbnd::sphere_capsule_intersects(sphere, cap, retval2, retval3)));
@@ -3200,26 +3161,26 @@ anfr("wi_sphere_capsule_intersects", "sphere,cap", "I}:2I}:2", "BFF}:3",
          push_xmfloat3(sp, retval3);
      });
 
-anfr("wi_scene_capsule_intersects", "scene,cap,filter_mask,layer_mask,lod", "I}:2I}:2III", "I}:2",
+anfr("wi_scene_capsule_intersects", "scene,cap,filter_mask,layer_mask,lod", "R:alienR:alienIII", "R:alien",
      "Tests whether a capsule intersects anything in the scene, returning a SphereIntersectionResult (not a typo)",
      [](StackPtr &sp, VM &vm) {
          auto lod         = (int32_t)Pop(sp).ival();
          auto layer_mask  = (int32_t)Pop(sp).ival();
          auto filter_mask = (int32_t)Pop(sp).ival();
-         auto cap         = pop_wo_handle(sp);
-         auto scene       = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::scene_capsule_intersects(scene, cap, filter_mask, layer_mask, lod));
+         auto cap         = pop_alien(sp);
+         auto scene       = pop_alien(sp);
+         push_alien(sp, vm, wbnd::scene_capsule_intersects(scene, cap, filter_mask, layer_mask, lod));
      });
 
-anfr("wi_scene_ray_intersects", "scene,ray,filter_mask,layer_mask,lod", "I}:2I}:2III", "I}:2",
-     "Tests whether a ray intersects anything in the scene, returning a RayIntersectionResult (not a typo)",
+anfr("wi_scene_ray_intersects", "scene,ray,filter_mask,layer_mask,lod", "R:alienR:alienIII", "R:alien",
+     "Tests whether a ray intersects anything in the scene, returning a RayIntersectionResult",
      [](StackPtr &sp, VM &vm) {
          auto lod         = (int32_t)Pop(sp).ival();
          auto layer_mask  = (int32_t)Pop(sp).ival();
          auto filter_mask = (int32_t)Pop(sp).ival();
-         auto ray         = pop_wo_handle(sp);
-         auto scene       = pop_wo_handle(sp);
-         push_wo_handle(sp, wbnd::scene_ray_intersects(scene, ray, filter_mask, layer_mask, lod));
+         auto ray         = pop_alien(sp);
+         auto scene       = pop_alien(sp);
+         push_alien(sp, vm, wbnd::scene_ray_intersects(scene, ray, filter_mask, layer_mask, lod));
      });
 
 anfr("wi_set_rigidbody_physics_shape", "rigidbody_physics,v", "I}:2I", "",
@@ -3418,34 +3379,34 @@ anfr("wi_get_rigidbody_physics_kinematic", "rigidbody_physics", "I}:2", "B",
          Push(sp, Value(wbnd::get_rigidbody_physics_kinematic(rigidbody_physics)));
      });
 
-anfr("wi_create_rigidbody_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_rigidbody_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a rigidbody component for the given entity and returns a handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_rigidbody_component(scene, entity));
      });
 
-anfr("wi_get_rigidbody_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_rigidbody_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the rigidbody component for the given entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_rigidbody_component(scene, entity));
      });
 
-anfr("wi_entity_rigidbody_count", "scene", "I}:2", "I",
+anfr("wi_entity_rigidbody_count", "scene", "R:alien", "I",
      "Returns the number of entities that have a rigidbody component",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_rigidbody_count(scene)));
      });
 
-anfr("wi_entity_rigidbody_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_rigidbody_get", "scene,n", "R:alienI", "I}:2",
      "Returns the nth entity that has a rigidbody component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_rigidbody_get(scene, n));
      });
 
@@ -3616,34 +3577,34 @@ anfr("wi_get_object_sort_priority", "object", "I}:2", "I",
          Push(sp, Value(wbnd::get_object_sort_priority(object)));
      });
 
-anfr("wi_create_object_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_object_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a object component for the given entity and returns a handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_object_component(scene, entity));
      });
 
-anfr("wi_get_object_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_object_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the object component for the given entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_object_component(scene, entity));
      });
 
-anfr("wi_entity_object_count", "scene", "I}:2", "I",
+anfr("wi_entity_object_count", "scene", "R:alien", "I",
      "Returns the number of entities that have a object component",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_object_count(scene)));
      });
 
-anfr("wi_entity_object_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_object_get", "scene,n", "R:alienI", "I}:2",
      "Returns the nth entity that has a object component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_object_get(scene, n));
      });
 
@@ -3677,34 +3638,34 @@ anfr("wi_get_hierarchy_layermask_bind", "hierarchy", "I}:2", "I",
          Push(sp, Value(wbnd::get_hierarchy_layermask_bind(hierarchy)));
      });
 
-anfr("wi_create_hierarchy_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_hierarchy_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a hierarchy component for the given entity and returns a handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_hierarchy_component(scene, entity));
      });
 
-anfr("wi_get_hierarchy_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_hierarchy_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the hierarchy component for the given entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_hierarchy_component(scene, entity));
      });
 
-anfr("wi_entity_hierarchy_count", "scene", "I}:2", "I",
+anfr("wi_entity_hierarchy_count", "scene", "R:alien", "I",
      "Returns the number of entities that have a hierarchy component",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_hierarchy_count(scene)));
      });
 
-anfr("wi_entity_hierarchy_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_hierarchy_get", "scene,n", "R:alienI", "I}:2",
      "Returns the nth entity that has a hierarchy component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_hierarchy_get(scene, n));
      });
 
@@ -3904,34 +3865,34 @@ anfr("wi_get_light_volumetric_clouds_enabled", "light", "I}:2", "B",
          Push(sp, Value(wbnd::get_light_volumetric_clouds_enabled(light)));
      });
 
-anfr("wi_create_light_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_light_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a light component for the given entity and returns a handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_light_component(scene, entity));
      });
 
-anfr("wi_get_light_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_light_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the light component for the given entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_light_component(scene, entity));
      });
 
-anfr("wi_entity_light_count", "scene", "I}:2", "I",
+anfr("wi_entity_light_count", "scene", "R:alien", "I",
      "Returns the number of entities that have a light component",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_light_count(scene)));
      });
 
-anfr("wi_entity_light_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_light_get", "scene,n", "R:alienI", "I}:2",
      "Returns the nth entity that has a light component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_light_get(scene, n));
      });
 
@@ -4107,45 +4068,45 @@ anfr("wi_get_sound_component_is_disable_3d", "sound_component", "I}:2", "B",
          Push(sp, Value(wbnd::get_sound_component_is_disable_3d(sound_component)));
      });
 
-anfr("wi_create_sound_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_sound_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a sound component for the given entity and returns a handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_sound_component(scene, entity));
      });
 
-anfr("wi_get_sound_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_sound_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the sound component for the given entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_sound_component(scene, entity));
      });
 
-anfr("wi_entity_sound_count", "scene", "I}:2", "I",
+anfr("wi_entity_sound_count", "scene", "R:alien", "I",
      "Returns the number of entities that have a sound component",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_sound_count(scene)));
      });
 
-anfr("wi_entity_sound_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_sound_get", "scene,n", "R:alienI", "I}:2",
      "Returns the nth entity that has a sound component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_sound_get(scene, n));
      });
 
-anfr("wi_scene_create_sound_entity", "scene,name,filename,pos", "I}:2SSF}:3", "I}:2",
+anfr("wi_scene_create_sound_entity", "scene,name,filename,pos", "R:alienSSF}:3", "I}:2",
      "Creates a entity with a sound component in the given scene, and returns it",
      [](StackPtr &sp, VM &vm) {
          XMFLOAT3 pos;
          pop_xmfloat3(sp, pos);
          auto filename = Pop(sp).sval()->strv();
          auto name     = Pop(sp).sval()->strv();
-         auto scene    = pop_wo_handle(sp);
+         auto scene    = pop_alien(sp);
          push_wo_handle(sp, wbnd::scene_create_sound_entity(scene, name, filename, pos));
      });
 
@@ -4224,44 +4185,44 @@ anfr("wi_get_decal_component_is_base_color_only_alpha", "decal_component", "I}:2
          Push(sp, Value(wbnd::get_decal_component_is_base_color_only_alpha(decal_component)));
      });
 
-anfr("wi_create_decal_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_create_decal_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Creates a decal component for the given entity and returns a handle",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_decal_component(scene, entity));
      });
 
-anfr("wi_get_decal_component", "scene,entity", "I}:2I}:2", "I}:2",
+anfr("wi_get_decal_component", "scene,entity", "R:alienI}:2", "I}:2",
      "Gets the decal component for the given entity.",
      [](StackPtr &sp, VM &vm) {
          auto entity = pop_wo_handle(sp);
-         auto scene  = pop_wo_handle(sp);
+         auto scene  = pop_alien(sp);
          push_wo_handle(sp, wbnd::get_decal_component(scene, entity));
      });
 
-anfr("wi_entity_decal_count", "scene", "I}:2", "I",
+anfr("wi_entity_decal_count", "scene", "R:alien", "I",
      "Returns the number of entities that have a decal component",
      [](StackPtr &sp, VM &vm) {
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          Push(sp, Value(wbnd::entity_decal_count(scene)));
      });
 
-anfr("wi_entity_decal_get", "scene,n", "I}:2I", "I}:2",
+anfr("wi_entity_decal_get", "scene,n", "R:alienI", "I}:2",
      "Returns the nth entity that has a decal component",
      [](StackPtr &sp, VM &vm) {
          auto n     = (int32_t)Pop(sp).ival();
-         auto scene = pop_wo_handle(sp);
+         auto scene = pop_alien(sp);
          push_wo_handle(sp, wbnd::entity_decal_get(scene, n));
      });
 
-anfr("wi_create_decal_entity", "scene,name,texture_name,normal_map_name", "I}:2SSS", "I}:2",
+anfr("wi_create_decal_entity", "scene,name,texture_name,normal_map_name", "R:alienSSS", "I}:2",
      "Creates a entity with a decal in the given scene, and returns it.",
      [](StackPtr &sp, VM &vm) {
          auto normal_map_name = Pop(sp).sval()->strv();
          auto texture_name    = Pop(sp).sval()->strv();
          auto name            = Pop(sp).sval()->strv();
-         auto scene           = pop_wo_handle(sp);
+         auto scene           = pop_alien(sp);
          push_wo_handle(sp, wbnd::create_decal_entity(scene, name, texture_name, normal_map_name));
      }); 
 

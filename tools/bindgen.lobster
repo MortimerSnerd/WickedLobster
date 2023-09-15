@@ -35,12 +35,23 @@ struct TD:
 
 // All the types we can handle in bindings.
 let known_types = [
+   // Handle for a tagged pointer of some sort.
    TD{
       name:"H", 
       lobster_tyspec: "I}}:2", 
       wbnd_tyname: "wo_handle", 
       loadfn: fn(name): "auto {name} = pop_wo_handle(sp);",
       storefn: fn(expr): "push_wo_handle(sp, {expr});",
+      pass_as_constref: true
+   },
+   // Handle for a tagged pointer where Lobster takes care of the lifetime.
+   // (A is for Alien)
+   TD{
+      name:"A", 
+      lobster_tyspec: "R:alien", 
+      wbnd_tyname: "wo_handle", 
+      loadfn: fn(name): "auto {name} = pop_alien(sp);",
+      storefn: fn(expr): "push_alien(sp, vm, {expr});",
       pass_as_constref: true
    },
    TD{
@@ -189,17 +200,26 @@ def parse_bindings(fname: string) -> string?, [fundef]:
    def parse_struct_def():
       let members = []
       var make_constructor = true
+      var managed_handles = false
       L.skip_ws()
       let sname = identifier()
       L.skip_ws()
-      if L.matched_word("!"):
-         make_constructor = false
+
+      var maybe_modifiers = true
+      while maybe_modifiers:
+         if L.matched_word("!bare"):
+            make_constructor = false
+         elif L.matched_word("!managed"):
+            managed_handles = true
+         else:
+            maybe_modifiers = false
 
       while L.chars_left() and not L.matched_word("endstruct"):
          push(members, parse_param())
          L.skip_ws()
 
-      let hix = find(known_types): _.name == "H"
+      let handname = if managed_handles: "A" else: "H"
+      let hix = find(known_types): _.name == handname
       assert hix >= 0
 
       if make_constructor:
@@ -208,12 +228,13 @@ def parse_bindings(fname: string) -> string?, [fundef]:
             name: "create_{sname}", 
             params: [], 
             returns: [hix]})
-         push(funs, fundef{
-            name: "delete_{sname}", 
-            params: [param{
-               name: sname, 
-               type: hix}], 
-            returns: []})
+         if not managed_handles:
+            push(funs, fundef{
+               name: "delete_{sname}", 
+               params: [param{
+                  name: sname, 
+                  type: hix}], 
+               returns: []})
 
       // Accessors
       for(members) m:

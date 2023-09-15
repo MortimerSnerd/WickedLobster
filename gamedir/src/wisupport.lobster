@@ -158,7 +158,7 @@ constructor wi_resource(h: int2):
    return wi_resource{h}
 
 struct wi_matrix:
-   handle: int2
+   handle: resource<alien>
 
    def transform(v: float4) -> float4:
       return wi_transform_vector(handle, v)
@@ -170,9 +170,6 @@ struct wi_matrix:
    def transform_vector(v: float3):
       let r = transform(float4{v.x, v.y, v.z, 0.0})
       return float3{r.x, r.y, r.z}
-
-   def delete():
-      wi_delete_matrix(handle)
 
    def assign(rhs: wi_matrix):
       wi_assign_matrix(handle, rhs.handle)
@@ -254,7 +251,7 @@ struct wi_entity:
 let INVALID_ENTITY = wi_entity{INVALID_ENTITY_HANDLE}
 
 struct wi_primitive_ray:
-   handle: int2
+   handle: resource<alien>
 
    def origin():
       return wi_get_primitive_ray_origin(handle)
@@ -286,8 +283,6 @@ struct wi_primitive_ray:
    def set_direction_inverse(v):
       wi_set_primitive_ray_direction_inverse(handle, v)
 
-   def delete():
-      wi_delete_primitive_ray(handle)
 
 def create_primitive_ray():
    return wi_primitive_ray{wi_create_primitive_ray()}
@@ -296,10 +291,7 @@ def make_ray_from(origin: float3, direction: float3, tmin = 0.0, tmax = 1.0e6):
    return wi_primitive_ray{wi_make_ray_from(origin, direction, tmin, tmax)}
 
 struct wi_primitive_capsule:
-   handle: int2
-
-   def delete():
-      wi_delete_primitive_capsule(handle)
+   handle: resource<alien>
 
    def base():
       return wi_get_primitive_capsule_base(handle)
@@ -336,7 +328,7 @@ def create_primitive_capsule() -> wi_primitive_capsule:
    return wi_primitive_capsule{wi_create_primitive_capsule()}
 
 struct wi_primitive_sphere:
-   handle: int2
+   handle: resource<alien>
 
    def center():
       return wi_get_primitive_sphere_center(handle)
@@ -370,7 +362,7 @@ def create_primitive_sphere() -> wi_primitive_sphere:
    return wi_primitive_sphere{wi_create_primitive_sphere()}
 
 struct wi_sphere_intersection:
-   handle: int2
+   handle: resource<alien>
 
    def set_entity(v):
       wi_set_sphere_intersection_result_entity(handle, v.handle)
@@ -399,15 +391,9 @@ struct wi_sphere_intersection:
    def set_depth(v):
       wi_set_sphere_intersection_result_depth(handle, v)
 
-   def delete():
-      wi_delete_sphere_intersection_result(handle)
-
 
 struct wi_ray_intersection:
-   handle: int2
-
-   def delete():
-      wi_delete_ray_intersection(handle)
+   handle: resource<alien>
 
    def entity():
       return wi_entity{wi_get_ray_intersection_entity(handle)}
@@ -475,8 +461,20 @@ struct wi_ray_intersection:
    def set_orientation(v: wi_matrix):
       wi_set_ray_intersection_orientation(handle, v.handle)
 
-
-
+   def debug_string(indlev = 0):
+      let ind0 = repeat_string("\t", indlev)
+      let ind1 = repeat_string("\t", indlev+1)
+      return "{ind0}wi_ray_intersection{{\n"+
+             "{ind1}entity: {entity()}\n" +  
+             "{ind1}position: {position()}\n" +
+             "{ind1}normal: {normal()}\n" + 
+             "{ind1}velocity: {velocity()}\n" +
+             "{ind1}distance: {distance()}\n" + 
+             "{ind1}subset_index: {subset_index()}\n" +
+             "{ind1}vertex_id0: {vertex_id0()}\n" + 
+             "{ind1}vertex_id1: {vertex_id1()}\n" + 
+             "{ind1}vertex_id2: {vertex_id2()}\n" + 
+             "{ind1}bary: {bary()}\n{ind0}}}"
 
 // Note: for components, when you get one, do what you need to do with it
 // and then discard it.  These can be invalidated by any code that
@@ -1275,7 +1273,10 @@ enum wi_light_type:
 // Wrapper for scenes.  This can be saved long term, 
 // it is only invalidated when the scene is deleted.
 class wi_scene:
-   handle: int2   
+   handle: resource<alien>   
+
+   def component_attach(entity: wi_entity, parent: wi_entity, child_already_in_local_space: bool):
+      wi_component_attach(handle, entity.handle, parent.handle, child_already_in_local_space)
 
    def create_transform_entity(name: string):
       return wi_entity{wi_create_transform_entity(handle, name)}
@@ -1521,11 +1522,6 @@ class wi_scene:
    def get_names_entity(i: int) -> wi_entity:
       return wi_entity{wi_entity_names_get(handle, i)}
 
-   def delete():
-      guard handle[1] != 0
-      wi_delete_scene(handle)
-      handle = int2{wk_scene, 0}
-
    def merge(src: wi_scene):
       wi_scene_merge(handle, src.handle)
 
@@ -1545,22 +1541,7 @@ def global_scene() -> wi_scene:
    return wi_scene{wi_global_scene()}
 
 
-def with_temp_scene(body):
-   let scene = new_wi_scene()
-   body(scene)
-   scene.delete()
-
-def with_temp_object(obj, body):
-   body(obj)
-   obj.delete()
-
-def with_temp_object(obj, obj2, body):
-   body(obj, obj2)
-   obj2.delete()
-   obj.delete()
-
-// Helper that calculates a capsule from the rididbody component data.  Capsule must be deleted
-// when you're done with it.  Assuming position is center of entity.
+// Helper that calculates a capsule from the rididbody component data. 
 def get_rigidbody_capsule(rb_tr: wi_transform_component, rb: wi_rigidbody_component) -> wi_primitive_capsule:
    //TODO: there's no reason the capsule couldn't be rotated by the entity transform, 
    //  this is only correct for capsules running along the y axis.

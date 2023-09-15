@@ -17,6 +17,7 @@ enum WOKIND {
 
 };
 
+
 // A handle for a wicked object that can be passed in and out of lobster as an int2.
 struct wo_handle
 {

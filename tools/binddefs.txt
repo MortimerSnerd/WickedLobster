@@ -1,60 +1,59 @@
 "Returns the transform component for 'entity' if it exists, or int2{?, 0} if there is none."
-def get_transform_component(scene: H, entity: H) -> H
+def get_transform_component(scene: A, entity: H) -> H
 
 "Creates a new empty scene."
-def new_scene() -> H
-
-"Deletes a scene."
-def delete_scene(scene: H)
+def new_scene() -> A
 
 "Returns the global scene"
-def global_scene() -> H
+def global_scene() -> A
 
 "Returns true if 'entity' is descendant of 'ancestor'"
-def is_descendant_entity(scene: H, entity: H, ancestor: H) -> bool
+def is_descendant_entity(scene: A, entity: H, ancestor: H) -> bool
 
 "Retargets an animation from one humanoid to another and returns resulting entity"
-def retarget_animation(scene: H, dest_entity: H, src_entity: H, bake_data: bool) -> H
+def retarget_animation(scene: A, dest_entity: H, src_entity: H, bake_data: bool) -> H
 
 "Deletes an entity from the scene"
-def remove_entity(scene: H, entity: H, recursive: bool)
+def remove_entity(scene: A, entity: H, recursive: bool)
 
 "Duplicates an entity"
-def duplicate_entity(scene: H, entity: H) -> H
+def duplicate_entity(scene: A, entity: H) -> H
 
 "Merges src scene into dest scene."
-def scene_merge(dest: H, src: H)
+def scene_merge(dest: A, src: A)
 
 "Creates an entity with a transform component"
-def create_transform_entity(scene: H, name: string) -> H
+def create_transform_entity(scene: A, name: string) -> H
 
 "Creates an entity with a object component"
-def create_object_entity(scene: H, name: string) -> H
+def create_object_entity(scene: A, name: string) -> H
 
 "Creates an entity with a mesh component"
-def create_mesh_entity(scene: H, name: string) -> H
+def create_mesh_entity(scene: A, name: string) -> H
 
 "Creates an entity with a light component"
-def create_light_entity(scene: H, name: string, position: float3, color: float3, intensity: float, range: float, type: int, outer_cone_angle: float, inner_cone_angle: float) -> H
+def create_light_entity(scene: A, name: string, position: float3, color: float3, intensity: float, range: float, type: int, outer_cone_angle: float, inner_cone_angle: float) -> H
 
 "Creates an entity with a force component"
-def create_force_entity(scene: H, name: string, position: float3) -> H
+def create_force_entity(scene: A, name: string, position: float3) -> H
 
 "Creates an entity with a environment_probe component"
-def create_environment_probe_entity(scene: H, name: string, position: float3) -> H
+def create_environment_probe_entity(scene: A, name: string, position: float3) -> H
 
 "Creates an entity with a emitter component"
-def create_emitter_entity(scene: H, name: string, position: float3) -> H
+def create_emitter_entity(scene: A, name: string, position: float3) -> H
 
 "Creates an entity with a cube component"
-def create_cube_entity(scene: H, name: string) -> H
+def create_cube_entity(scene: A, name: string) -> H
 
 "Creates an entity with a plane component"
-def create_plane_entity(scene: H, name: string) -> H
+def create_plane_entity(scene: A, name: string) -> H
 
+"Attaches an entity to a parent"
+def component_attach(scene: A, entity: H, parent: H, child_already_in_local_space: bool)
 
 "wi::primitive::Ray"
-struct primitive_ray
+struct primitive_ray !managed
     origin: float3
     t_min: float
     direction: float3
@@ -63,16 +62,16 @@ struct primitive_ray
 endstruct
 
 "Creates a ray from the passed parameters"
-def make_ray_from(origin: float3, direction: float3, tmin: float, tmax: float) -> H
+def make_ray_from(origin: float3, direction: float3, tmin: float, tmax: float) -> A
 
 "Tests intersection between a ray and capsule, returns bool, dist, direction"
-def ray_capsule_intersects(ray: H, capsule: H) -> bool, float, float3
+def ray_capsule_intersects(ray: A, capsule: A) -> bool, float, float3
 
 "Tests intersection between a ray and sphere, returns bool, dist, direction"
-def ray_sphere_intersects(ray: H, sphere: H) -> bool, float, float3
+def ray_sphere_intersects(ray: A, sphere: A) -> bool, float, float3
 
 "wi::scene::Scene::RayIntersectionResult"
-struct ray_intersection
+struct ray_intersection !managed
     entity: H
     position: float3
     normal: float3
@@ -90,37 +89,37 @@ endstruct
 
 
 "Loads the model from the file into the given scene. Returns valid entity handle if attached==true"
-def load_model(scene: H, fname: string, attach: bool) -> H
+def load_model(scene: A, fname: string, attach: bool) -> H
 
 "Creates a new empty entity"
 def create_entity() -> H
 
 "Creates a layer component for the given entity and returns a handle"
-def create_layer_component(scene: H, entity: H) -> H
+def create_layer_component(scene: A, entity: H) -> H
 
 "Gets the layer component for the given entity."
-def get_layer_component(scene: H, entity: H) -> H
+def get_layer_component(scene: A, entity: H) -> H
 
 "Returns the number of entities that have a layer component"
-def entity_layer_count(scene: H) -> int
+def entity_layer_count(scene: A) -> int
 
 "Returns the nth entity that has a layer component"
-def entity_layer_get(scene: H, n: int) -> H
+def entity_layer_get(scene: A, n: int) -> H
 
 "Creates a humanoid component for the given entity and returns a handle"
-def create_humanoid_component(scene: H, entity: H) -> H
+def create_humanoid_component(scene: A, entity: H) -> H
 
 "Gets the humanoid component for the given entity."
-def get_humanoid_component(scene: H, entity: H) -> H
+def get_humanoid_component(scene: A, entity: H) -> H
 
 "Returns the number of entities that have a humanoid component"
-def entity_humanoid_count(scene: H) -> int
+def entity_humanoid_count(scene: A) -> int
 
 "Returns the nth entity that has a humanoid component"
-def entity_humanoid_get(scene: H, n: int) -> H
+def entity_humanoid_get(scene: A, n: int) -> H
 
 "Creates a name component for the given entity, and returns a the handle"
-def create_name_component(scene: H, entity: H) -> H
+def create_name_component(scene: A, entity: H) -> H
 
 "Sets the name for a name component."
 def nc_set_name(name_comp: H, name: string)
@@ -129,16 +128,16 @@ def nc_set_name(name_comp: H, name: string)
 def nc_get_name(name_comp: H) -> string
 
 "Gets the name component for the given entity"
-def get_name_component(scene: H, entity: H) -> H
+def get_name_component(scene: A, entity: H) -> H
 
 "Returns number of entities that have name components."
-def entity_names_count(scene: H) -> int
+def entity_names_count(scene: A) -> int
 
 "Returns entity #n that has a name component"
-def entity_names_get(scene: H, n: int) -> H
+def entity_names_get(scene: A, n: int) -> H
 
 "Searches scene for an entity by name. Returns INVALID_ENTITY if not found."
-def find_entity_by_name(scene: H, name: string, ancestor_entity: H) -> H
+def find_entity_by_name(scene: A, name: string, ancestor_entity: H) -> H
 
 "Logs to Wicked Engine backlog with given log level"
 def backlog(level: int, msg: string)
@@ -147,10 +146,10 @@ def backlog(level: int, msg: string)
 def is_backlog_active() -> bool
 
 "Creates a camera component on an entity."
-def create_camera_component(scene: H, entity: H) -> H
+def create_camera_component(scene: A, entity: H) -> H
 
 "wi::scene::TransformComponent"
-struct transform!
+struct transform !bare
 	scale_local: float3
 	rotation_local: float4
 	translation_local: float3
@@ -158,7 +157,7 @@ struct transform!
 endstruct
 
 "Creates a transform component on an entity"
-def create_transform_component(scene: H, entity: H) -> H
+def create_transform_component(scene: A, entity: H) -> H
 
 "Creates a transform component attached to no scene or entity.  Seems to be used primarly for calculations from scripts"
 def create_transform() -> H
@@ -206,13 +205,13 @@ def transform_scale(tcomp: H, scale: float3)
 def transform_lerp(tcomp: H, a: H, b: H, t: float)
 
 "gets the local matrix for the transform"
-def get_transform_local_matrix(tcomp: H) -> H 
+def get_transform_local_matrix(tcomp: H) -> A 
 
 "gets the world matrix for the transform"
-def get_transform_world_matrix(tcomp: H) -> H
+def get_transform_world_matrix(tcomp: H) -> A
 
 "Trasforms the transform by the given matrix"
-def transform_transform_matrix(tcomp: H, matrix: H)
+def transform_transform_matrix(tcomp: H, matrix: A)
 
 "Gets camera component fov"
 def camera_fov(tcomp: H) -> float
@@ -251,41 +250,41 @@ def camera_update(tcomp: H)
 def transform_camera(camera: H, tcomp: H)
 
 "Sets the camera's transform from the matris"
-def transform_camera_set_matrix(camera: H, matrix: H)
+def transform_camera_set_matrix(camera: H, matrix: A)
 
 "Gets the camera component of an entity"
-def get_camera_component(scene: H, ent: H) -> H
+def get_camera_component(scene: A, ent: H) -> H
 
 "Returns the number of cameras in the scene"
-def get_camera_count(scene: H) -> int
+def get_camera_count(scene: A) -> int
 
 "returns entity holding the nth camera in the scene"
-def get_camera_entity(scene: H, n: int) -> H
+def get_camera_entity(scene: A, n: int) -> H
 
 "wi::scene::CameraComponent"
-struct camera!
+struct camera !bare
 	eye: float3
 	at: float3
 	up: float3
 endstruct
 
 "Gets the camera projection matrix.  Matrix valid as long as camera component exists."
-def get_camera_projection(tcomp: H) -> H
+def get_camera_projection(tcomp: H) -> A
 
 "Gets the camera view matrix.  Matrix valid as long as camera component exists."
-def get_camera_view(tcomp: H) -> H
+def get_camera_view(tcomp: H) -> A
 
 "Gets the camera VP matrix.  Matrix valid as long as camera component exists."
-def get_camera_VP(tcomp: H) -> H
+def get_camera_VP(tcomp: H) -> A
 
 "Gets the camera inverse projection matrix.  Matrix valid as long as camera component exists."
-def get_camera_inverse_projection(tcomp: H) -> H
+def get_camera_inverse_projection(tcomp: H) -> A
 
 "Gets the camera inverse view matrix.  Matrix valid as long as camera component exists."
-def get_camera_inverse_view(tcomp: H) -> H
+def get_camera_inverse_view(tcomp: H) -> A
 
 "Gets the camera inverse VP matrix.  Matrix valid as long as camera component exists."
-def get_camera_inverse_VP(tcomp: H) -> H
+def get_camera_inverse_VP(tcomp: H) -> A
 
 
 
@@ -379,7 +378,7 @@ def sprite_font_get_text(font: H) -> string
 
 
 "wi::scene::HumanoidComponent"
-struct humanoid!
+struct humanoid !bare
 	default_look_direction: float3
 	head_rotation_max: float2
 	head_rotation_speed: float
@@ -402,7 +401,7 @@ def humanoid_set_lookat_enabled(hum: H, v: bool)
 
 
 "wi::scene::Layer component"
-struct layer!
+struct layer !bare
 	mask: int
 	propagation_mask: int
 endstruct
@@ -433,7 +432,7 @@ def get_renderpath_physical_dims(path: H) -> int2
 def get_renderpath_logical_dims(path: H) -> float2
 
 "wi::RenderPath3d"
-struct renderpath3d!
+struct renderpath3d !bare
 	exposure: float
 	brightness: float
 	contrast: float
@@ -492,7 +491,7 @@ def set_renderpath3d_ao(renderpath3d: H, v: int)
 
 
 "wi::scene::ColliderComponent"
-struct collider!
+struct collider !bare
 	shape: int
 	radius: float
 	offset: float3
@@ -507,86 +506,83 @@ def set_collider_is_cpu_enabled(collider: H, v: bool)
 
 
 "Creates a collider component for the given entity and returns a handle"
-def create_collider_component(scene: H, entity: H) -> H
+def create_collider_component(scene: A, entity: H) -> H
 
 "Gets the collider component for the given entity."
-def get_collider_component(scene: H, entity: H) -> H
+def get_collider_component(scene: A, entity: H) -> H
 
 "Returns the number of entities that have a collider component"
-def entity_collider_count(scene: H) -> int
+def entity_collider_count(scene: A) -> int
 
 "Returns the nth entity that has a collider component"
-def entity_collider_get(scene: H, n: int) -> H
+def entity_collider_get(scene: A, n: int) -> H
 
-"Returns the primitive capsule for the collider, only valid if the shape is CAPSULE.  Returns value does not need to be deleted, valid until there is an ecs change in the scene"
-def get_collider_capsule(collider: H) -> H
+"Returns the primitive capsule for the collider, only valid if the shape is CAPSULE."
+def get_collider_capsule(collider: H) -> A
 
 "Creates a matrix"
-def create_matrix4x4() -> H
-
-"Deletes a matrix"
-def delete_matrix(m: H)
+def create_matrix4x4() -> A
 
 "Initializes the matrix as an identity matrix"
-def identity_matrix(m: H)
+def identity_matrix(m: A)
 
 "Transforms a vector with the matrix"
-def transform_vector(matrix: H, v: float4) -> float4
+def transform_vector(matrix: A, v: float4) -> float4
 
 "Assigns matrix lhs the value from rhs"
-def assign_matrix(lhs: H, rhs: H)
+def assign_matrix(lhs: A, rhs: A)
 
 "Returns the translation part of the given matrix"
-def get_matrix_translation(matrix: H) -> float3
+def get_matrix_translation(matrix: A) -> float3
 
 "Initializes a matrix from rows"
-def assign_matrix_rows(m: H, r1: float4, r2: float4, r3: float4, r4: float4)
+def assign_matrix_rows(m: A, r1: float4, r2: float4, r3: float4, r4: float4)
 
 "Returns a row from a matrix"
-def return_matrix_row(m: H, r: int) -> float4
+def return_matrix_row(m: A, r: int) -> float4
 
 "Set up as a translation matrix"
-def translation_matrix(m: H, v: float3)
+def translation_matrix(m: A, v: float3)
 
 "Set up as a rotation matrix"
-def rotation_euler_matrix(m: H, angles: float3)
+def rotation_euler_matrix(m: A, angles: float3)
 
 "Set up as a rotation around x matrix"
-def rotation_x_matrix(m: H, a: float)
+def rotation_x_matrix(m: A, a: float)
 
 "Set up as a rotation around y matrix"
-def rotation_y_matrix(m: H, a: float)
+def rotation_y_matrix(m: A, a: float)
 
 "Set up as a rotation around z matrix"
-def rotation_z_matrix(m: H, a: float)
+def rotation_z_matrix(m: A, a: float)
 
 "Set matrix as quaternion rotation"
-def rotation_quat_matrix(m: H, quat: float4)
+def rotation_quat_matrix(m: A, quat: float4)
 
 "Set up matrix as a scaling matrix"
-def scaling_matrix(m: H, scale: float4)
+def scaling_matrix(m: A, scale: float4)
 
 "Set up matrix to look to a pos"
-def look_to_matrix(m: H, eyepos: float3, eyedir: float3, up: float3)
+def look_to_matrix(m: A, eyepos: float3, eyedir: float3, up: float3)
 
 "Set up matrix to look at a pos"
-def look_at_matrix(m: H, eyepos: float3, focuspos: float3, up: float3)
+def look_at_matrix(m: A, eyepos: float3, focuspos: float3, up: float3)
 
 "Multiply lhs by rhs and put the reuslt into result"
-def multiply_matrix(lhs: H, rhs: H, result: H)
+def multiply_matrix(lhs: A, rhs: A, result: A)
 
 "Add lhs and rhs, and put the result in result"
-def add_matrix(lhs: H, rhs: H, result: H)
+def add_matrix(lhs: A, rhs: A, result: A)
 
 "Transpose a matrix"
-def transpose_matrix(m: H, result: H)
+def transpose_matrix(m: A, result: A)
 
 "Inverts 'm' and puts the result in 'result'"
-def invert_matrix(m: H, result: H)
+def invert_matrix(m: A, result: A)
 
 
 "wi::scene::AnimationComponent"
-struct animation!
+struct animation !bare
 	start: float
 	end: float
 	timer: float
@@ -619,16 +615,16 @@ def stop_animation(anim: H)
 def set_animation_looped(anim: H, v: bool)
 
 "Creates a animation component for the given entity and returns a handle"
-def create_animation_component(scene: H, entity: H) -> H
+def create_animation_component(scene: A, entity: H) -> H
 
 "Gets the animation component for the given entity."
-def get_animation_component(scene: H, entity: H) -> H
+def get_animation_component(scene: A, entity: H) -> H
 
 "Returns the number of entities that have a animation component"
-def entity_animation_count(scene: H) -> int
+def entity_animation_count(scene: A) -> int
 
 "Returns the nth entity that has a animation component"
-def entity_animation_get(scene: H, n: int) -> H
+def entity_animation_get(scene: A, n: int) -> H
 
 
 "Controls VXGI"
@@ -638,17 +634,17 @@ def renderer_set_vxgi_enabled(v: bool)
 def renderer_vxgi_enabled() -> bool
 
 "wi::primitive::Sphere"
-struct primitive_sphere
+struct primitive_sphere !managed
 	center: float3
 	radius: float
 endstruct
 
 "Primitive to primitive intersection test, returns true|false,distance,direction"
-def sphere_sphere_intersects(sphere0: H, sphere1: H) -> bool,float,float3
+def sphere_sphere_intersects(sphere0: A, sphere1: A) -> bool,float,float3
 
 
 "wi::scene::Scene::SphereIntersectionResult"
-struct sphere_intersection_result
+struct sphere_intersection_result !managed
 	entity: H
 	position: float3
 	normal: float3
@@ -657,34 +653,34 @@ struct sphere_intersection_result
 endstruct
 
 "Tests a sphere intersection with a scene, and returns a SphereIntersectionResult"
-def scene_sphere_intersects(scene: H, sphere: H, filter_mask: int, layer_mask: int, lod: int)->H
+def scene_sphere_intersects(scene: A, sphere: A, filter_mask: int, layer_mask: int, lod: int)-> A
 
 
 "wi::primitive::Capsule"
-struct primitive_capsule
+struct primitive_capsule !managed
 	base: float3
 	tip: float3
 	radius: float
 endstruct
 
 "Capsule to capsule intersection test, returns true/false, position, normal, penetration_depth"
-def capsule_capsule_intersects(cap0: H, cap1: H) -> bool, float3, float3, float
+def capsule_capsule_intersects(cap0: A, cap1: A) -> bool, float3, float3, float
 
 "Capsule to sphere intersection test, returns bool, dist, direction"
-def capsule_sphere_intersects(cap: H, sphere: H) -> bool, float, float3
+def capsule_sphere_intersects(cap: A, sphere: A) -> bool, float, float3
 
 "Sphere to capsule intersection test, returns bool, dist, direction"
-def sphere_capsule_intersects(sphere: H, cap: H) -> bool, float, float3
+def sphere_capsule_intersects(sphere: A, cap: A) -> bool, float, float3
 
 "Tests whether a capsule intersects anything in the scene, returning a SphereIntersectionResult (not a typo)"
-def scene_capsule_intersects(scene: H, cap: H, filter_mask: int, layer_mask: int, lod: int) -> H
+def scene_capsule_intersects(scene: A, cap: A, filter_mask: int, layer_mask: int, lod: int) -> A
 
-"Tests whether a ray intersects anything in the scene, returning a RayIntersectionResult (not a typo)"
-def scene_ray_intersects(scene: H, ray: H, filter_mask: int, layer_mask: int, lod: int) -> H
+"Tests whether a ray intersects anything in the scene, returning a RayIntersectionResult"
+def scene_ray_intersects(scene: A, ray: A, filter_mask: int, layer_mask: int, lod: int) -> A
 
 
 "wi::scene::RigidBodyPhysicsComponent"
-struct rigidbody_physics!
+struct rigidbody_physics !bare
 	shape: int
 	mass: float
 	friction: float
@@ -701,19 +697,19 @@ struct rigidbody_physics!
 endstruct
 
 "Creates a rigidbody component for the given entity and returns a handle"
-def create_rigidbody_component(scene: H, entity: H) -> H
+def create_rigidbody_component(scene: A, entity: H) -> H
 
 "Gets the rigidbody component for the given entity."
-def get_rigidbody_component(scene: H, entity: H) -> H
+def get_rigidbody_component(scene: A, entity: H) -> H
 
 "Returns the number of entities that have a rigidbody component"
-def entity_rigidbody_count(scene: H) -> int
+def entity_rigidbody_count(scene: A) -> int
 
 "Returns the nth entity that has a rigidbody component"
-def entity_rigidbody_get(scene: H, n: int) -> H
+def entity_rigidbody_get(scene: A, n: int) -> H
 
 "wi::scene::ObjectComponent"
-struct object!
+struct object !bare
 	mesh_id: H
 	cascade_mask: int
 	filter_mask: int
@@ -728,39 +724,39 @@ struct object!
 endstruct
 
 "Creates a object component for the given entity and returns a handle"
-def create_object_component(scene: H, entity: H) -> H
+def create_object_component(scene: A, entity: H) -> H
 
 "Gets the object component for the given entity."
-def get_object_component(scene: H, entity: H) -> H
+def get_object_component(scene: A, entity: H) -> H
 
 "Returns the number of entities that have a object component"
-def entity_object_count(scene: H) -> int
+def entity_object_count(scene: A) -> int
 
 "Returns the nth entity that has a object component"
-def entity_object_get(scene: H, n: int) -> H
+def entity_object_get(scene: A, n: int) -> H
 
 
 "wi::scene::HierarchyComponent"
-struct hierarchy!
+struct hierarchy !bare
     parent_id: H
     layermask_bind: int
 endstruct
 
 "Creates a hierarchy component for the given entity and returns a handle"
-def create_hierarchy_component(scene: H, entity: H) -> H
+def create_hierarchy_component(scene: A, entity: H) -> H
 
 "Gets the hierarchy component for the given entity."
-def get_hierarchy_component(scene: H, entity: H) -> H
+def get_hierarchy_component(scene: A, entity: H) -> H
 
 "Returns the number of entities that have a hierarchy component"
-def entity_hierarchy_count(scene: H) -> int
+def entity_hierarchy_count(scene: A) -> int
 
 "Returns the nth entity that has a hierarchy component"
-def entity_hierarchy_get(scene: H, n: int) -> H
+def entity_hierarchy_get(scene: A, n: int) -> H
 
 
 "wi::scene::LightComponent"
-struct light!
+struct light !bare
     type: int
     color: float3
     intensity: float
@@ -777,16 +773,16 @@ struct light!
 endstruct
 
 "Creates a light component for the given entity and returns a handle"
-def create_light_component(scene: H, entity: H) -> H
+def create_light_component(scene: A, entity: H) -> H
 
 "Gets the light component for the given entity."
-def get_light_component(scene: H, entity: H) -> H
+def get_light_component(scene: A, entity: H) -> H
 
 "Returns the number of entities that have a light component"
-def entity_light_count(scene: H) -> int
+def entity_light_count(scene: A) -> int
 
 "Returns the nth entity that has a light component"
-def entity_light_get(scene: H, n: int) -> H
+def entity_light_get(scene: A, n: int) -> H
 
 
 "Populates the Resource with sound data"
@@ -797,7 +793,7 @@ def set_resource_outdated(resource: H)
 
 
 "wi::audio::SoundInstance"
-struct sound_instance!
+struct sound_instance !bare
     loop_begin: float
     loop_length: float
     reverb_enabled: bool
@@ -808,7 +804,7 @@ def sound_instance_is_valid(sound_instance: H) -> bool
 
 
 "wi::scene::SoundComponent"
-struct sound_component!
+struct sound_component !bare
     filename: string
     resource: H
     instance: H
@@ -819,23 +815,23 @@ struct sound_component!
 endstruct
 
 "Creates a sound component for the given entity and returns a handle"
-def create_sound_component(scene: H, entity: H) -> H
+def create_sound_component(scene: A, entity: H) -> H
 
 "Gets the sound component for the given entity."
-def get_sound_component(scene: H, entity: H) -> H
+def get_sound_component(scene: A, entity: H) -> H
 
 "Returns the number of entities that have a sound component"
-def entity_sound_count(scene: H) -> int
+def entity_sound_count(scene: A) -> int
 
 "Returns the nth entity that has a sound component"
-def entity_sound_get(scene: H, n: int) -> H
+def entity_sound_get(scene: A, n: int) -> H
 
 "Creates a entity with a sound component in the given scene, and returns it"
-def scene_create_sound_entity(scene: H, name: string, filename: string, pos: float3) -> H
+def scene_create_sound_entity(scene: A, name: string, filename: string, pos: float3) -> H
 
 
 "wi::scene::DecalComponent"
-struct decal_component!
+struct decal_component !bare
     slope_blend_power: float
     texture: H
     normal: H
@@ -844,19 +840,19 @@ struct decal_component!
 endstruct
 
 "Creates a decal component for the given entity and returns a handle"
-def create_decal_component(scene: H, entity: H) -> H
+def create_decal_component(scene: A, entity: H) -> H
 
 "Gets the decal component for the given entity."
-def get_decal_component(scene: H, entity: H) -> H
+def get_decal_component(scene: A, entity: H) -> H
 
 "Returns the number of entities that have a decal component"
-def entity_decal_count(scene: H) -> int
+def entity_decal_count(scene: A) -> int
 
 "Returns the nth entity that has a decal component"
-def entity_decal_get(scene: H, n: int) -> H
+def entity_decal_get(scene: A, n: int) -> H
 
 "Creates a entity with a decal in the given scene, and returns it."
-def create_decal_entity(scene: H, name: string, texture_name: string, normal_map_name: string) -> H
+def create_decal_entity(scene: A, name: string, texture_name: string, normal_map_name: string) -> H
 
 
 

@@ -65,15 +65,40 @@ namespace wbnd
     template<typename T, WOKIND W>
     struct AlienPtr
     {
+        // We need the lowest order bit for the NODELETE flag.
+        static_assert(alignof(T) > 1);
+
+        enum
+        {
+            NODELETE = 0x1,
+            ALL_PTAGS = NODELETE
+        };
+
         static wo_handle handle(T *alien)
         {
             return {W, reinterpret_cast<int64_t>(alien)};
         }
 
+        // Handle for a managed type used in a sitatuation where the pointer
+        // should not be deleted when the lifetime ends.  Here, usually that's
+        // when we need to return a pointer to the inside of another object with
+        // a separate lifetime.
+        static wo_handle nodelete_handle(T *alien)
+        {
+            return {W, reinterpret_cast<int64_t>(alien)|NODELETE};
+        }
+
         static T* ptr(wo_handle const &h)
         {
             handle_check(h, W);
-            return reinterpret_cast<T *>(h.name);
+            return reinterpret_cast<T *>(h.name&~ALL_PTAGS);
+        }
+
+        static void deleteit(wo_handle const &h)
+        {
+            if ((h.name & NODELETE) == 0) {
+                delete ptr(h);
+            }
         }
 
     };
@@ -106,6 +131,49 @@ namespace wbnd
     AlienPtr<wi::primitive::Ray, WK_RAY> RAY;
     AlienPtr<wi::scene::Scene::RayIntersectionResult, WK_RAY_INTERSECTION> RAY_INTERSECT;
 
+    // This is awkward, but options are limited because the Lobster and Wicked
+    // engine headers can't co-exist in the same compilation unit. We only handle cases
+    // that we have mapped to the alien type.
+    void delete_alien(wo_handle const &h)
+    {
+        if (!h.kind) return;
+
+        switch (h.kind) {
+            case WK_RAY: 
+                RAY.deleteit(h);
+                break;
+
+            case WK_CAPSULE:
+                CAPSULE.deleteit(h);
+                break;
+
+            case WK_SPHERE: 
+                SPHERE.deleteit(h);
+                break;
+
+            case WK_SPHEREINTERSECTION:
+                SPHERE_INTERSECTION.deleteit(h);
+                break;
+
+            case WK_RAY_INTERSECTION:
+                RAY_INTERSECT.deleteit(h);
+                break;
+
+            case WK_MATRIX:
+                MATRIX.deleteit(h);
+                break;
+
+            case WK_SCENE:
+                SCENE.deleteit(h);
+                break;
+
+            default:
+                wi::backlog::post("unhandled delete_alien tag", wi::backlog::LogLevel::Error);
+                dump_lobster_stack();
+                abort();
+                break;
+        }
+    }
 
     void valid_entity(wo_handle const &h)
     {
@@ -128,15 +196,6 @@ namespace wbnd
         return SCENE.handle(new wi::scene::Scene());
     }
 
-    void delete_scene(wo_handle const &scene)
-    {
-        if (scene.name == 0) return;
-        auto sp = SCENE.ptr(scene);
-        // No deleting global scene.
-        if (sp == &wi::scene::GetScene()) return;
-        delete sp;
-    }
-
     void scene_merge(wo_handle const &dest, wo_handle const &src)
     {
         auto dp = SCENE.ptr(dest);
@@ -146,7 +205,7 @@ namespace wbnd
 
     wo_handle global_scene()
     {
-        return wo_handle{WK_SCENE, reinterpret_cast<int64_t>(&wi::scene::GetScene())};
+        return SCENE.nodelete_handle(&wi::scene::GetScene());
     }
 
     wo_handle load_model(wo_handle const& dest_scene, std::string_view const& filename, bool attach_to_entity)
@@ -1072,7 +1131,7 @@ namespace wbnd
 
     wo_handle create_matrix4x4()
     {
-        return {WK_MATRIX, reinterpret_cast<int64_t>(new XMFLOAT4X4())};
+        return MATRIX.handle(new XMFLOAT4X4());
     }
 
     void load_from_xmmatrix(XMFLOAT4X4 *dest, XMMATRIX &src)
@@ -1287,32 +1346,32 @@ namespace wbnd
 
     wo_handle get_camera_projection(wo_handle const &tcomp)
     {
-        return MATRIX.handle(&CAMERA.ptr(tcomp)->Projection);
+        return MATRIX.nodelete_handle(&CAMERA.ptr(tcomp)->Projection);
     }
 
     wo_handle get_camera_view(wo_handle const &tcomp)
     {
-        return MATRIX.handle(&CAMERA.ptr(tcomp)->View);
+        return MATRIX.nodelete_handle(&CAMERA.ptr(tcomp)->View);
     }
 
     wo_handle get_camera_VP(wo_handle const &tcomp)
     {
-        return MATRIX.handle(&CAMERA.ptr(tcomp)->VP);
+        return MATRIX.nodelete_handle(&CAMERA.ptr(tcomp)->VP);
     }
 
     wo_handle get_camera_inverse_projection(wo_handle const &tcomp)
     {
-        return MATRIX.handle(&CAMERA.ptr(tcomp)->InvProjection);
+        return MATRIX.nodelete_handle(&CAMERA.ptr(tcomp)->InvProjection);
     }
 
     wo_handle get_camera_inverse_view(wo_handle const &tcomp)
     {
-        return MATRIX.handle(&CAMERA.ptr(tcomp)->InvView);
+        return MATRIX.nodelete_handle(&CAMERA.ptr(tcomp)->InvView);
     }
 
     wo_handle get_camera_inverse_VP(wo_handle const &tcomp)
     {
-        return MATRIX.handle(&CAMERA.ptr(tcomp)->InvVP);
+        return MATRIX.nodelete_handle(&CAMERA.ptr(tcomp)->InvVP);
     }
 
     void set_animation_start(wo_handle const &animation, float v)
@@ -1942,11 +2001,6 @@ namespace wbnd
         return SPHERE.handle(new wi::primitive::Sphere());
     }
 
-    void delete_primitive_sphere(wo_handle const &primitive_sphere)
-    {
-        delete SPHERE.ptr(primitive_sphere);
-    }
-
     void set_primitive_sphere_center(wo_handle const &primitive_sphere, XMFLOAT3 const &v)
     {
         SPHERE.ptr(primitive_sphere)->center = v;
@@ -1975,11 +2029,6 @@ namespace wbnd
     wo_handle create_sphere_intersection_result()
     {
         return SPHERE_INTERSECTION.handle(new wi::scene::Scene::SphereIntersectionResult());
-    }
-
-    void delete_sphere_intersection_result(wo_handle const &sphere_intersection_result)
-    {
-        delete SPHERE_INTERSECTION.ptr(sphere_intersection_result);
     }
 
     void set_sphere_intersection_result_entity(wo_handle const &sphere_intersection_result, wo_handle const &v)
@@ -2045,11 +2094,6 @@ namespace wbnd
         return CAPSULE.handle(new wi::primitive::Capsule());
     }
 
-    void delete_primitive_capsule(wo_handle const &primitive_capsule)
-    {
-        delete CAPSULE.ptr(primitive_capsule);
-    }
-
     void set_primitive_capsule_base(wo_handle const &primitive_capsule, XMFLOAT3 const &v)
     {
         CAPSULE.ptr(primitive_capsule)->base = v;
@@ -2111,7 +2155,7 @@ namespace wbnd
 
     wo_handle get_collider_capsule(wo_handle const &collider)
     {
-        return CAPSULE.handle(&COLLIDER.ptr(collider)->capsule);
+        return CAPSULE.nodelete_handle(&COLLIDER.ptr(collider)->capsule);
     }
 
     void set_rigidbody_physics_shape(wo_handle const &rigidbody_physics, int32_t v)
@@ -2867,14 +2911,16 @@ namespace wbnd
         return mkentity(SCENE.ptr(scene)->Entity_CreatePlane(string(name)));
     }
 
+    void component_attach(wo_handle const &scene, wo_handle const &entity, wo_handle const &parent, bool child_already_in_local_space)
+    {
+        handle_check(entity, WK_ENTITY);
+        handle_check(parent, WK_ENTITY); 
+        SCENE.ptr(scene)->Component_Attach(entity.name, parent.name, child_already_in_local_space);
+    }
+
     wo_handle create_primitive_ray()
     {
         return RAY.handle(new wi::primitive::Ray());
-    }
-
-    void delete_primitive_ray(wo_handle const &primitive_ray)
-    {
-        delete RAY.ptr(primitive_ray);
     }
 
     void set_primitive_ray_origin(wo_handle const &primitive_ray, XMFLOAT3 const &v)
@@ -2946,11 +2992,6 @@ namespace wbnd
     wo_handle create_ray_intersection()
     {
         return RAY_INTERSECT.handle(new wi::scene::Scene::RayIntersectionResult());
-    }
-
-    void delete_ray_intersection(wo_handle const &ray_intersection)
-    {
-        delete RAY_INTERSECT.ptr(ray_intersection);
     }
 
     void set_ray_intersection_entity(wo_handle const &ray_intersection, wo_handle const &v)
@@ -3061,6 +3102,6 @@ namespace wbnd
 
     wo_handle get_ray_intersection_orientation(wo_handle const &ray_intersection)
     {
-        return MATRIX.handle(&RAY_INTERSECT.ptr(ray_intersection)->orientation);
+        return MATRIX.nodelete_handle(&RAY_INTERSECT.ptr(ray_intersection)->orientation);
     }
 }

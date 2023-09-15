@@ -18,5 +18,8 @@ namespace wbnd
     // Needs to be called before the lobster VM is started.
     void set_3d_render_path(wi::RenderPath3D *rp);
     void set_game_app(GameApplication *app);
+
+    // Used by AlienResource to delete a arbitrary alien pointer.
+    void delete_alien(wo_handle const &h);
 }
 

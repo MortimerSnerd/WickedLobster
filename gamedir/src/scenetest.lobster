@@ -23,23 +23,23 @@ var first_frame = true
 // to float3_z if.
 def get_fwd_vector(t: wi_transform_component) -> float3:
    var rv = float3_z
-   with_temp_object(t.world_matrix()) m:
-      let fc = m.transform_vector(float3_z) * float3{1.0, 0.0, 1.0}
-      if magnitude_squared(fc) >= 0.001:
-         rv = normalize(fc)
+   let m = t.world_matrix()
+   let fc = m.transform_vector(float3_z) * float3{1.0, 0.0, 1.0}
+   if magnitude_squared(fc) >= 0.001:
+      rv = normalize(fc)
    return rv
 
 // Get the vector the transform is looking at. 
 def get_look_vector(t: wi_transform_component) -> float3:
    var rv = float3_z
-   with_temp_object(t.world_matrix()) m:
-      let fc = m.transform_vector(float3_z)
-      if magnitude_squared(fc) >= 0.001:
-         rv = normalize(fc)
+   let m = t.world_matrix()
+   let fc = m.transform_vector(float3_z)
+   if magnitude_squared(fc) >= 0.001:
+      rv = normalize(fc)
    return rv
 
 // Returns a ray pointing from the camera to the direction being looked
-// at, with the given maxlen.  The ray must be deleted.
+// at, with the given maxlen. 
 def get_look_ray(maxlen = 1.0e6) -> wi_primitive_ray:
    let cam_tr = gscene.get_transform_component(cament)
    let dir = get_look_vector(cam_tr)
@@ -79,13 +79,13 @@ def load_initial_scene():
 
    // Load up our character model, and attach the camera to it.
    // It's just a box right now.
-   with_temp_scene() csc:
-      csc.load_model("spudge/fpchar.wiscene", false)
-      charent = csc.find_entity_by_name("boxybrown")
-      assert charent.is_valid()
-      cament = csc.find_entity_by_name("eyepoint", charent)
-      assert cament.is_valid()
-      gscene.merge(csc)
+   let csc = new_wi_scene()
+   csc.load_model("spudge/fpchar.wiscene", false)
+   charent = csc.find_entity_by_name("boxybrown")
+   assert charent.is_valid()
+   cament = csc.find_entity_by_name("eyepoint", charent)
+   assert cament.is_valid()
+   gscene.merge(csc)
 
    // Move character to spawnpoint, and extract yaw, pitch, etc...
    let char_tr = gscene.get_transform_component(charent)
@@ -111,12 +111,18 @@ def load_initial_scene():
    pinned_mouse_pos = input_get_pointer()
    input_hide_pointer(true)
 
-def create_spot_decal(pos):
-   let ent = gscene.create_decal_entity("spot", "spudge/spot.png")
-   let tr = gscene.get_transform_component(ent)
-   tr.clear()
-   tr.translate(pos + float3_y*0.01)
-   tr.rotate(mk_quat(float3_y, rnd_float()*360.0))
+def splat_decal(decal: wi_entity, pos: float3, normal: float3, on: wi_entity, rot = 0.0, scale = 1.0):
+   let decaltr = gscene.get_transform_component(decal)
+   decaltr.translate(pos)
+   decaltr.rotate(mk_quat(normal, rot))
+   decaltr.scale(float3_1*scale)
+   gscene.component_attach(decal, on, false)
+
+   // Restrict layer to what we're attached to
+   let onlayer = gscene.get_layer_component(on)
+   if onlayer.is_valid():
+      let dlayer = gscene.get_layer_component(decal)
+      dlayer.set_layer_mask(onlayer.layer_mask())
 
 
 wi_set_app_variable_frame_fn():
@@ -139,7 +145,7 @@ wi_set_app_variable_frame_fn():
    var mpos = float2_0
    var mdiff = float2_0
 
-   logmsg("FRAME dt={dt}")
+   //logmsg("FRAME dt={dt}")
 
    if first_frame:
       // pin the mouse to the center of the screen, so it won't go out of the window
@@ -186,14 +192,13 @@ wi_set_app_variable_frame_fn():
 
       if input_press(MOUSE_BUTTON_LEFT):
          //DEBUG play with rays
-         with_temp_object(get_look_ray()) ray:
-            with_temp_object(gscene.ray_intersects(ray, FILTER_OPAQUE, ~player_layer), wi_matrix()) ir, mat:
-               if ir.entity.is_valid():
-                  let ent = gscene.create_decal_entity("spot", "spudge/spot.png")
-                  let tr = gscene.get_transform_component(ent)
-                  tr.translate(ir.position())
-                  mat.look_to(ir.position(), ir.normal())
-                  tr.transform_by_matrix(mat)
+         let ray = get_look_ray()
+         let ir = gscene.ray_intersects(ray, FILTER_OPAQUE, ~player_layer)
+         let mat = wi_matrix()
+         logmsg("PICK {ir.debug_string()}")
+         if ir.entity.is_valid():
+            let ent = gscene.create_decal_entity("spot", "spudge/spot.png")
+            splat_decal(ent, ir.position(), ir.normal(), ir.entity(), rnd_float()*360.0, 0.2)
 
 
    var yvel = char_vel.y
@@ -214,35 +219,38 @@ wi_set_app_variable_frame_fn():
 
    let started_on_floor = char_on_floor
    char_on_floor = false
-   with_temp_object(get_rigidbody_capsule(char_tr, char_rb)) cap:
-      logmsg("\tctest capbase = {cap.base()}, tip={cap.tip()}, rad={cap.radius()}, v={char_vel} dp={act_dp} on_floor={char_on_floor}")
-      let start_pos = cap.base()
-      cap.translate(act_dp)
-      var touching_possible = true
-      var max_iters = 4
-      while touching_possible and max_iters > 0:
-         max_iters--
-         with_temp_object(gscene.capsule_intersects(cap, FILTER_COLLIDER|FILTER_NAVIGATION_MESH|FILTER_OPAQUE, static_layer|dynobjs_layer)) sin:
-            let cent = sin.entity()
-            let n = sin.normal()
-            guard cent.is_valid():
-               touching_possible = false
-            logmsg("\t\ttouch base={cap.base()}")
-            logmsg(sin.debug_string(3))
-            cap.translate(n*sin.depth())
-            if n.looks_like_floor:
-               if not started_on_floor:
-                  create_spot_decal(cap.base())
-               char_on_floor = true
-               char_vel = float3{char_vel.x, 0.0, char_vel.z}
-            elif n.looks_like_ceiling:
-               char_vel = float3{char_vel.x, 0.0, char_vel.z}
+   let cap = get_rigidbody_capsule(char_tr, char_rb)
+   //logmsg("\tctest capbase = {cap.base()}, tip={cap.tip()}, rad={cap.radius()}, v={char_vel} dp={act_dp} on_floor={char_on_floor}")
+   let start_pos = cap.base()
+   cap.translate(act_dp)
+   var touching_possible = true
+   var max_iters = 4
+   while touching_possible and max_iters > 0:
+      max_iters--
+      let sin = gscene.capsule_intersects(cap, FILTER_COLLIDER|FILTER_NAVIGATION_MESH|FILTER_OPAQUE, 
+                                          static_layer|dynobjs_layer)
+      let cent = sin.entity()
+      guard cent.is_valid():
+         touching_possible = false
 
-      act_dp = cap.base() - start_pos
-      if char_on_floor:
-         // Keep contact with the floor, rather than bouncing by a minute amount
-         // every frame.
-         act_dp -= float3_y*0.01
+      //logmsg("\t\ttouch base={cap.base()}")
+      //logmsg(sin.debug_string(3))
+      let n = sin.normal()
+      cap.translate(n*sin.depth())
+      if n.looks_like_floor:
+         if not started_on_floor:
+            let decal = gscene.create_decal_entity("spot", "spudge/spot.png")
+            splat_decal(decal, cap.base(), n, cent, rnd_float()*360.0, 0.2)
+         char_on_floor = true
+         char_vel = float3{char_vel.x, 0.0, char_vel.z}
+      elif n.looks_like_ceiling:
+         char_vel = float3{char_vel.x, 0.0, char_vel.z}
+
+   act_dp = cap.base() - start_pos
+   if char_on_floor:
+      // Keep contact with the floor, rather than bouncing by a minute amount
+      // every frame.
+      act_dp -= float3_y*0.01
 
    // Set head pitch
    let cam_tr = gscene.get_transform_component(cament)
