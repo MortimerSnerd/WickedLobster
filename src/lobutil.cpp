@@ -194,13 +194,13 @@ namespace
 void add_wl_builtins(lobster::NativeRegistry &anfr)
 {
     using namespace lobster;
-    anfr("wi_quit_game", "", "", "",
+    anfr("quit_game", "", "", "",
          "Call to exit the application",
         [](StackPtr &, VM &) {
             app_should_quit = true;
     });
 
-    anfr("wi_start_game", "", "", "",
+    anfr("start_game", "", "", "",
          "The lobster code should call this to start the game after any "
          "wanted function callbacks are set up.",
         [](StackPtr &, VM &) {
@@ -208,7 +208,7 @@ void add_wl_builtins(lobster::NativeRegistry &anfr)
             return NilVal();
     });
 
-    anfr("wi_set_app_variable_frame_fn", "f", "L", "",
+    anfr("set_app_variable_frame_fn", "f", "L", "",
          "Sets the function that gets called at the beginning of the frame. "
          "Can call delta_time() to get the step time since the last variable frame.",
         [](StackPtr &, VM &vm, Value &f) {
@@ -218,7 +218,7 @@ void add_wl_builtins(lobster::NativeRegistry &anfr)
             return NilVal();
     });
 
-    anfr("wi_set_app_fixed_frame_fn", "f", "L", "",
+    anfr("set_app_fixed_frame_fn", "f", "L", "",
          "Sets the function that gets called at the fixed intervals",
         [](StackPtr &, VM &vm, Value &f) {
             assert(f.type >= lobster::V_FUNCTION);
@@ -270,7 +270,7 @@ string run_lobster(lobster_options &args, function<void()> main)
         //
         // This function of course owes much to Lobster's main.cpp
         RegisterCoreLanguageBuiltins(nfr);
-        lobster::RegisterBuiltin(nfr, "", "wicked_lobster", add_wl_builtins);
+        lobster::RegisterBuiltin(nfr, "wiraw", "wicked_lobster", add_wl_builtins);
         auto loader = lobster::EnginePreInit(nfr);
 
         // We expect the current directory to be gamedir, with a "modules" and

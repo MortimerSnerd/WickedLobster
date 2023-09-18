@@ -5,7 +5,7 @@ def get_transform_component(scene: A, entity: H) -> H
 def new_scene() -> A
 
 "Returns the global scene"
-def global_scene() -> A
+def get_global_scene() -> A
 
 "Returns true if 'entity' is descendant of 'ancestor'"
 def is_descendant_entity(scene: A, entity: H, ancestor: H) -> bool
@@ -289,13 +289,13 @@ def get_camera_inverse_VP(tcomp: H) -> A
 
 
 "Check if a button is down"
-def input_down(button: int, playerindex: int) -> bool
+def get_input_down(button: int, playerindex: int) -> bool
 
 "Check if a button is pressed once"
-def input_press(button: int, playerindex: int) -> bool
+def get_input_press(button: int, playerindex: int) -> bool
 
 "Check if a button is held down"
-def input_hold(button: int, frames: int, continuous: bool, playerindex: int) -> bool
+def get_input_hold(button: int, frames: int, continuous: bool, playerindex: int) -> bool
 
 "get pointer position (eg. mouse pointer) (.xy) + scroll delta (.z) + pressure (.w)"
 def input_get_pointer() -> float4

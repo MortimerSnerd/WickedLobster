@@ -203,7 +203,7 @@ namespace wbnd
         dp->Merge(*sp);
     }
 
-    wo_handle global_scene()
+    wo_handle get_global_scene()
     {
         return SCENE.nodelete_handle(&wi::scene::GetScene());
     }
@@ -504,17 +504,17 @@ namespace wbnd
         return CAMERA.handle(sp->cameras.GetComponent(ent.name));
     }
 
-    bool input_down(int32_t button, int32_t playerindex)
+    bool get_input_down(int32_t button, int32_t playerindex)
     {
         return wi::input::Down((wi::input::BUTTON)button, playerindex);
     }
 
-    bool input_press(int32_t button, int32_t playerindex)
+    bool get_input_press(int32_t button, int32_t playerindex)
     {
         return wi::input::Press((wi::input::BUTTON)button, playerindex);
     }
 
-    bool input_hold(int32_t button, int32_t frames, bool continuous, int32_t playerindex)
+    bool get_input_hold(int32_t button, int32_t frames, bool continuous, int32_t playerindex)
     {
         return wi::input::Hold((wi::input::BUTTON)button, frames, continuous, playerindex);
     }

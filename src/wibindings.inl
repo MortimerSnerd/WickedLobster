@@ -1,7 +1,7 @@
 // GENERATED for inclusion in wibindings.h by tools/bindgen.lobster, do not edit
 wo_handle get_transform_component(wo_handle const& scene, wo_handle const& entity);
 wo_handle new_scene();
-wo_handle global_scene();
+wo_handle get_global_scene();
 bool is_descendant_entity(wo_handle const& scene, wo_handle const& entity, wo_handle const& ancestor);
 wo_handle retarget_animation(wo_handle const& scene, wo_handle const& dest_entity, wo_handle const& src_entity, bool bake_data);
 void remove_entity(wo_handle const& scene, wo_handle const& entity, bool recursive);
@@ -129,9 +129,9 @@ wo_handle get_camera_VP(wo_handle const& tcomp);
 wo_handle get_camera_inverse_projection(wo_handle const& tcomp);
 wo_handle get_camera_inverse_view(wo_handle const& tcomp);
 wo_handle get_camera_inverse_VP(wo_handle const& tcomp);
-bool input_down(int32_t button, int32_t playerindex);
-bool input_press(int32_t button, int32_t playerindex);
-bool input_hold(int32_t button, int32_t frames, bool continuous, int32_t playerindex);
+bool get_input_down(int32_t button, int32_t playerindex);
+bool get_input_press(int32_t button, int32_t playerindex);
+bool get_input_hold(int32_t button, int32_t frames, bool continuous, int32_t playerindex);
 XMFLOAT4 input_get_pointer();
 void input_set_pointer(XMFLOAT4 const& props);
 void input_hide_pointer(bool value);

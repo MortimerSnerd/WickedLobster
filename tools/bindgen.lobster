@@ -2,6 +2,7 @@
 // data file that resembles lobster declarations. 
 import std
 import core.lexbase
+import core.strappend
 
 def genload_fn(paramname: string) -> string
 def genstore_fn(expr: string) -> string
@@ -306,7 +307,7 @@ def write_lobster_binding_code(defs) -> string?:
    out.line("// GENERATED for inclusion into lobutils.cpp, do not edit.")
 
    for(defs) d:
-      out.add("anfr(\"wi_{d.name}\", \"")
+      out.add("anfr(\"{d.name}\", \"")
       out.add(join(map(d.params): _.name, ","))
       out.add("\", ")
 
