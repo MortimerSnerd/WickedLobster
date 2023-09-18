@@ -270,7 +270,7 @@ string run_lobster(lobster_options &args, function<void()> main)
         //
         // This function of course owes much to Lobster's main.cpp
         RegisterCoreLanguageBuiltins(nfr);
-        lobster::RegisterBuiltin(nfr, "wicked_lobster", add_wl_builtins);
+        lobster::RegisterBuiltin(nfr, "", "wicked_lobster", add_wl_builtins);
         auto loader = lobster::EnginePreInit(nfr);
 
         // We expect the current directory to be gamedir, with a "modules" and
