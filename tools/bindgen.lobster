@@ -6,20 +6,6 @@ import core.lexbase
 def genload_fn(paramname: string) -> string
 def genstore_fn(expr: string) -> string
 
-class str_appender:
-   buf = ""
-   len = 0
-
-   def add(s):
-      buf, len = write_substring(buf, len, s, 0)
-
-   def line(s):
-      add(s)
-      add("\n")
-
-   def result():
-      return substring(buf, 0, len)
-
 // Description of types we handle
 struct TD:
    name: string

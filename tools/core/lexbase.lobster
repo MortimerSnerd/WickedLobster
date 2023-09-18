@@ -38,6 +38,14 @@ class lex_base:
     def char():
         return buf[p]
 
+    // Returns character at +n position, or 0 if that would be past eof.
+    def lookahead(n: int):
+       let pl = n + p
+       if pl < length(buf):
+          return buf[pl]
+       else:
+          return 0
+
     // If the current char is a EOL sequence, skips past it and
     // updates "line", returns true.
     def ate_eol() -> bool:
@@ -105,6 +113,21 @@ class lex_base:
         else:
             return false
 
+    def matched_char_from(chars: string) -> bool:
+       if chars_left():
+          let c = buf[p]
+          for(length(chars)) ci:
+            if chars[ci] == c:
+               return true
+       return false
+
+    def matched_char(c: int) -> bool:
+       if p+1 < length(buf) and c == buf[p]:
+          p++
+          return true
+       else:
+          return false
+
     def ignore_ws(body):
         skip_ws()
         body()
@@ -142,3 +165,4 @@ def is_alpha_ascii(i: int):
 
 def is_num_ascii(i: int):
     return i >= '0' and i <= '9'
+
